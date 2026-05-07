@@ -1,0 +1,143 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  min-height: 100%;
+  background-color: #070b0f;
+}
+
+body {
+  min-height: 100vh;
+  color: #f8fafc;
+  background:
+    radial-gradient(circle at -8% -10%, rgba(62, 242, 207, 0.14), transparent 34%),
+    radial-gradient(circle at 112% -12%, rgba(255, 212, 90, 0.07), transparent 28%),
+    radial-gradient(circle at 50% 115%, rgba(74, 214, 243, 0.06), transparent 32%),
+    linear-gradient(180deg, rgba(12, 18, 24, 0.32) 0%, rgba(7, 11, 15, 0) 34%),
+    linear-gradient(180deg, #070b0f 0%, #091017 38%, #06090d 100%);
+  font-feature-settings: "ss01" on, "cv02" on, "cv11" on;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+::selection {
+  color: #041012;
+  background: rgba(62, 242, 207, 0.45);
+}
+
+@layer base {
+  * {
+    @apply border-romano-line;
+  }
+}
+
+@layer components {
+  .card-surface {
+    @apply relative rounded-4xl border border-romano-line bg-[linear-gradient(180deg,rgba(22,30,40,0.88),rgba(12,16,22,0.9))] shadow-soft backdrop-blur-2xl transition duration-300;
+    box-shadow:
+      0 30px 80px -42px rgba(0, 0, 0, 0.96),
+      0 10px 30px -18px rgba(0, 0, 0, 0.58),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08),
+      inset 0 0 28px rgba(62, 242, 207, 0.018);
+  }
+
+  .card-surface::before {
+    content: "";
+    position: absolute;
+    inset: 1px;
+    border-radius: calc(2rem - 1px);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  .card-surface > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .page-wrap {
+    @apply mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 pb-32 pt-8 sm:px-6 lg:px-8;
+  }
+
+  .section-title {
+    @apply text-3xl font-bold tracking-[-0.06em] text-romano-ink sm:text-4xl;
+  }
+
+  .section-copy {
+    @apply text-sm leading-8 text-romano-slate sm:text-base;
+  }
+
+  .primary-button {
+    @apply inline-flex items-center justify-center rounded-2xl border border-romano-navy/25 bg-romano-primary px-5 py-3 text-sm font-semibold text-[#051215] shadow-glow transition duration-300 hover:-translate-y-0.5 hover:border-romano-navy/40 hover:shadow-[0_24px_62px_-28px_rgba(62,242,207,0.72)] disabled:cursor-not-allowed disabled:opacity-60;
+    background-size: 140% 140%;
+  }
+
+  .secondary-button {
+    @apply inline-flex items-center justify-center rounded-2xl border border-romano-line bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.025))] px-5 py-3 text-sm font-semibold text-romano-ink transition duration-300 hover:-translate-y-0.5 hover:border-romano-navy/35 hover:bg-[linear-gradient(180deg,rgba(62,242,207,0.08),rgba(255,255,255,0.04))] hover:text-white;
+  }
+
+  .input-shell {
+    @apply w-full rounded-2xl border border-romano-line bg-[rgba(10,14,19,0.78)] px-4 py-3 text-sm text-romano-ink outline-none transition duration-300 placeholder:text-romano-slate/70 focus:border-romano-navy/45 focus:bg-[rgba(12,18,24,0.94)] focus:ring-4 focus:ring-romano-navy/10;
+  }
+
+  .surface-elevated {
+    @apply rounded-3xl border border-romano-line bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.045))] shadow-soft backdrop-blur-xl;
+    box-shadow:
+      0 20px 50px -36px rgba(0, 0, 0, 0.9),
+      inset 0 1px 0 rgba(255, 255, 255, 0.07);
+  }
+
+  .surface-muted {
+    @apply rounded-3xl border border-romano-line bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.022))] backdrop-blur-lg;
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      0 14px 34px -26px rgba(0, 0, 0, 0.75);
+  }
+
+  .eyebrow-label {
+    @apply text-xs font-semibold uppercase tracking-[0.3em] text-romano-amberText;
+  }
+
+  .field-label {
+    @apply text-[11px] font-semibold uppercase tracking-[0.22em] text-romano-slate;
+  }
+
+  .glass-pill {
+    @apply rounded-full border border-romano-line bg-white/[0.045] shadow-soft backdrop-blur-xl;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .primary-button {
+    animation: button-glow 6s ease-in-out infinite;
+  }
+}
+
+@keyframes button-glow {
+  0%,
+  100% {
+    box-shadow: 0 16px 40px -26px rgba(62, 242, 207, 0.34);
+    background-position: 0% 50%;
+  }
+
+  50% {
+    box-shadow: 0 20px 48px -24px rgba(62, 242, 207, 0.48);
+    background-position: 100% 50%;
+  }
+}
