@@ -107,3 +107,11 @@ export type OrderPayload = {
   ownerId: string;
   businessId: string;
 };
+
+export type WaitlistPayload = {
+  name: string;
+  email: string;
+  businessType: string;
+  whatsappNumber?: string | null;
+  source: "coming-soon";
+};

@@ -1,105 +1,74 @@
-import Link from "next/link";
-import { BrandWordmark } from "@/components/brand-wordmark";
-import { StatusBadge } from "@/components/status-badge";
-import { Reveal } from "@/components/reveal";
+"use client";
 
-const features = [
+import Link from "next/link";
+import { FormEvent, useState } from "react";
+import { motion } from "framer-motion";
+import { BrandWordmark } from "@/components/brand-wordmark";
+import { Reveal } from "@/components/reveal";
+import { StatusBadge } from "@/components/status-badge";
+import { createWaitlistEntry } from "@/lib/firestore";
+
+const businessTypes = [
+  "Perfume seller",
+  "Clothing reseller",
+  "WhatsApp shop",
+  "Instagram store",
+  "Local retailer",
+  "Other",
+] as const;
+
+const featureCards = [
   {
-    title: "Inventory tracking",
-    description: "Keep every bottle, size, color, or style count accurate from one clean view.",
+    title: "Stock management",
+    description: "Track every item, see what is running low, and stay ready before demand slips away.",
   },
   {
-    title: "Order management",
-    description: "Capture customer orders quickly and track payment and fulfilment status with less back-and-forth.",
+    title: "Order tracking",
+    description: "Capture new orders quickly and keep payment and fulfilment status clear for the whole day.",
   },
   {
     title: "WhatsApp automation",
-    description: "Send polished WhatsApp-ready confirmations without leaving your order screen.",
-  },
-  {
-    title: "Low stock alerts",
-    description: "See what needs restocking before a fast-moving product turns into a missed sale.",
-  },
-  {
-    title: "Revenue insights",
-    description: "Stay close to today’s revenue and understand what your paid sales are doing.",
+    description: "Send polished customer confirmations without hopping between chats and spreadsheets.",
   },
   {
     title: "Business analytics",
-    description: "Spot best sellers, order flow, and stock health without needing spreadsheets.",
+    description: "See what is selling, what needs attention, and how your business is moving in real time.",
+  },
+  {
+    title: "Low stock alerts",
+    description: "Catch restock needs early with live thresholds that surface pressure before you miss a sale.",
+  },
+  {
+    title: "Mobile-first dashboard",
+    description: "Built for founders who run their business on the move and need clean clarity on smaller screens.",
   },
 ] as const;
 
-const steps = [
-  {
-    step: "01",
-    title: "Add products",
-    description: "Set up your catalog with names, prices, stock levels, and low-stock thresholds.",
-  },
-  {
-    step: "02",
-    title: "Create orders",
-    description: "Capture customer orders in seconds and keep payment and fulfilment status clear.",
-  },
-  {
-    step: "03",
-    title: "Send confirmations + track sales",
-    description: "Share WhatsApp-ready updates and watch revenue, stock, and orders from one dashboard.",
-  },
+const previewStats = [
+  { label: "Orders today", value: "18", helper: "New customer orders" },
+  { label: "Low stock", value: "4", helper: "Products to reorder" },
+  { label: "Revenue", value: "R8,420", helper: "Captured this week" },
 ] as const;
 
-const testimonials = [
-  {
-    quote:
-      "FlowLo helped me stop guessing what stock I still had. I can finally manage perfume orders without scrolling through chats.",
-    name: "Ayanda M.",
-    role: "Perfume seller",
-  },
-  {
-    quote:
-      "I sell mostly through Instagram and WhatsApp. FlowLo made my orders feel organised and way more professional.",
-    name: "Lebo K.",
-    role: "Clothing reseller",
-  },
-  {
-    quote:
-      "The low stock alerts and order statuses save me time every day. I know what’s selling and what needs attention.",
-    name: "Zanele P.",
-    role: "Local retail owner",
-  },
+const inventoryRows = [
+  { name: "Yara Pink", stock: "3 left", tone: "warning" as const },
+  { name: "Club de Nuit", stock: "12 left", tone: "success" as const },
+  { name: "Khamrah", stock: "5 left", tone: "neutral" as const },
 ] as const;
 
-const pricingPlans = [
-  {
-    name: "Starter",
-    price: "Free",
-    description: "For side hustles getting organised for the first time.",
-    features: ["1 business", "Product tracking", "Order management", "WhatsApp confirmations"],
-    highlight: false,
-  },
-  {
-    name: "Business",
-    price: "R99/month",
-    description: "For growing sellers who need better visibility every day.",
-    features: ["Everything in Starter", "Revenue insights", "Low stock alerts", "Best-seller analytics"],
-    highlight: true,
-  },
-  {
-    name: "Growth",
-    price: "R299/month",
-    description: "For fast-moving shops ready for deeper control and scale.",
-    features: ["Everything in Business", "Advanced reporting", "Priority support", "Future multi-user tools"],
-    highlight: false,
-  },
+const activityRows = [
+  { customer: "Lebo Nkosi", total: "R1,150", payment: "Paid", order: "Completed" },
+  { customer: "Ayanda Mokoena", total: "R780", payment: "Partial", order: "Pending" },
+  { customer: "Nthabiseng D.", total: "R640", payment: "Unpaid", order: "Pending" },
 ] as const;
 
-const audienceTags = [
-  "Perfume sellers",
-  "Clothing resellers",
-  "WhatsApp businesses",
-  "Instagram shops",
-  "Small local retailers",
-] as const;
+type WaitlistStatus = "idle" | "submitting" | "success" | "error";
+type WaitlistFormState = {
+  name: string;
+  email: string;
+  businessType: (typeof businessTypes)[number];
+  whatsappNumber: string;
+};
 
 function FeatureCard({
   title,
@@ -120,425 +89,452 @@ function FeatureCard({
 }
 
 export function LandingPage() {
+  const [form, setForm] = useState<WaitlistFormState>({
+    name: "",
+    email: "",
+    businessType: businessTypes[0],
+    whatsappNumber: "",
+  });
+  const [status, setStatus] = useState<WaitlistStatus>("idle");
+  const [error, setError] = useState("");
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setStatus("submitting");
+    setError("");
+
+    try {
+      await createWaitlistEntry({
+        name: form.name,
+        email: form.email,
+        businessType: form.businessType,
+        whatsappNumber: form.whatsappNumber,
+        source: "coming-soon",
+      });
+
+      setStatus("success");
+      setForm({
+        name: "",
+        email: "",
+        businessType: businessTypes[0],
+        whatsappNumber: "",
+      });
+    } catch {
+      setStatus("error");
+      setError("Something went wrong. Please try again.");
+    }
+  };
+
+  const currentYear = new Date().getFullYear();
+
   return (
-    <div className="landing-page relative min-h-screen overflow-hidden">
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-[560px] bg-[radial-gradient(circle_at_10%_12%,rgba(62,242,207,0.12),transparent_34%),radial-gradient(circle_at_106%_-8%,rgba(255,212,90,0.06),transparent_28%),radial-gradient(circle_at_60%_36%,rgba(74,214,243,0.06),transparent_30%)]" />
-      <div className="pointer-events-none absolute inset-x-0 top-[34%] h-[460px] bg-[radial-gradient(circle_at_74%_10%,rgba(62,242,207,0.06),transparent_28%),radial-gradient(circle_at_28%_88%,rgba(255,212,90,0.04),transparent_26%)] blur-3xl" />
+    <div className="relative min-h-screen overflow-hidden">
+      <motion.div
+        aria-hidden
+        animate={{ opacity: [0.46, 0.7, 0.46], scale: [1, 1.06, 1] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        className="pointer-events-none absolute -left-24 top-[-8rem] h-[24rem] w-[24rem] rounded-full bg-[radial-gradient(circle,rgba(62,242,207,0.14),transparent_68%)] blur-3xl"
+      />
+      <motion.div
+        aria-hidden
+        animate={{ opacity: [0.2, 0.34, 0.2], scale: [1, 1.08, 1] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+        className="pointer-events-none absolute right-[-10rem] top-[-9rem] h-[24rem] w-[24rem] rounded-full bg-[radial-gradient(circle,rgba(255,212,90,0.08),transparent_72%)] blur-3xl"
+      />
+      <motion.div
+        aria-hidden
+        animate={{ opacity: [0.18, 0.3, 0.18], y: [0, -12, 0] }}
+        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+        className="pointer-events-none absolute bottom-[-10rem] left-1/2 h-[26rem] w-[26rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(74,214,243,0.08),transparent_72%)] blur-3xl"
+      />
+
       <header className="mx-auto w-full max-w-7xl px-4 pt-5 sm:px-6 lg:px-8">
         <div className="card-surface sticky top-4 z-30 flex items-center justify-between gap-4 rounded-[30px] px-4 py-4 sm:px-6">
-          <Link href="/">
+          <Link href="/" aria-label="FlowLo home">
             <BrandWordmark size="md" />
           </Link>
 
-          <nav className="hidden items-center gap-6 text-sm font-medium text-romano-slate md:flex">
-            <a href="#features" className="transition hover:text-romano-ink">
-              Features
-            </a>
-            <a href="#pricing" className="transition hover:text-romano-ink">
-              Pricing
-            </a>
-            <Link href="/login" className="transition hover:text-romano-ink">
-              Login
-            </Link>
-          </nav>
+          <div className="glass-pill hidden items-center gap-3 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-romano-amberText md:flex">
+            <span className="h-2 w-2 rounded-full bg-romano-amberText shadow-[0_0_18px_-8px_rgba(255,212,90,0.85)]" />
+            Launching Soon
+          </div>
 
           <div className="flex items-center gap-3">
             <Link href="/login" className="hidden text-sm font-semibold text-romano-slate sm:inline-flex">
               Login
             </Link>
-            <Link href="/register" className="primary-button">
-              Start free
-            </Link>
+            <a href="#waitlist" className="primary-button">
+              Join Beta
+            </a>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-7xl flex-col px-4 pb-28 pt-10 sm:px-6 lg:px-8">
-        <section className="grid gap-10 pb-20 pt-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+      <main className="mx-auto flex w-full max-w-7xl flex-col px-4 pb-24 pt-10 sm:px-6 lg:px-8">
+        <section className="grid gap-10 pb-20 pt-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
           <Reveal className="max-w-3xl">
-            <div className="glass-pill inline-flex flex-wrap items-center gap-2 px-4 py-2 text-sm font-medium text-romano-slate">
-              <span className="rounded-full border border-romano-amberText/20 bg-romano-amber px-2 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-romano-amberText">
-                FlowLo
+            <div className="glass-pill inline-flex flex-wrap items-center gap-3 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-romano-amberText">
+              <span className="rounded-full border border-romano-amberText/20 bg-romano-amber px-2.5 py-1 text-[10px]">
+                Beta Coming Soon
               </span>
-              Clean stock. Clear orders. Faster sales.
+              FlowLo is coming soon.
             </div>
 
-            <h1 className="mt-6 max-w-3xl text-5xl font-bold tracking-[-0.07em] text-romano-ink sm:text-6xl lg:text-7xl">
-              Run your business from one clean dashboard.
+            <h1 className="mt-6 max-w-4xl text-5xl font-bold tracking-[-0.08em] text-romano-ink sm:text-6xl lg:text-7xl">
+              Clean stock. Clean orders. Faster sales.
             </h1>
-            <p className="mt-5 max-w-2xl text-base leading-8 text-romano-slate sm:text-lg">
-              Track stock, manage orders, and send WhatsApp-ready confirmations in
-              seconds.
+
+            <p className="mt-5 max-w-2xl text-lg leading-8 text-romano-mintText">
+              Manage stock, orders, and customer updates in one flow.
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/register" className="primary-button">
-                Start free
-              </Link>
-              <a href="#demo" className="secondary-button">
-                View demo
+            <p className="mt-5 max-w-3xl text-base leading-8 text-romano-slate sm:text-lg">
+              FlowLo helps South African businesses manage stock, orders, payments,
+              and customer communication in one seamless flow. Built for small
+              businesses, resellers, and WhatsApp-first sellers who want a cleaner
+              way to track stock, manage orders, and keep customers updated.
+            </p>
+
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <a href="#waitlist" className="primary-button">
+                Join Beta
+              </a>
+              <a href="#preview" className="secondary-button">
+                Watch Demo
               </a>
             </div>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              {audienceTags.map((tag) => (
-                <span
-                  key={tag}
-                  className="glass-pill px-4 py-2 text-sm text-romano-slate"
-                >
-                  {tag}
-                </span>
-              ))}
+              <span className="glass-pill px-4 py-2 text-sm text-romano-slate">
+                Built in South Africa
+              </span>
+              <span className="glass-pill px-4 py-2 text-sm text-romano-slate">
+                WhatsApp-first sellers
+              </span>
+              <span className="glass-pill px-4 py-2 text-sm text-romano-slate">
+                flowlo.co.za
+              </span>
             </div>
           </Reveal>
 
           <Reveal delay={0.08} className="relative">
-            <div className="absolute inset-x-10 top-0 h-40 rounded-full bg-[radial-gradient(circle,rgba(62,242,207,0.14),transparent_70%)] blur-3xl" />
-            <div className="absolute -right-10 -top-2 h-32 w-32 rounded-full bg-[radial-gradient(circle,rgba(255,212,90,0.08),transparent_72%)] blur-3xl" />
-            <div className="relative card-surface overflow-hidden p-5 sm:p-6">
+            <motion.div
+              animate={{ y: [0, -10, 0], rotate: [0, 0.6, 0] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+              className="relative card-surface overflow-hidden p-5 sm:p-6"
+            >
               <div className="flex items-center justify-between gap-4">
                 <div>
-                  <p className="text-sm font-semibold text-romano-ink">FlowLo workspace</p>
+                  <p className="text-sm font-semibold text-romano-ink">FlowLo control room</p>
                   <p className="mt-1 text-sm text-romano-slate">
-                    Inventory, orders, and revenue in one place.
+                    One clean flow for stock, orders, and customer updates.
                   </p>
                 </div>
-                <StatusBadge tone="success" label="Live" />
+                <StatusBadge tone="success" label="Live preview" />
               </div>
 
               <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                <div className="surface-muted p-4">
-                  <p className="text-sm text-romano-slate">Today’s Revenue</p>
-                  <p className="mt-3 text-2xl font-semibold text-romano-ink">R4,820</p>
-                </div>
-                <div className="surface-elevated p-4">
-                  <p className="text-sm text-romano-slate">Orders Today</p>
-                  <p className="mt-3 text-2xl font-semibold text-romano-ink">18</p>
-                </div>
-                <div className="surface-elevated p-4">
-                  <p className="text-sm text-romano-slate">Low Stock</p>
-                  <p className="mt-3 text-2xl font-semibold text-romano-ink">3</p>
-                </div>
+                {previewStats.map((stat) => (
+                  <div key={stat.label} className="surface-elevated p-4">
+                    <p className="field-label">{stat.label}</p>
+                    <p className="mt-3 text-2xl font-semibold text-romano-ink">{stat.value}</p>
+                    <p className="mt-2 text-xs leading-6 text-romano-slate">{stat.helper}</p>
+                  </div>
+                ))}
               </div>
 
-              <div className="mt-6 grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
+              <div className="mt-6 grid gap-4 lg:grid-cols-[1.02fr_0.98fr]">
                 <div className="surface-elevated p-4">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-romano-ink">Recent orders</p>
-                    <StatusBadge tone="neutral" label="Latest" />
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-romano-ink">Inventory tracking</p>
+                    <StatusBadge tone="warning" label="Low stock alerts" />
                   </div>
-                  <div className="mt-4 grid gap-3">
-                    {[
-                      ["Lebo Nkosi", "R950", "paid"],
-                      ["Sharon Mokoena", "R1,250", "pending"],
-                      ["Mpho Dlamini", "R640", "completed"],
-                    ].map(([name, total, status]) => (
-                      <div
-                        key={`${name}-${total}`}
-                        className="surface-muted p-3"
-                      >
-                        <div className="flex items-center justify-between gap-3">
-                          <div>
-                            <p className="text-sm font-semibold text-romano-ink">{name}</p>
-                            <p className="mt-1 text-xs text-romano-slate">WhatsApp order</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm font-semibold text-romano-ink">{total}</p>
-                            <p className="mt-1 text-xs capitalize text-romano-slate">{status}</p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
 
-                <div className="surface-elevated p-4">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-romano-ink">Stock health</p>
-                    <StatusBadge tone="warning" label="Attention" />
-                  </div>
                   <div className="mt-4 grid gap-3">
-                    {[
-                      ["Yara Pink", "2 left"],
-                      ["Ameerat Gold", "4 left"],
-                      ["Club de Nuit", "5 left"],
-                    ].map(([name, stock]) => (
+                    {inventoryRows.map((row) => (
                       <div
-                        key={`${name}-${stock}`}
-                        className="surface-muted flex items-center justify-between p-3"
+                        key={row.name}
+                        className="surface-muted flex items-center justify-between gap-3 p-3"
                       >
                         <div>
-                          <p className="text-sm font-semibold text-romano-ink">{name}</p>
-                          <p className="mt-1 text-xs text-romano-slate">Low stock alert</p>
+                          <p className="text-sm font-semibold text-romano-ink">{row.name}</p>
+                          <p className="mt-1 text-xs text-romano-slate">Tracked in real time</p>
                         </div>
-                        <p className="text-sm font-semibold text-romano-ink">{stock}</p>
+                        <StatusBadge tone={row.tone} label={row.stock} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="surface-elevated p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-semibold text-romano-ink">Order management</p>
+                    <StatusBadge tone="neutral" label="Today" />
+                  </div>
+
+                  <div className="mt-4 grid gap-3">
+                    {activityRows.map((row) => (
+                      <div key={row.customer} className="surface-muted p-3">
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <p className="text-sm font-semibold text-romano-ink">{row.customer}</p>
+                            <p className="mt-1 text-xs text-romano-slate">WhatsApp confirmation ready</p>
+                          </div>
+                          <p className="text-sm font-semibold text-romano-ink">{row.total}</p>
+                        </div>
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <StatusBadge
+                            tone={
+                              row.payment === "Paid"
+                                ? "success"
+                                : row.payment === "Partial"
+                                  ? "warning"
+                                  : "danger"
+                            }
+                            label={row.payment}
+                          />
+                          <StatusBadge
+                            tone={row.order === "Completed" ? "success" : "neutral"}
+                            label={row.order}
+                          />
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="card-surface absolute -bottom-6 left-5 hidden w-56 p-4 lg:block">
-              <p className="text-sm font-semibold text-romano-ink">WhatsApp ready</p>
-              <p className="mt-2 text-sm leading-6 text-romano-slate">
-                Send customer confirmations straight from your order detail page.
+              <div className="mt-4 grid gap-4 sm:grid-cols-[0.78fr_1.22fr]">
+                <div className="surface-muted p-4">
+                  <p className="field-label">WhatsApp confirmations</p>
+                  <p className="mt-3 text-sm leading-7 text-romano-ink">
+                    Hi Lebo, your order of 2 x Yara Pink totaling R1,150 has been
+                    received. We&apos;ll keep you updated.
+                  </p>
+                </div>
+
+                <div className="surface-muted p-4">
+                  <p className="field-label">Analytics snapshot</p>
+                  <div className="mt-3 flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm text-romano-slate">Completed sales</p>
+                      <p className="mt-1 text-xl font-semibold text-romano-ink">14 this week</p>
+                    </div>
+                    <div className="h-12 w-px bg-romano-line" />
+                    <div>
+                      <p className="text-sm text-romano-slate">Best seller</p>
+                      <p className="mt-1 text-xl font-semibold text-romano-ink">Yara Pink</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              animate={{ y: [0, 8, 0] }}
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
+              className="card-surface absolute -bottom-6 left-5 hidden w-56 p-4 lg:block"
+            >
+              <p className="field-label">Beta note</p>
+              <p className="mt-3 text-sm leading-7 text-romano-ink">
+                Join the list for launch updates, product previews, and early access invites.
               </p>
-            </div>
+            </motion.div>
           </Reveal>
         </section>
 
-        <section id="features" className="pt-10">
+        <section id="preview" className="pt-8">
           <Reveal className="max-w-2xl">
-            <p className="eyebrow-label">
-              Features
-            </p>
+            <p className="eyebrow-label">Product Preview</p>
             <h2 className="section-title mt-3">
-              Everything a small business needs to stay organised.
+              Built to feel like a real operating system for small business sales.
             </h2>
             <p className="section-copy mt-3">
-              FlowLo is built for sellers who run on WhatsApp and Instagram and need
-              a system that feels simple from day one.
+              FlowLo is designed for fast-moving South African sellers who need
+              clarity, visibility, and cleaner customer communication without
+              enterprise complexity.
             </p>
+          </Reveal>
+
+          <div className="mt-10 grid gap-5 lg:grid-cols-3">
+            <Reveal>
+              <div className="card-surface p-6">
+                <p className="field-label">Inventory</p>
+                <p className="mt-4 text-2xl font-semibold text-romano-ink">Track stock live</p>
+                <p className="mt-3 text-sm leading-7 text-romano-slate">
+                  Know exactly what is left before you sell the next bottle, pair, or item.
+                </p>
+              </div>
+            </Reveal>
+            <Reveal delay={0.05}>
+              <div className="card-surface p-6">
+                <p className="field-label">Customer flow</p>
+                <p className="mt-4 text-2xl font-semibold text-romano-ink">Send updates fast</p>
+                <p className="mt-3 text-sm leading-7 text-romano-slate">
+                  Generate polished WhatsApp confirmations from one clean order screen.
+                </p>
+              </div>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <div className="card-surface p-6">
+                <p className="field-label">Visibility</p>
+                <p className="mt-4 text-2xl font-semibold text-romano-ink">See what is selling</p>
+                <p className="mt-3 text-sm leading-7 text-romano-slate">
+                  Stay close to revenue, orders, and low stock signals as your business grows.
+                </p>
+              </div>
+            </Reveal>
+          </div>
+        </section>
+
+        <section className="pt-24">
+          <Reveal className="max-w-2xl">
+            <p className="eyebrow-label">Features</p>
+            <h2 className="section-title mt-3">
+              Designed for sellers who run lean, move fast, and sell through chat.
+            </h2>
           </Reveal>
 
           <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {features.map((feature, index) => (
+            {featureCards.map((feature, index) => (
               <Reveal key={feature.title} delay={index * 0.04}>
-                <FeatureCard
-                  title={feature.title}
-                  description={feature.description}
-                />
+                <FeatureCard title={feature.title} description={feature.description} />
               </Reveal>
             ))}
           </div>
         </section>
 
-        <section id="how-it-works" className="pt-24">
-          <Reveal className="max-w-2xl">
-            <p className="eyebrow-label">
-              How it works
-            </p>
-            <h2 className="section-title mt-3">
-              Go from messy chats to structured sales in three steps.
-            </h2>
-          </Reveal>
-
-          <div className="mt-10 grid gap-5 lg:grid-cols-3">
-            {steps.map((item, index) => (
-              <Reveal key={item.step} delay={index * 0.06}>
-                <div className="card-surface p-7">
-                <p className="text-sm font-semibold uppercase tracking-[0.25em] text-romano-amberText">
-                  {item.step}
-                </p>
-                <h3 className="mt-4 text-xl font-semibold text-romano-ink">{item.title}</h3>
-                <p className="mt-3 text-sm leading-8 text-romano-slate">{item.description}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </section>
-
-        <section id="demo" className="pt-24">
-          <Reveal className="max-w-2xl">
-            <p className="eyebrow-label">
-              Demo
-            </p>
-            <h2 className="section-title mt-3">
-              A realistic preview of the FlowLo workspace.
-            </h2>
-            <p className="section-copy mt-3">
-              Designed to feel clean on mobile, clear in the middle of a busy selling day,
-              and premium enough to trust with your business.
-            </p>
-          </Reveal>
-
-          <div className="mt-10 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-            <Reveal>
-              <div className="card-surface p-7">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-lg font-semibold text-romano-ink">Performance</p>
-                  <p className="mt-1 text-sm text-romano-slate">Revenue and sales activity at a glance.</p>
-                </div>
-                <StatusBadge tone="success" label="Growing" />
-              </div>
-              <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                <div className="surface-muted p-4">
-                  <p className="text-sm text-romano-slate">Total Revenue</p>
-                  <p className="mt-3 text-3xl font-semibold text-romano-ink">R38,420</p>
-                </div>
-                <div className="surface-elevated p-4">
-                  <p className="text-sm text-romano-slate">Units Sold Today</p>
-                  <p className="mt-3 text-3xl font-semibold text-romano-ink">24</p>
-                </div>
-              </div>
-              <div className="mt-5 grid gap-3">
-                {[
-                  ["Pending orders", "6"],
-                  ["Completed today", "9"],
-                  ["Cancelled", "1"],
-                ].map(([label, value]) => (
-                  <div
-                    key={label}
-                    className="surface-muted flex items-center justify-between p-4"
-                  >
-                    <p className="text-sm text-romano-slate">{label}</p>
-                    <p className="text-lg font-semibold text-romano-ink">{value}</p>
-                  </div>
-                ))}
-              </div>
-              </div>
-            </Reveal>
-
-            <Reveal delay={0.06}>
-              <div className="card-surface p-7">
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-lg font-semibold text-romano-ink">Sales activity</p>
-                  <p className="mt-1 text-sm text-romano-slate">Latest orders and confirmations.</p>
-                </div>
-                <StatusBadge tone="neutral" label="5 recent" />
-              </div>
-              <div className="mt-6 grid gap-3">
-                {[
-                  ["Nthabi S.", "R780", "paid", "completed"],
-                  ["Tebogo P.", "R1,420", "partial", "pending"],
-                  ["Tumi L.", "R510", "unpaid", "pending"],
-                  ["Refilwe M.", "R1,100", "paid", "completed"],
-                ].map(([name, total, payment, order]) => (
-                  <div
-                    key={`${name}-${total}`}
-                    className="surface-elevated p-4"
-                  >
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div>
-                        <p className="font-semibold text-romano-ink">{name}</p>
-                        <p className="mt-1 text-sm text-romano-slate">Ordered through WhatsApp</p>
-                      </div>
-                      <p className="font-semibold text-romano-ink">{total}</p>
-                    </div>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <StatusBadge tone={payment === "paid" ? "success" : payment === "partial" ? "warning" : "danger"} label={payment} />
-                      <StatusBadge tone={order === "completed" ? "success" : "warning"} label={order} />
-                    </div>
-                  </div>
-                ))}
-              </div>
-              </div>
-            </Reveal>
-          </div>
-        </section>
-
-        <section className="pt-24">
-          <Reveal className="max-w-2xl">
-            <p className="eyebrow-label">
-              Testimonials
-            </p>
-            <h2 className="section-title mt-3">
-              Built for modern sellers who want to look more professional.
-            </h2>
-          </Reveal>
-
-          <div className="mt-10 grid gap-5 lg:grid-cols-3">
-            {testimonials.map((testimonial, index) => (
-              <Reveal key={testimonial.name} delay={index * 0.05}>
-                <div className="card-surface p-7">
-                <p className="text-base leading-8 text-romano-ink">“{testimonial.quote}”</p>
-                <div className="mt-6">
-                  <p className="font-semibold text-romano-ink">{testimonial.name}</p>
-                  <p className="mt-1 text-sm text-romano-slate">{testimonial.role}</p>
-                </div>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </section>
-
-        <section id="pricing" className="pt-24">
-          <Reveal className="max-w-2xl">
-            <p className="eyebrow-label">
-              Pricing
-            </p>
-            <h2 className="section-title mt-3">
-              Start simple, then grow with better visibility.
-            </h2>
-            <p className="section-copy mt-3">
-              Clear pricing designed for side hustles, growing resellers, and small local shops.
-            </p>
-          </Reveal>
-
-          <div className="mt-10 grid gap-5 xl:grid-cols-3">
-            {pricingPlans.map((plan, index) => (
-              <Reveal key={plan.name} delay={index * 0.05}>
-                <div
-                key={plan.name}
-                className={`card-surface relative overflow-hidden p-7 ${plan.highlight ? "border-romano-amberText/30 bg-[linear-gradient(180deg,rgba(255,212,90,0.06),rgba(17,24,32,0.92))]" : ""}`}
-              >
-                {plan.highlight ? (
-                  <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,rgba(255,212,90,0.12),transparent_36%),radial-gradient(circle_at_top_right,rgba(62,242,207,0.08),transparent_28%)]" />
-                ) : null}
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-lg font-semibold text-romano-ink">{plan.name}</p>
-                    <p className="mt-2 text-sm leading-6 text-romano-slate">
-                      {plan.description}
-                    </p>
-                  </div>
-                  {plan.highlight ? <StatusBadge tone="warning" label="Popular" /> : null}
-                </div>
-                <p className="mt-6 text-4xl font-semibold tracking-[-0.05em] text-romano-ink">
-                  {plan.price}
-                </p>
-                <div className="mt-6 grid gap-3">
-                  {plan.features.map((feature) => (
-                    <div
-                      key={feature}
-                      className="surface-muted flex items-center gap-3 px-4 py-3 text-sm text-romano-ink"
-                    >
-                      <span className="h-2 w-2 rounded-full bg-romano-navy shadow-glow" />
-                      {feature}
-                    </div>
-                  ))}
-                </div>
-                <Link
-                  href="/register"
-                  className={`mt-6 ${plan.highlight ? "primary-button" : "secondary-button"}`}
-                >
-                  Start free
-                </Link>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </section>
-
-        <section className="pt-24">
+        <section id="waitlist" className="pt-24">
           <Reveal>
-            <div className="card-surface overflow-hidden p-7 sm:p-9 lg:p-11">
-            <div className="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
-              <div>
-                <p className="eyebrow-label">
-                  Ready to start?
-                </p>
-                <h2 className="mt-3 text-3xl font-semibold tracking-[-0.04em] text-romano-ink sm:text-4xl">
-                  Clean stock. Clear orders. Faster sales.
-                </h2>
-                <p className="mt-3 max-w-2xl text-sm leading-7 text-romano-slate sm:text-base">
-                  Join modern small businesses using FlowLo to organise stock, track sales,
-                  and follow up on WhatsApp more professionally.
-                </p>
-              </div>
+            <div className="card-surface overflow-hidden p-7 sm:p-9 lg:p-10">
+              <div className="grid gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-start">
+                <div className="max-w-xl">
+                  <p className="eyebrow-label">Join the waitlist</p>
+                  <h2 className="section-title mt-3">
+                    Request early access to FlowLo beta.
+                  </h2>
+                  <p className="section-copy mt-4">
+                    We&apos;re opening FlowLo to a small group of early sellers first.
+                    Join the waitlist if you want early access, preview updates, and
+                    launch news for flowlo.co.za.
+                  </p>
 
-              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-                <Link href="/register" className="primary-button">
-                  Start free
-                </Link>
-                <Link href="/login" className="secondary-button">
-                  Login
-                </Link>
+                  <div className="mt-6 grid gap-3">
+                    <div className="surface-muted p-4">
+                      <p className="field-label">Best fit right now</p>
+                      <p className="mt-3 text-sm leading-7 text-romano-ink">
+                        Perfume sellers, clothing resellers, WhatsApp shops, and local retail teams.
+                      </p>
+                    </div>
+                    <div className="surface-muted p-4">
+                      <p className="field-label">What you’ll get</p>
+                      <p className="mt-3 text-sm leading-7 text-romano-ink">
+                        Early feature access, beta updates, and first-release launch notices.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="surface-elevated p-5 sm:p-6">
+                  {status === "success" ? (
+                    <div className="grid gap-4">
+                      <StatusBadge tone="success" label="You’re on the list" />
+                      <h3 className="text-2xl font-semibold tracking-[-0.04em] text-romano-ink">
+                        You&apos;re on the list — we&apos;ll be in touch soon.
+                      </h3>
+                      <p className="text-sm leading-7 text-romano-slate">
+                        Thanks for joining the FlowLo beta waitlist. We&apos;ll share launch
+                        news, previews, and early access details as we get closer.
+                      </p>
+                      <button
+                        type="button"
+                        className="secondary-button mt-2"
+                        onClick={() => setStatus("idle")}
+                      >
+                        Join another email
+                      </button>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleSubmit} className="grid gap-4">
+                      <label className="grid gap-2">
+                        <span className="field-label">Name</span>
+                        <input
+                          className="input-shell"
+                          value={form.name}
+                          onChange={(event) =>
+                            setForm((current) => ({ ...current, name: event.target.value }))
+                          }
+                          placeholder="Lebo Nkosi"
+                          required
+                        />
+                      </label>
+
+                      <label className="grid gap-2">
+                        <span className="field-label">Email</span>
+                        <input
+                          type="email"
+                          className="input-shell"
+                          value={form.email}
+                          onChange={(event) =>
+                            setForm((current) => ({ ...current, email: event.target.value }))
+                          }
+                          placeholder="hello@business.co.za"
+                          required
+                        />
+                      </label>
+
+                      <label className="grid gap-2">
+                        <span className="field-label">Business type</span>
+                        <select
+                          className="input-shell"
+                          value={form.businessType}
+                          onChange={(event) =>
+                            setForm((current) => ({
+                              ...current,
+                              businessType: event.target.value as WaitlistFormState["businessType"],
+                            }))
+                          }
+                        >
+                          {businessTypes.map((type) => (
+                            <option key={type} value={type}>
+                              {type}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+
+                      <label className="grid gap-2">
+                        <span className="field-label">WhatsApp number (optional)</span>
+                        <input
+                          className="input-shell"
+                          value={form.whatsappNumber}
+                          onChange={(event) =>
+                            setForm((current) => ({
+                              ...current,
+                              whatsappNumber: event.target.value,
+                            }))
+                          }
+                          placeholder="082 123 4567"
+                        />
+                      </label>
+
+                      {status === "error" ? (
+                        <div className="rounded-2xl bg-romano-rose px-4 py-3 text-sm text-romano-roseText">
+                          {error || "Something went wrong. Please try again."}
+                        </div>
+                      ) : null}
+
+                      <button
+                        type="submit"
+                        className="primary-button mt-2"
+                        disabled={status === "submitting"}
+                      >
+                        {status === "submitting" ? "Submitting..." : "Request Early Access"}
+                      </button>
+                    </form>
+                  )}
+                </div>
               </div>
-            </div>
             </div>
           </Reveal>
         </section>
@@ -548,21 +544,21 @@ export function LandingPage() {
         <div className="card-surface flex flex-col gap-6 px-6 py-7 sm:px-7 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <BrandWordmark size="md" showTagline={false} />
-            <p className="mt-2 text-sm text-romano-slate">
+            <p className="mt-3 text-sm text-romano-slate">
               Built for modern small businesses.
             </p>
+            <p className="mt-1 text-sm text-romano-slate">Built in South Africa</p>
           </div>
 
-          <div className="flex flex-wrap gap-4 text-sm text-romano-slate">
+          <div className="flex flex-wrap items-center gap-4 text-sm text-romano-slate">
+            <span>flowlo.co.za</span>
+            <Link href="/privacy" className="transition hover:text-romano-ink">
+              Privacy Policy
+            </Link>
             <Link href="/terms" className="transition hover:text-romano-ink">
               Terms
             </Link>
-            <Link href="/privacy" className="transition hover:text-romano-ink">
-              Privacy
-            </Link>
-            <a href="mailto:hello@flowlo.app" className="transition hover:text-romano-ink">
-              Contact
-            </a>
+            <span>© {currentYear} FlowLo</span>
           </div>
         </div>
       </footer>

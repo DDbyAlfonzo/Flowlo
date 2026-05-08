@@ -10,6 +10,12 @@ service cloud.firestore {
       return signedIn() && resourceData.ownerId == request.auth.uid;
     }
 
+    function validText(value, minLength, maxLength) {
+      return value is string
+        && value.size() >= minLength
+        && value.size() <= maxLength;
+    }
+
     match /businesses/{businessId} {
       allow read, delete: if owns(resource.data);
       allow create: if signedIn()
@@ -34,6 +40,26 @@ service cloud.firestore {
         && request.resource.data.ownerId == request.auth.uid;
       allow update: if owns(resource.data)
         && request.resource.data.ownerId == request.auth.uid;
+    }
+
+    match /waitlist/{entryId} {
+      allow read, update, delete: if false;
+      allow create: if request.resource.data.keys().hasOnly([
+          "name",
+          "email",
+          "businessType",
+          "whatsappNumber",
+          "createdAt",
+          "source"
+        ])
+        && validText(request.resource.data.name, 2, 80)
+        && validText(request.resource.data.email, 5, 120)
+        && request.resource.data.email.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$')
+        && validText(request.resource.data.businessType, 2, 80)
+        && request.resource.data.whatsappNumber is string
+        && request.resource.data.whatsappNumber.size() <= 30
+        && request.resource.data.source == "coming-soon"
+        && request.resource.data.createdAt == request.time;
     }
   }
 }

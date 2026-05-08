@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { LandingPage } from "@/components/landing-page";
 import { AUTH_COOKIE_NAME } from "@/lib/constants";
+
+export const metadata: Metadata = {
+  title: "Coming Soon",
+  description: "Manage stock, orders, and customer updates in one flow.",
+};
 
 export default async function HomePage() {
   const cookieStore = await cookies();

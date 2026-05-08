@@ -30,7 +30,7 @@ export function BrandWordmark({
   size = "md",
   showTagline = true,
   className = "",
-  tagline = "Clean stock. Clear orders. Faster sales.",
+  tagline = "Manage stock, orders, and customer updates in one flow.",
 }: BrandWordmarkProps) {
   const classes = sizeClasses[size];
 

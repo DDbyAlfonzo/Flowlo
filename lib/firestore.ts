@@ -20,6 +20,7 @@ import {
   OrderPayload,
   Product,
   ProductPayload,
+  WaitlistPayload,
 } from "@/types";
 
 type FirestoreRecord = Record<string, unknown>;
@@ -518,4 +519,19 @@ export async function cancelOrder(orderId: string) {
       orderStatus: "cancelled",
     });
   });
+}
+
+export async function createWaitlistEntry(input: WaitlistPayload) {
+  const waitlistRef = doc(collection(db, "waitlist"));
+
+  await setDoc(waitlistRef, {
+    name: input.name.trim(),
+    email: input.email.trim().toLowerCase(),
+    businessType: input.businessType.trim(),
+    whatsappNumber: (input.whatsappNumber ?? "").trim(),
+    createdAt: serverTimestamp(),
+    source: input.source,
+  });
+
+  return waitlistRef.id;
 }
