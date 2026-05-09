@@ -16,6 +16,7 @@ FlowLo is a clean inventory and order management MVP for small businesses that s
 - Email/password login with managed access approval
 - Public request-access flow backed by Firebase Auth and Firestore
 - Admin review console at `/admin/access-requests`
+- Coming soon waitlist with server-side email notifications via Resend
 - One business per user
 - Product create, edit, list, and delete flows
 - Order create, list, and detail flows
@@ -28,6 +29,7 @@ FlowLo is a clean inventory and order management MVP for small businesses that s
 ```text
 project-root/
 ├── app/
+│   ├── api/waitlist/notify/
 │   ├── dashboard/
 │   ├── login/
 │   ├── orders/
@@ -92,7 +94,13 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
+RESEND_API_KEY=
+WAITLIST_NOTIFY_EMAIL=ddbyalfonzo@gmail.com
 ```
+
+`RESEND_API_KEY` is used only on the server by the waitlist notification route. It is never exposed to the browser.
+
+`WAITLIST_NOTIFY_EMAIL` is optional and defaults to `ddbyalfonzo@gmail.com`.
 
 ## Local development
 
@@ -189,7 +197,10 @@ The simplest production setup is Vercel for the Next.js app and Firebase for Aut
 1. Push the project to a Git repository.
 2. Import the project into Vercel.
 3. Set the same `NEXT_PUBLIC_FIREBASE_*` environment variables in Vercel.
-4. Deploy.
+4. Add `RESEND_API_KEY` in Vercel for waitlist email notifications.
+5. Optionally add `WAITLIST_NOTIFY_EMAIL` if you want notifications to go somewhere other than the default.
+6. Redeploy after saving the environment variables.
+7. Deploy.
 
 ### Firebase backend deployment
 
@@ -204,4 +215,5 @@ firebase deploy --only firestore:rules,storage
 - Currency is currently formatted as `ZAR` for a South African storefront feel. If you want multi-currency support later, add a currency field to the business settings and switch the formatter.
 - A lightweight auth session cookie is used for fast route gating in middleware. Firestore and Storage rules still protect the actual data.
 - FlowLo uses a permanent managed-access model. New users request access first, then an admin approves or rejects them before dashboard access opens.
+- The waitlist form saves to Firestore first, then calls a server-side API route that sends a Resend notification email. If the email fails, the waitlist entry still stays saved.
 - The `scripts/` folder is included for future seeding or migration utilities, but no seed script is required for this MVP.

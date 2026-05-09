@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { FormEvent, useState } from "react";
 import { motion } from "framer-motion";
+import { AmbientBackground } from "@/components/ambient-background";
 import { BrandWordmark } from "@/components/brand-wordmark";
 import { Reveal } from "@/components/reveal";
 import { StatusBadge } from "@/components/status-badge";
@@ -70,6 +71,32 @@ type WaitlistFormState = {
   whatsappNumber: string;
 };
 
+async function notifyWaitlistSignup(input: {
+  entryId: string;
+  name: string;
+  email: string;
+  businessType: string;
+  whatsappNumber: string;
+  createdAt: string;
+  source: "coming-soon";
+}) {
+  const response = await fetch("/api/waitlist/notify", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    const data = (await response.json().catch(() => null)) as
+      | { message?: string }
+      | null;
+
+    throw new Error(data?.message || "Waitlist notification failed.");
+  }
+}
+
 function FeatureCard({
   title,
   description,
@@ -104,13 +131,24 @@ export function LandingPage() {
     setError("");
 
     try {
-      await createWaitlistEntry({
+      const payload = {
         name: form.name,
         email: form.email,
         businessType: form.businessType,
         whatsappNumber: form.whatsappNumber,
         source: "coming-soon",
-      });
+      } as const;
+      const entryId = await createWaitlistEntry(payload);
+
+      try {
+        await notifyWaitlistSignup({
+          entryId,
+          ...payload,
+          createdAt: new Date().toISOString(),
+        });
+      } catch (notifyError) {
+        console.error("FlowLo waitlist email notification failed.", notifyError);
+      }
 
       setStatus("success");
       setForm({
@@ -129,26 +167,9 @@ export function LandingPage() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      <motion.div
-        aria-hidden
-        animate={{ opacity: [0.46, 0.7, 0.46], scale: [1, 1.06, 1] }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        className="pointer-events-none absolute -left-24 top-[-8rem] h-[24rem] w-[24rem] rounded-full bg-[radial-gradient(circle,rgba(62,242,207,0.14),transparent_68%)] blur-3xl"
-      />
-      <motion.div
-        aria-hidden
-        animate={{ opacity: [0.2, 0.34, 0.2], scale: [1, 1.08, 1] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-        className="pointer-events-none absolute right-[-10rem] top-[-9rem] h-[24rem] w-[24rem] rounded-full bg-[radial-gradient(circle,rgba(255,212,90,0.08),transparent_72%)] blur-3xl"
-      />
-      <motion.div
-        aria-hidden
-        animate={{ opacity: [0.18, 0.3, 0.18], y: [0, -12, 0] }}
-        transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-        className="pointer-events-none absolute bottom-[-10rem] left-1/2 h-[26rem] w-[26rem] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(74,214,243,0.08),transparent_72%)] blur-3xl"
-      />
+      <AmbientBackground variant="marketing" />
 
-      <header className="mx-auto w-full max-w-7xl px-4 pt-5 sm:px-6 lg:px-8">
+      <header className="relative z-10 mx-auto w-full max-w-7xl px-4 pt-5 sm:px-6 lg:px-8">
         <div className="card-surface sticky top-4 z-30 flex items-center justify-between gap-4 rounded-[30px] px-4 py-4 sm:px-6">
           <Link href="/" aria-label="FlowLo home">
             <BrandWordmark size="md" />
@@ -170,7 +191,7 @@ export function LandingPage() {
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-7xl flex-col px-4 pb-24 pt-10 sm:px-6 lg:px-8">
+      <main className="relative z-10 mx-auto flex w-full max-w-7xl flex-col px-4 pb-24 pt-10 sm:px-6 lg:px-8">
         <section className="grid gap-10 pb-20 pt-10 lg:grid-cols-[1.02fr_0.98fr] lg:items-center">
           <Reveal className="max-w-3xl">
             <div className="glass-pill inline-flex flex-wrap items-center gap-3 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-romano-amberText">
@@ -540,14 +561,19 @@ export function LandingPage() {
         </section>
       </main>
 
-      <footer className="mx-auto mt-8 w-full max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
+      <footer className="relative z-10 mx-auto mt-8 w-full max-w-7xl px-4 pb-10 sm:px-6 lg:px-8">
         <div className="card-surface flex flex-col gap-6 px-6 py-7 sm:px-7 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <BrandWordmark size="md" showTagline={false} />
             <p className="mt-3 text-sm text-romano-slate">
               Managed access for modern small businesses.
             </p>
-            <p className="mt-1 text-sm text-romano-slate">Built in South Africa</p>
+            <p className="mt-1 text-sm text-romano-slate">
+              Built by{" "}
+              <span className="font-medium tracking-[0.08em] text-romano-amberText">
+                DDbyAlfonzo
+              </span>
+            </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-4 text-sm text-romano-slate">

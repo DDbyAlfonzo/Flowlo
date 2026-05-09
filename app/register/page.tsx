@@ -112,7 +112,8 @@ export default function RegisterPage() {
     <AuthCard
       eyebrow="Managed access"
       title="Request access to FlowLo"
-      description="FlowLo uses managed access so we can onboard the right businesses properly."
+      description="Tell us about your business. We'll review your request and let you know once access is approved."
+      supportNote="Built for WhatsApp-first sellers, resellers, and small businesses."
       footer={
         <>
           Already requested access?{" "}
