@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     default: "FlowLo",
     template: "%s | FlowLo",
   },
-  description: "Clean stock. Clear orders. Faster sales.",
+  description: "Manage stock, orders, and customer updates in one flow.",
 };
 
 export default function RootLayout({

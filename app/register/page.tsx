@@ -5,105 +5,287 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthCard } from "@/components/auth-card";
 import { LoadingScreen } from "@/components/loading-screen";
-import { registerWithEmail } from "@/lib/auth";
+import { logoutUser, registerWithEmail } from "@/lib/auth";
+import { ACCESS_REQUEST_BUSINESS_TYPES } from "@/lib/constants";
+import { createAccessRequest } from "@/lib/firestore";
 import { useAuth } from "@/hooks/use-auth";
+
+type AccessRequestFormState = {
+  fullName: string;
+  email: string;
+  businessName: string;
+  businessType: (typeof ACCESS_REQUEST_BUSINESS_TYPES)[number];
+  whatsappNumber: string;
+  password: string;
+  confirmPassword: string;
+};
+
+const INITIAL_FORM: AccessRequestFormState = {
+  fullName: "",
+  email: "",
+  businessName: "",
+  businessType: ACCESS_REQUEST_BUSINESS_TYPES[0],
+  whatsappNumber: "",
+  password: "",
+  confirmPassword: "",
+};
 
 export default function RegisterPage() {
   const router = useRouter();
-  const { user, business, loading, businessLoading } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const { user, business, isAdmin, isApproved, loading, accessLoading, businessLoading } = useAuth();
+  const [form, setForm] = useState<AccessRequestFormState>(INITIAL_FORM);
   const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    if (!loading && user && !businessLoading) {
+    if (loading || accessLoading || !user) {
+      return;
+    }
+
+    if (isAdmin) {
+      router.replace("/admin/access-requests");
+      return;
+    }
+
+    if (isApproved && !businessLoading) {
       router.replace(business ? "/dashboard" : "/settings/business");
     }
-  }, [business, businessLoading, loading, router, user]);
+  }, [
+    accessLoading,
+    business,
+    businessLoading,
+    isAdmin,
+    isApproved,
+    loading,
+    router,
+    user,
+  ]);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
+
     setSubmitting(true);
     setError("");
 
     try {
-      await registerWithEmail({
-        email,
-        password,
+      const credential = await registerWithEmail({
+        email: form.email,
+        password: form.password,
       });
-      router.replace("/settings/business");
+
+      await createAccessRequest({
+        uid: credential.user.uid,
+        fullName: form.fullName,
+        email: form.email,
+        businessName: form.businessName,
+        businessType: form.businessType,
+        whatsappNumber: form.whatsappNumber,
+        role: "user",
+      });
+
+      await logoutUser();
+      setSuccess(true);
+      setForm(INITIAL_FORM);
     } catch (submitError) {
+      await logoutUser();
       setError(
         submitError instanceof Error
           ? submitError.message
-          : "We could not create your account.",
+          : "We could not send your access request.",
       );
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading || (user && businessLoading)) {
+  if (loading || accessLoading || (user && isApproved && businessLoading)) {
     return <LoadingScreen message="Getting things ready..." />;
   }
 
   return (
     <AuthCard
-      eyebrow="Start free"
-      title="Create your FlowLo account"
-      description="Create your login first. We’ll help you set up your business right after this."
-      panelTitle="Built for sellers who want a cleaner way to run daily sales."
-      panelDescription="From perfumes and clothing to fast-moving local inventory, FlowLo keeps your stock, orders, and WhatsApp follow-ups organised."
+      eyebrow="Managed access"
+      title="Request access to FlowLo"
+      description="FlowLo uses managed access so we can onboard the right businesses properly."
       footer={
         <>
-          Already have an account?{" "}
+          Already requested access?{" "}
           <Link href="/login" className="font-semibold text-romano-mintText">
             Login
           </Link>
         </>
       }
+      trustNote="Managed access helps us onboard the right businesses with a cleaner setup experience."
     >
-      <form onSubmit={handleSubmit} className="grid gap-4">
-        <label className="grid gap-2">
-          <span className="field-label">Email Address</span>
-          <input
-            type="email"
-            className="input-shell"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="owner@flowlo.app"
-            required
-          />
-        </label>
-
-        <label className="grid gap-2">
-          <span className="field-label">Password</span>
-          <input
-            type="password"
-            minLength={6}
-            className="input-shell"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="At least 6 characters"
-            required
-          />
-        </label>
-
-        <div className="surface-muted px-4 py-3 text-sm leading-6 text-romano-slate">
-          Next step: tell us your business name and category so we can personalise your dashboard.
-        </div>
-
-        {error ? (
-          <div className="rounded-2xl bg-romano-rose px-4 py-3 text-sm text-romano-roseText">
-            {error}
+      {success ? (
+        <div className="grid gap-5">
+          <div className="surface-elevated rounded-[1.7rem] p-6">
+            <p className="eyebrow-label text-romano-mintText">Request received</p>
+            <h3 className="mt-4 text-2xl font-semibold tracking-[-0.05em] text-romano-ink">
+              You&apos;re on the list.
+            </h3>
+            <p className="mt-4 text-sm leading-7 text-romano-slate">
+              Your access request has been received. We&apos;ll review it and let you
+              know once your account is approved.
+            </p>
           </div>
-        ) : null}
 
-        <button type="submit" className="primary-button mt-2" disabled={submitting}>
-          {submitting ? "Creating account..." : "Create Account"}
-        </button>
-      </form>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Link href="/login" className="primary-button auth-submit-button">
+              Back to login
+            </Link>
+            <Link href="/" className="secondary-button auth-submit-button">
+              Return home
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="grid gap-5">
+          <label className="grid gap-2">
+            <span className="field-label">Full Name</span>
+            <input
+              className="auth-input-shell"
+              value={form.fullName}
+              onChange={(event) =>
+                setForm((current) => ({ ...current, fullName: event.target.value }))
+              }
+              placeholder="Lebo Nkosi"
+              autoComplete="name"
+              required
+            />
+          </label>
+
+          <label className="grid gap-2">
+            <span className="field-label">Email Address</span>
+            <input
+              type="email"
+              className="auth-input-shell"
+              value={form.email}
+              onChange={(event) =>
+                setForm((current) => ({ ...current, email: event.target.value }))
+              }
+              placeholder="owner@business.co.za"
+              autoComplete="email"
+              inputMode="email"
+              required
+            />
+          </label>
+
+          <label className="grid gap-2">
+            <span className="field-label">Business Name</span>
+            <input
+              className="auth-input-shell"
+              value={form.businessName}
+              onChange={(event) =>
+                setForm((current) => ({ ...current, businessName: event.target.value }))
+              }
+              placeholder="FlowLo Fragrance House"
+              autoComplete="organization"
+              required
+            />
+          </label>
+
+          <label className="grid gap-2">
+            <span className="field-label">Business Type</span>
+            <select
+              className="auth-input-shell"
+              value={form.businessType}
+              onChange={(event) =>
+                setForm((current) => ({
+                  ...current,
+                  businessType: event.target.value as AccessRequestFormState["businessType"],
+                }))
+              }
+            >
+              {ACCESS_REQUEST_BUSINESS_TYPES.map((option) => (
+                <option key={option} value={option}>
+                  {option}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="grid gap-2">
+            <span className="field-label">WhatsApp Number</span>
+            <input
+              className="auth-input-shell"
+              value={form.whatsappNumber}
+              onChange={(event) =>
+                setForm((current) => ({
+                  ...current,
+                  whatsappNumber: event.target.value,
+                }))
+              }
+              placeholder="082 123 4567"
+              autoComplete="tel"
+              inputMode="tel"
+              required
+            />
+          </label>
+
+          <div className="grid gap-5 sm:grid-cols-2">
+            <label className="grid gap-2">
+              <span className="field-label">Password</span>
+              <input
+                type="password"
+                minLength={6}
+                className="auth-input-shell"
+                value={form.password}
+                onChange={(event) =>
+                  setForm((current) => ({ ...current, password: event.target.value }))
+                }
+                placeholder="At least 6 characters"
+                autoComplete="new-password"
+                required
+              />
+            </label>
+
+            <label className="grid gap-2">
+              <span className="field-label">Confirm Password</span>
+              <input
+                type="password"
+                minLength={6}
+                className="auth-input-shell"
+                value={form.confirmPassword}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    confirmPassword: event.target.value,
+                  }))
+                }
+                placeholder="Repeat your password"
+                autoComplete="new-password"
+                required
+              />
+            </label>
+          </div>
+
+          <div className="auth-note">
+            After you request access, we&apos;ll review your business details before
+            opening your FlowLo workspace.
+          </div>
+
+          {error ? (
+            <div className="auth-feedback auth-feedback-error" aria-live="polite">
+              {error}
+            </div>
+          ) : null}
+
+          <button
+            type="submit"
+            className="primary-button auth-submit-button mt-1"
+            disabled={submitting}
+          >
+            {submitting ? "Sending request..." : "Request access"}
+          </button>
+        </form>
+      )}
     </AuthCard>
   );
 }

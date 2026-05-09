@@ -163,9 +163,9 @@ export function LandingPage() {
             <Link href="/login" className="hidden text-sm font-semibold text-romano-slate sm:inline-flex">
               Login
             </Link>
-            <a href="#waitlist" className="primary-button">
-              Join Beta
-            </a>
+            <Link href="/register" className="primary-button">
+              Request Access
+            </Link>
           </div>
         </div>
       </header>
@@ -175,7 +175,7 @@ export function LandingPage() {
           <Reveal className="max-w-3xl">
             <div className="glass-pill inline-flex flex-wrap items-center gap-3 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-romano-amberText">
               <span className="rounded-full border border-romano-amberText/20 bg-romano-amber px-2.5 py-1 text-[10px]">
-                Beta Coming Soon
+                Managed Access
               </span>
               FlowLo is coming soon.
             </div>
@@ -196,9 +196,9 @@ export function LandingPage() {
             </p>
 
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <a href="#waitlist" className="primary-button">
-                Join Beta
-              </a>
+              <Link href="/register" className="primary-button">
+                Request access
+              </Link>
               <a href="#preview" className="secondary-button">
                 Watch Demo
               </a>
@@ -335,9 +335,9 @@ export function LandingPage() {
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
               className="card-surface absolute -bottom-6 left-5 hidden w-56 p-4 lg:block"
             >
-              <p className="field-label">Beta note</p>
+              <p className="field-label">Managed access</p>
               <p className="mt-3 text-sm leading-7 text-romano-ink">
-                Join the list for launch updates, product previews, and early access invites.
+                Request access when you&apos;re ready, or join the waitlist for launch updates and product previews.
               </p>
             </motion.div>
           </Reveal>
@@ -409,27 +409,27 @@ export function LandingPage() {
             <div className="card-surface overflow-hidden p-7 sm:p-9 lg:p-10">
               <div className="grid gap-8 lg:grid-cols-[0.88fr_1.12fr] lg:items-start">
                 <div className="max-w-xl">
-                  <p className="eyebrow-label">Join the waitlist</p>
+                  <p className="eyebrow-label">Stay in the loop</p>
                   <h2 className="section-title mt-3">
-                    Request early access to FlowLo beta.
+                    Get launch updates while access stays managed.
                   </h2>
                   <p className="section-copy mt-4">
-                    We&apos;re opening FlowLo to a small group of early sellers first.
-                    Join the waitlist if you want early access, preview updates, and
-                    launch news for flowlo.co.za.
+                    Request access from the FlowLo signup page when you&apos;re ready
+                    for review. Join the waitlist here if you want launch news,
+                    preview updates, and product announcements for flowlo.co.za.
                   </p>
 
                   <div className="mt-6 grid gap-3">
                     <div className="surface-muted p-4">
-                      <p className="field-label">Best fit right now</p>
+                      <p className="field-label">Managed access</p>
                       <p className="mt-3 text-sm leading-7 text-romano-ink">
-                        Perfume sellers, clothing resellers, WhatsApp shops, and local retail teams.
+                        FlowLo reviews every business before opening the full dashboard, products, and orders workspace.
                       </p>
                     </div>
                     <div className="surface-muted p-4">
-                      <p className="field-label">What you’ll get</p>
+                      <p className="field-label">Waitlist updates</p>
                       <p className="mt-3 text-sm leading-7 text-romano-ink">
-                        Early feature access, beta updates, and first-release launch notices.
+                        Launch notices, preview updates, and product news as FlowLo gets closer to release.
                       </p>
                     </div>
                   </div>
@@ -443,8 +443,8 @@ export function LandingPage() {
                         You&apos;re on the list — we&apos;ll be in touch soon.
                       </h3>
                       <p className="text-sm leading-7 text-romano-slate">
-                        Thanks for joining the FlowLo beta waitlist. We&apos;ll share launch
-                        news, previews, and early access details as we get closer.
+                        Thanks for joining the FlowLo waitlist. We&apos;ll share launch
+                        news, previews, and product updates as we get closer.
                       </p>
                       <button
                         type="button"
@@ -529,7 +529,7 @@ export function LandingPage() {
                         className="primary-button mt-2"
                         disabled={status === "submitting"}
                       >
-                        {status === "submitting" ? "Submitting..." : "Request Early Access"}
+                        {status === "submitting" ? "Submitting..." : "Join waitlist"}
                       </button>
                     </form>
                   )}
@@ -545,7 +545,7 @@ export function LandingPage() {
           <div>
             <BrandWordmark size="md" showTagline={false} />
             <p className="mt-3 text-sm text-romano-slate">
-              Built for modern small businesses.
+              Managed access for modern small businesses.
             </p>
             <p className="mt-1 text-sm text-romano-slate">Built in South Africa</p>
           </div>

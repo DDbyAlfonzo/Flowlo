@@ -8,6 +8,9 @@ export type BusinessCategory =
 export type PaymentStatus = "unpaid" | "paid" | "partial";
 export type OrderStatus = "pending" | "completed" | "cancelled";
 export type OrderSource = "manual" | "whatsapp";
+export type AccessRequestStatus = "pending" | "approved" | "rejected";
+export type AccessRequestRole = "user";
+export type AccessCookieStatus = AccessRequestStatus | "none";
 
 export type Business = {
   id: string;
@@ -114,4 +117,29 @@ export type WaitlistPayload = {
   businessType: string;
   whatsappNumber?: string | null;
   source: "coming-soon";
+};
+
+export type AccessRequest = {
+  id: string;
+  uid: string;
+  fullName: string;
+  email: string;
+  businessName: string;
+  businessType: string;
+  whatsappNumber: string;
+  status: AccessRequestStatus;
+  role: AccessRequestRole;
+  createdAt: Date | null;
+  reviewedAt: Date | null;
+  reviewedBy: string | null;
+};
+
+export type AccessRequestPayload = {
+  uid: string;
+  fullName: string;
+  email: string;
+  businessName: string;
+  businessType: string;
+  whatsappNumber: string;
+  role?: AccessRequestRole;
 };

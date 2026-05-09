@@ -14,6 +14,9 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import {
+  AccessRequest,
+  AccessRequestPayload,
+  AccessRequestStatus,
   Business,
   Order,
   OrderItem,
@@ -122,10 +125,80 @@ function mapOrder(snapshot: Awaited<ReturnType<typeof getDoc>>) {
   } as Order;
 }
 
+function mapAccessRequest(snapshot: Awaited<ReturnType<typeof getDoc>>) {
+  if (!snapshot.exists()) {
+    return null;
+  }
+
+  const data = snapshot.data() as FirestoreRecord;
+  return {
+    id: snapshot.id,
+    uid: String(data.uid ?? ""),
+    fullName: String(data.fullName ?? ""),
+    email: String(data.email ?? ""),
+    businessName: String(data.businessName ?? ""),
+    businessType: String(data.businessType ?? ""),
+    whatsappNumber: String(data.whatsappNumber ?? ""),
+    status: data.status as AccessRequestStatus,
+    role: data.role as AccessRequest["role"],
+    createdAt: toDate(data.createdAt),
+    reviewedAt: toDate(data.reviewedAt),
+    reviewedBy: data.reviewedBy ? String(data.reviewedBy) : null,
+  } as AccessRequest;
+}
+
 export async function getBusiness(ownerId: string) {
   const businessRef = doc(db, "businesses", ownerId);
   const snapshot = await getDoc(businessRef);
   return mapBusiness(snapshot);
+}
+
+export async function getAccessRequest(uid: string) {
+  const accessRequestRef = doc(db, "betaAccessRequests", uid);
+  const snapshot = await getDoc(accessRequestRef);
+  return mapAccessRequest(snapshot);
+}
+
+export async function listAccessRequests() {
+  const snapshots = await getDocs(collection(db, "betaAccessRequests"));
+  const items = snapshots.docs
+    .map((snapshot) => mapAccessRequest(snapshot))
+    .filter((item): item is AccessRequest => Boolean(item));
+  return sortByDateDesc(items);
+}
+
+export async function createAccessRequest(input: AccessRequestPayload) {
+  const accessRequestRef = doc(db, "betaAccessRequests", input.uid);
+
+  await setDoc(accessRequestRef, {
+    uid: input.uid,
+    fullName: input.fullName.trim(),
+    email: input.email.trim().toLowerCase(),
+    businessName: input.businessName.trim(),
+    businessType: input.businessType.trim(),
+    whatsappNumber: input.whatsappNumber.trim(),
+    status: "pending",
+    role: input.role ?? "user",
+    createdAt: serverTimestamp(),
+    reviewedAt: null,
+    reviewedBy: null,
+  });
+
+  return input.uid;
+}
+
+export async function reviewAccessRequest(
+  requestId: string,
+  status: Extract<AccessRequestStatus, "approved" | "rejected">,
+  reviewedBy: string,
+) {
+  const accessRequestRef = doc(db, "betaAccessRequests", requestId);
+
+  await updateDoc(accessRequestRef, {
+    status,
+    reviewedAt: serverTimestamp(),
+    reviewedBy: reviewedBy.trim().toLowerCase(),
+  });
 }
 
 export async function upsertBusiness(input: {

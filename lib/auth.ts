@@ -7,7 +7,12 @@ import {
   User,
 } from "firebase/auth";
 import { auth } from "@/lib/firebase";
-import { AUTH_COOKIE_NAME } from "@/lib/constants";
+import {
+  ACCESS_COOKIE_NAME,
+  ADMIN_COOKIE_NAME,
+  AUTH_COOKIE_NAME,
+} from "@/lib/constants";
+import { AccessCookieStatus } from "@/types";
 
 let persistenceReady: Promise<void> | null = null;
 
@@ -35,27 +40,45 @@ export async function registerWithEmail(input: {
 
 export async function logoutUser() {
   await signOut(auth);
-  clearSessionCookie();
+  clearAuthCookies();
 }
 
-export function syncSessionCookie(user: User | null) {
+function writeCookie(name: string, value: string, maxAge: number) {
+  document.cookie = `${name}=${value}; path=/; max-age=${maxAge}; samesite=lax`;
+}
+
+function clearCookie(name: string) {
+  document.cookie = `${name}=; path=/; max-age=0; samesite=lax`;
+}
+
+export function syncAuthCookies(input: {
+  user: User | null;
+  accessStatus?: AccessCookieStatus;
+  isAdmin?: boolean;
+}) {
   if (typeof document === "undefined") {
     return;
   }
 
+  const { user, accessStatus = "none", isAdmin = false } = input;
+
   if (!user) {
-    clearSessionCookie();
+    clearAuthCookies();
     return;
   }
 
   const maxAge = 60 * 60 * 24 * 30;
-  document.cookie = `${AUTH_COOKIE_NAME}=active; path=/; max-age=${maxAge}; samesite=lax`;
+  writeCookie(AUTH_COOKIE_NAME, "active", maxAge);
+  writeCookie(ACCESS_COOKIE_NAME, accessStatus, maxAge);
+  writeCookie(ADMIN_COOKIE_NAME, isAdmin ? "true" : "false", maxAge);
 }
 
-export function clearSessionCookie() {
+export function clearAuthCookies() {
   if (typeof document === "undefined") {
     return;
   }
 
-  document.cookie = `${AUTH_COOKIE_NAME}=; path=/; max-age=0; samesite=lax`;
+  clearCookie(AUTH_COOKIE_NAME);
+  clearCookie(ACCESS_COOKIE_NAME);
+  clearCookie(ADMIN_COOKIE_NAME);
 }

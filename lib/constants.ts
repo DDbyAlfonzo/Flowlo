@@ -1,4 +1,8 @@
 export const AUTH_COOKIE_NAME = "flowlo_session";
+export const ACCESS_COOKIE_NAME = "flowlo_access";
+export const ADMIN_COOKIE_NAME = "flowlo_admin";
+
+export const ADMIN_EMAILS = ["ddbyalfonzo@gmail.com"] as const;
 
 export const BUSINESS_CATEGORIES = [
   "Perfume",
@@ -14,9 +18,26 @@ export const ORDER_STATUSES = ["pending", "completed", "cancelled"] as const;
 
 export const ORDER_SOURCES = ["manual", "whatsapp"] as const;
 
+export const ACCESS_REQUEST_BUSINESS_TYPES = [
+  "Perfume seller",
+  "Clothing reseller",
+  "WhatsApp shop",
+  "Instagram store",
+  "Local retailer",
+  "Other",
+] as const;
+
 export const APP_NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/products", label: "Products" },
   { href: "/orders", label: "Orders" },
   { href: "/settings/business", label: "Business" },
 ];
+
+export function isAdminEmail(email?: string | null) {
+  if (!email) {
+    return false;
+  }
+
+  return ADMIN_EMAILS.includes(email.trim().toLowerCase() as (typeof ADMIN_EMAILS)[number]);
+}

@@ -13,7 +13,9 @@ FlowLo is a clean inventory and order management MVP for small businesses that s
 
 ## Features
 
-- Email/password login and registration
+- Email/password login with managed access approval
+- Public request-access flow backed by Firebase Auth and Firestore
+- Admin review console at `/admin/access-requests`
 - One business per user
 - Product create, edit, list, and delete flows
 - Order create, list, and detail flows
@@ -122,11 +124,26 @@ The current order flow is:
 
 ## Route protection
 
-- `middleware.ts` blocks private routes when the auth session cookie is missing.
+- `middleware.ts` blocks private routes unless a user is both authenticated and approved.
+- `/admin/access-requests` is reserved for admin reviewers listed in `ADMIN_EMAILS`.
 - Firebase Auth remains the source of truth for access to app data.
-- Firestore and Storage rules enforce owner-level access on the backend.
+- Firestore and Storage rules enforce managed-access and owner-level access on the backend.
 
 ## Data model
+
+### `betaAccessRequests/{uid}`
+
+- `uid`
+- `fullName`
+- `email`
+- `businessName`
+- `businessType`
+- `whatsappNumber`
+- `status`
+- `role`
+- `createdAt`
+- `reviewedAt`
+- `reviewedBy`
 
 ### `businesses/{uid}`
 
@@ -186,4 +203,5 @@ firebase deploy --only firestore:rules,storage
 
 - Currency is currently formatted as `ZAR` for a South African storefront feel. If you want multi-currency support later, add a currency field to the business settings and switch the formatter.
 - A lightweight auth session cookie is used for fast route gating in middleware. Firestore and Storage rules still protect the actual data.
+- FlowLo uses a permanent managed-access model. New users request access first, then an admin approves or rejects them before dashboard access opens.
 - The `scripts/` folder is included for future seeding or migration utilities, but no seed script is required for this MVP.

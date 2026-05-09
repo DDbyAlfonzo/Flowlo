@@ -17,10 +17,22 @@ function isActive(pathname: string, href: string) {
   return pathname.startsWith(href);
 }
 
-export function AppShell({ children }: { children: ReactNode }) {
+type AppShellProps = {
+  children: ReactNode;
+  showNav?: boolean;
+  shellTitle?: string;
+  shellSubtitle?: string;
+};
+
+export function AppShell({
+  children,
+  showNav = true,
+  shellTitle,
+  shellSubtitle,
+}: AppShellProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { business, user } = useAuth();
+  const { business, isAdmin, user } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
   const reduceMotion = useReducedMotion();
 
@@ -47,66 +59,77 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div>
           <BrandWordmark size="sm" showTagline={false} />
           <h1 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-romano-ink">
-            {business?.businessName ?? "Your business"}
+            {shellTitle ?? business?.businessName ?? "Your business"}
           </h1>
           <p className="mt-1 text-sm text-romano-slate">
-            {business?.category ?? "Inventory and order management"} · {user?.email}
+            {shellSubtitle ??
+              `${business?.category ?? "Inventory and order management"} · ${user?.email ?? ""}`}
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="secondary-button"
-          disabled={signingOut}
-        >
-          {signingOut ? "Signing out..." : "Sign out"}
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          {isAdmin ? (
+            <Link href="/admin/access-requests" className="secondary-button">
+              Access Requests
+            </Link>
+          ) : null}
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="secondary-button"
+            disabled={signingOut}
+          >
+            {signingOut ? "Signing out..." : "Sign out"}
+          </button>
+        </div>
       </motion.header>
 
       <main className="mt-8 flex-1">{children}</main>
 
-      <motion.nav
-        initial={reduceMotion ? false : { opacity: 0, y: 22 }}
-        animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-        transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-        className="fixed bottom-4 left-1/2 z-30 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 rounded-[26px] border border-white/10 bg-[linear-gradient(180deg,rgba(16,22,30,0.82),rgba(8,12,17,0.9))] p-1.5 shadow-soft backdrop-blur-2xl"
-      >
-        <div className="grid grid-cols-4 gap-2">
-          {APP_NAV_ITEMS.map((item) => {
-            const active = isActive(pathname, item.href);
+      {showNav ? (
+        <motion.nav
+          initial={reduceMotion ? false : { opacity: 0, y: 22 }}
+          animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed bottom-4 left-1/2 z-30 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 rounded-[26px] border border-white/10 bg-[linear-gradient(180deg,rgba(16,22,30,0.82),rgba(8,12,17,0.9))] p-1.5 shadow-soft backdrop-blur-2xl"
+        >
+          <div className="grid grid-cols-4 gap-2">
+            {APP_NAV_ITEMS.map((item) => {
+              const active = isActive(pathname, item.href);
 
-            return (
-              <motion.div
-                key={item.href}
-                whileHover={reduceMotion ? undefined : { y: -1.5 }}
-                whileTap={reduceMotion ? undefined : { scale: 0.985 }}
-                transition={{ duration: 0.2 }}
-              >
-                <Link
-                  href={item.href}
-                  className={`group relative block overflow-hidden rounded-[20px] px-3 py-2.5 text-center text-[11px] font-semibold transition sm:text-sm ${
-                    active
-                      ? "text-[#041215]"
-                      : "text-romano-slate hover:text-romano-ink"
-                  }`}
+              return (
+                <motion.div
+                  key={item.href}
+                  whileHover={reduceMotion ? undefined : { y: -1.5 }}
+                  whileTap={reduceMotion ? undefined : { scale: 0.985 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  {active ? (
-                    <motion.span
-                      layoutId="flowlo-nav-pill"
-                      className="absolute inset-0 rounded-[20px] border border-romano-navy/25 bg-romano-primary shadow-[0_0_26px_-16px_rgba(62,242,207,0.75)]"
-                      transition={{ type: "spring", stiffness: 380, damping: 34 }}
-                    />
-                  ) : (
-                    <span className="absolute inset-0 rounded-[20px] bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))] opacity-0 transition duration-300 group-hover:opacity-100" />
-                  )}
-                  <span className="relative z-10">{item.label}</span>
-                </Link>
-              </motion.div>
-            );
-          })}
-        </div>
-      </motion.nav>
+                  <Link
+                    href={item.href}
+                    className={`group relative block overflow-hidden rounded-[20px] px-3 py-2.5 text-center text-[11px] font-semibold transition sm:text-sm ${
+                      active
+                        ? "text-[#041215]"
+                        : "text-romano-slate hover:text-romano-ink"
+                    }`}
+                  >
+                    {active ? (
+                      <motion.span
+                        layoutId="flowlo-nav-pill"
+                        className="absolute inset-0 rounded-[20px] border border-romano-navy/25 bg-romano-primary shadow-[0_0_26px_-16px_rgba(62,242,207,0.75)]"
+                        transition={{ type: "spring", stiffness: 380, damping: 34 }}
+                      />
+                    ) : (
+                      <span className="absolute inset-0 rounded-[20px] bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))] opacity-0 transition duration-300 group-hover:opacity-100" />
+                    )}
+                    <span className="relative z-10">{item.label}</span>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.nav>
+      ) : null}
     </div>
   );
 }

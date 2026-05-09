@@ -6,8 +6,28 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isAdmin() {
+      return signedIn()
+        && request.auth.token.email == 'ddbyalfonzo@gmail.com';
+    }
+
+    function accessRequestPath(userId) {
+      return /databases/$(database)/documents/betaAccessRequests/$(userId);
+    }
+
+    function isApprovedUser(userId) {
+      return signedIn()
+        && request.auth.uid == userId
+        && exists(accessRequestPath(userId))
+        && get(accessRequestPath(userId)).data.status == 'approved';
+    }
+
     function owns(resourceData) {
       return signedIn() && resourceData.ownerId == request.auth.uid;
+    }
+
+    function ownsApproved(resourceData) {
+      return owns(resourceData) && isApprovedUser(request.auth.uid);
     }
 
     function validText(value, minLength, maxLength) {
@@ -16,41 +36,93 @@ service cloud.firestore {
         && value.size() <= maxLength;
     }
 
-    match /businesses/{businessId} {
-      allow read, delete: if owns(resource.data);
+    match /betaAccessRequests/{requestId} {
+      allow read: if isAdmin()
+        || (signedIn() && request.auth.uid == requestId);
+
       allow create: if signedIn()
+        && requestId == request.auth.uid
+        && !exists(accessRequestPath(requestId))
+        && request.resource.data.keys().hasOnly([
+          'uid',
+          'fullName',
+          'email',
+          'businessName',
+          'businessType',
+          'whatsappNumber',
+          'status',
+          'role',
+          'createdAt',
+          'reviewedAt',
+          'reviewedBy'
+        ])
+        && request.resource.data.uid == request.auth.uid
+        && validText(request.resource.data.fullName, 2, 120)
+        && validText(request.resource.data.email, 5, 120)
+        && request.resource.data.email.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$')
+        && validText(request.resource.data.businessName, 2, 120)
+        && validText(request.resource.data.businessType, 2, 80)
+        && validText(request.resource.data.whatsappNumber, 7, 30)
+        && request.resource.data.status == 'pending'
+        && request.resource.data.role == 'user'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.reviewedAt == null
+        && request.resource.data.reviewedBy == null;
+
+      allow update: if isAdmin()
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.fullName == resource.data.fullName
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.businessName == resource.data.businessName
+        && request.resource.data.businessType == resource.data.businessType
+        && request.resource.data.whatsappNumber == resource.data.whatsappNumber
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.createdAt == resource.data.createdAt
+        && (
+          request.resource.data.status == 'approved'
+          || request.resource.data.status == 'rejected'
+        )
+        && request.resource.data.reviewedAt == request.time
+        && validText(request.resource.data.reviewedBy, 5, 120);
+
+      allow delete: if false;
+    }
+
+    match /businesses/{businessId} {
+      allow read, delete: if ownsApproved(resource.data);
+      allow create: if isApprovedUser(request.auth.uid)
         && businessId == request.auth.uid
         && request.resource.data.ownerId == request.auth.uid;
-      allow update: if owns(resource.data)
+      allow update: if ownsApproved(resource.data)
         && businessId == request.auth.uid
         && request.resource.data.ownerId == request.auth.uid;
     }
 
     match /products/{productId} {
-      allow read, delete: if owns(resource.data);
-      allow create: if signedIn()
+      allow read, delete: if ownsApproved(resource.data);
+      allow create: if isApprovedUser(request.auth.uid)
         && request.resource.data.ownerId == request.auth.uid;
-      allow update: if owns(resource.data)
+      allow update: if ownsApproved(resource.data)
         && request.resource.data.ownerId == request.auth.uid;
     }
 
     match /orders/{orderId} {
-      allow read, delete: if owns(resource.data);
-      allow create: if signedIn()
+      allow read, delete: if ownsApproved(resource.data);
+      allow create: if isApprovedUser(request.auth.uid)
         && request.resource.data.ownerId == request.auth.uid;
-      allow update: if owns(resource.data)
+      allow update: if ownsApproved(resource.data)
         && request.resource.data.ownerId == request.auth.uid;
     }
 
     match /waitlist/{entryId} {
       allow read, update, delete: if false;
       allow create: if request.resource.data.keys().hasOnly([
-          "name",
-          "email",
-          "businessType",
-          "whatsappNumber",
-          "createdAt",
-          "source"
+          'name',
+          'email',
+          'businessType',
+          'whatsappNumber',
+          'createdAt',
+          'source'
         ])
         && validText(request.resource.data.name, 2, 80)
         && validText(request.resource.data.email, 5, 120)
@@ -58,7 +130,7 @@ service cloud.firestore {
         && validText(request.resource.data.businessType, 2, 80)
         && request.resource.data.whatsappNumber is string
         && request.resource.data.whatsappNumber.size() <= 30
-        && request.resource.data.source == "coming-soon"
+        && request.resource.data.source == 'coming-soon'
         && request.resource.data.createdAt == request.time;
     }
   }
