@@ -9,7 +9,7 @@ import {
 } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: "Coming Soon",
+  title: "FlowLo | Coming Soon",
   description: "Manage stock, orders, and customer updates in one flow.",
 };
 
