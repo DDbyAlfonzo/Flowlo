@@ -7,6 +7,13 @@ export type BusinessCategory =
 
 export type PaymentStatus = "unpaid" | "paid" | "partial";
 export type OrderStatus = "pending" | "completed" | "cancelled";
+export type DeliveryStatus =
+  | "pending"
+  | "confirmed"
+  | "packed"
+  | "out_for_delivery"
+  | "delivered"
+  | "cancelled";
 export type OrderSource = "manual" | "whatsapp";
 export type AccessRequestStatus = "pending" | "approved" | "rejected";
 export type AccessRequestRole = "user";
@@ -57,6 +64,46 @@ export type Order = {
   ownerId: string;
   businessId: string;
   createdAt: Date | null;
+  orderNumber?: string;
+  trackingId?: string;
+  customerEmail?: string | null;
+  deliveryStatus?: DeliveryStatus;
+  deliveryAddress?: string | null;
+  deliveryNotes?: string | null;
+  assignedCourier?: string | null;
+  estimatedDeliveryTime?: string | null;
+  supportPhone?: string | null;
+  updatedAt?: Date | null;
+};
+
+export type Delivery = {
+  id: string;
+  orderId: string;
+  orderNumber: string;
+  trackingId: string;
+  customerName: string;
+  customerPhone: string;
+  deliveryAddress: string;
+  deliveryNotes?: string | null;
+  assignedCourier?: string | null;
+  estimatedDeliveryTime?: string | null;
+  deliveryStatus: DeliveryStatus;
+  supportPhone?: string | null;
+  ownerId: string;
+  businessId: string;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+};
+
+export type PublicTrackingRecord = {
+  trackingId: string;
+  orderNumber: string;
+  customerName: string;
+  deliveryStatus: DeliveryStatus;
+  estimatedDeliveryTime?: string | null;
+  supportPhone?: string | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
 };
 
 export type DashboardSummary = {

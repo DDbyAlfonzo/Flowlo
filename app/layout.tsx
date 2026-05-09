@@ -9,6 +9,15 @@ export const metadata: Metadata = {
     template: "%s | FlowLo",
   },
   description: "Manage stock, orders, and customer updates in one flow.",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [
+      { url: "/apple-icon.svg", type: "image/svg+xml" },
+    ],
+    shortcut: ["/icon.svg"],
+  },
 };
 
 export default function RootLayout({

@@ -29,6 +29,23 @@ export function formatDate(value: Date | null) {
   }).format(value);
 }
 
+export function formatEstimatedDeliveryTime(value?: string | null) {
+  if (!value) {
+    return "Not set yet";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en-ZA", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(date);
+}
+
 export function isLowStock(quantity: number, threshold: number) {
   return quantity <= threshold;
 }

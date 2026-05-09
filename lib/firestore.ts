@@ -18,13 +18,22 @@ import {
   AccessRequestPayload,
   AccessRequestStatus,
   Business,
+  Delivery,
   Order,
   OrderItem,
   OrderPayload,
   Product,
   ProductPayload,
+  PublicTrackingRecord,
   WaitlistPayload,
 } from "@/types";
+import {
+  buildOrderNumber,
+  buildTrackingId,
+  deriveDeliveryFromOrder,
+  deriveDeliveryStatus,
+  parseOrderIdFromTrackingId,
+} from "@/lib/order-workflow";
 
 type FirestoreRecord = Record<string, unknown>;
 type OrderQuantityItem = {
@@ -36,6 +45,11 @@ type StockTransactionItem = {
   product: Product;
   quantity: number;
 };
+type FirestoreTransaction = Parameters<typeof runTransaction>[1] extends (
+  transaction: infer T,
+) => Promise<unknown>
+  ? T
+  : never;
 
 const FRIENDLY_STOCK_ERROR = "Not enough stock available to complete this order.";
 const STOCK_ALREADY_UPDATED_ERROR = "This order has already updated stock.";
@@ -58,6 +72,16 @@ function sortByDateDesc<T extends { createdAt: Date | null }>(items: T[]) {
   return [...items].sort(
     (a, b) => (b.createdAt?.getTime() ?? 0) - (a.createdAt?.getTime() ?? 0),
   );
+}
+
+function sortByUpdatedDesc<T extends { createdAt: Date | null; updatedAt: Date | null }>(
+  items: T[],
+) {
+  return [...items].sort((a, b) => {
+    const left = a.updatedAt?.getTime() ?? a.createdAt?.getTime() ?? 0;
+    const right = b.updatedAt?.getTime() ?? b.createdAt?.getTime() ?? 0;
+    return right - left;
+  });
 }
 
 function mapBusiness(snapshot: Awaited<ReturnType<typeof getDoc>>) {
@@ -107,6 +131,8 @@ function mapOrder(snapshot: Awaited<ReturnType<typeof getDoc>>) {
   }
 
   const data = snapshot.data() as FirestoreRecord;
+  const orderStatus = (data.orderStatus as Order["orderStatus"]) ?? "pending";
+
   return {
     id: snapshot.id,
     customerName: String(data.customerName ?? ""),
@@ -114,15 +140,55 @@ function mapOrder(snapshot: Awaited<ReturnType<typeof getDoc>>) {
     items: Array.isArray(data.items) ? (data.items as OrderItem[]) : [],
     orderTotal: Number(data.orderTotal ?? 0),
     paymentStatus: data.paymentStatus as Order["paymentStatus"],
-    orderStatus: data.orderStatus as Order["orderStatus"],
-    // Legacy orders were created while stock was always deducted on create.
+    orderStatus,
     stockDeducted:
       typeof data.stockDeducted === "boolean" ? data.stockDeducted : true,
     source: data.source as Order["source"],
     ownerId: String(data.ownerId ?? ""),
     businessId: String(data.businessId ?? ""),
     createdAt: toDate(data.createdAt),
+    orderNumber: String(data.orderNumber ?? buildOrderNumber(snapshot.id)),
+    trackingId: String(data.trackingId ?? buildTrackingId(snapshot.id)),
+    customerEmail: data.customerEmail ? String(data.customerEmail) : null,
+    deliveryStatus:
+      (data.deliveryStatus as Order["deliveryStatus"]) ?? deriveDeliveryStatus(orderStatus),
+    deliveryAddress: data.deliveryAddress ? String(data.deliveryAddress) : null,
+    deliveryNotes: data.deliveryNotes ? String(data.deliveryNotes) : null,
+    assignedCourier: data.assignedCourier ? String(data.assignedCourier) : null,
+    estimatedDeliveryTime: data.estimatedDeliveryTime
+      ? String(data.estimatedDeliveryTime)
+      : null,
+    supportPhone: data.supportPhone ? String(data.supportPhone) : null,
+    updatedAt: toDate(data.updatedAt ?? data.createdAt),
   } as Order;
+}
+
+function mapDelivery(snapshot: Awaited<ReturnType<typeof getDoc>>) {
+  if (!snapshot.exists()) {
+    return null;
+  }
+
+  const data = snapshot.data() as FirestoreRecord;
+  return {
+    id: snapshot.id,
+    orderId: String(data.orderId ?? ""),
+    orderNumber: String(data.orderNumber ?? ""),
+    trackingId: String(data.trackingId ?? snapshot.id),
+    customerName: String(data.customerName ?? ""),
+    customerPhone: String(data.customerPhone ?? ""),
+    deliveryAddress: String(data.deliveryAddress ?? ""),
+    deliveryNotes: data.deliveryNotes ? String(data.deliveryNotes) : null,
+    assignedCourier: data.assignedCourier ? String(data.assignedCourier) : null,
+    estimatedDeliveryTime: data.estimatedDeliveryTime
+      ? String(data.estimatedDeliveryTime)
+      : null,
+    deliveryStatus: data.deliveryStatus as Delivery["deliveryStatus"],
+    supportPhone: data.supportPhone ? String(data.supportPhone) : null,
+    ownerId: String(data.ownerId ?? ""),
+    businessId: String(data.businessId ?? ""),
+    createdAt: toDate(data.createdAt),
+    updatedAt: toDate(data.updatedAt ?? data.createdAt),
+  } as Delivery;
 }
 
 function mapAccessRequest(snapshot: Awaited<ReturnType<typeof getDoc>>) {
@@ -145,6 +211,193 @@ function mapAccessRequest(snapshot: Awaited<ReturnType<typeof getDoc>>) {
     reviewedAt: toDate(data.reviewedAt),
     reviewedBy: data.reviewedBy ? String(data.reviewedBy) : null,
   } as AccessRequest;
+}
+
+function mergeOrderItems(items: OrderPayload["items"]) {
+  const merged = new Map<string, number>();
+
+  for (const item of items) {
+    if (!item.productId || item.quantity <= 0) {
+      continue;
+    }
+
+    merged.set(item.productId, (merged.get(item.productId) ?? 0) + item.quantity);
+  }
+
+  return Array.from(merged.entries()).map(([productId, quantity]) => ({
+    productId,
+    quantity,
+  }));
+}
+
+function orderShouldDeductStock(input: {
+  paymentStatus: Order["paymentStatus"];
+  orderStatus: Order["orderStatus"];
+}) {
+  return input.paymentStatus === "paid" || input.orderStatus === "completed";
+}
+
+function buildStoredOrderItems(items: Order["items"]) {
+  return mergeOrderItems(
+    items.map((item) => ({
+      productId: item.productId,
+      quantity: item.quantity,
+    })),
+  );
+}
+
+async function loadStockTransactionItems(
+  transaction: FirestoreTransaction,
+  items: OrderQuantityItem[],
+  ownerId: string,
+  businessId: string,
+) {
+  const productRefs = items.map((item) => doc(db, "products", item.productId));
+  const productSnapshots = await Promise.all(
+    productRefs.map((productRef) => transaction.get(productRef)),
+  );
+
+  return items.map((item, index) => {
+    const snapshot = productSnapshots[index];
+
+    if (!snapshot.exists()) {
+      throw new Error("One of the selected products no longer exists.");
+    }
+
+    const product = mapProduct(snapshot);
+
+    if (!product) {
+      throw new Error("Unable to read one of the selected products.");
+    }
+
+    if (product.ownerId !== ownerId || product.businessId !== businessId) {
+      throw new Error("You can only sell products from your own business.");
+    }
+
+    return {
+      productRef: productRefs[index],
+      product,
+      quantity: item.quantity,
+    } satisfies StockTransactionItem;
+  });
+}
+
+function ensureStockAvailable(
+  items: StockTransactionItem[],
+  message: string | ((product: Product) => string),
+) {
+  for (const item of items) {
+    if (item.quantity > item.product.quantity) {
+      throw new Error(
+        typeof message === "function" ? message(item.product) : message,
+      );
+    }
+  }
+}
+
+function applyStockDelta(
+  transaction: FirestoreTransaction,
+  items: StockTransactionItem[],
+  direction: "deduct" | "restore",
+) {
+  for (const item of items) {
+    const nextQuantity =
+      direction === "deduct"
+        ? item.product.quantity - item.quantity
+        : item.product.quantity + item.quantity;
+
+    transaction.update(item.productRef, {
+      quantity: nextQuantity,
+      updatedAt: serverTimestamp(),
+    });
+  }
+}
+
+function buildOrderLineItems(items: StockTransactionItem[]) {
+  let orderTotal = 0;
+  const finalItems: OrderItem[] = [];
+
+  for (const item of items) {
+    const lineTotal = item.product.sellingPrice * item.quantity;
+
+    finalItems.push({
+      productId: item.product.id,
+      productName: item.product.name,
+      quantity: item.quantity,
+      unitPrice: item.product.sellingPrice,
+      total: lineTotal,
+    });
+
+    orderTotal += lineTotal;
+  }
+
+  return {
+    finalItems,
+    orderTotal,
+  };
+}
+
+async function getOrderForUpdate(transaction: FirestoreTransaction, orderId: string) {
+  const orderRef = doc(db, "orders", orderId);
+  const snapshot = await transaction.get(orderRef);
+
+  if (!snapshot.exists()) {
+    throw new Error("Order not found.");
+  }
+
+  const order = mapOrder(snapshot);
+
+  if (!order) {
+    throw new Error("Unable to read this order.");
+  }
+
+  return {
+    orderRef,
+    order,
+  };
+}
+
+async function syncDeliveryFromOrder(
+  transaction: FirestoreTransaction,
+  order: Order,
+) {
+  const delivery = deriveDeliveryFromOrder(order);
+  const deliveryRef = doc(db, "deliveries", delivery.trackingId);
+
+  transaction.set(
+    deliveryRef,
+    {
+      orderId: delivery.orderId,
+      orderNumber: delivery.orderNumber,
+      trackingId: delivery.trackingId,
+      customerName: delivery.customerName,
+      customerPhone: delivery.customerPhone,
+      deliveryAddress: delivery.deliveryAddress,
+      deliveryNotes: delivery.deliveryNotes ?? "",
+      assignedCourier: delivery.assignedCourier ?? "",
+      estimatedDeliveryTime: delivery.estimatedDeliveryTime ?? "",
+      deliveryStatus: delivery.deliveryStatus,
+      supportPhone: delivery.supportPhone ?? "",
+      ownerId: delivery.ownerId,
+      businessId: delivery.businessId,
+      createdAt: order.createdAt ?? serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    },
+    { merge: true },
+  );
+}
+
+function toPublicTrackingRecord(delivery: Delivery): PublicTrackingRecord {
+  return {
+    trackingId: delivery.trackingId,
+    orderNumber: delivery.orderNumber,
+    customerName: delivery.customerName,
+    deliveryStatus: delivery.deliveryStatus,
+    estimatedDeliveryTime: delivery.estimatedDeliveryTime,
+    supportPhone: delivery.supportPhone,
+    createdAt: delivery.createdAt,
+    updatedAt: delivery.updatedAt,
+  };
 }
 
 export async function getBusiness(ownerId: string) {
@@ -288,163 +541,64 @@ export async function getOrder(orderId: string) {
   return mapOrder(snapshot);
 }
 
-function mergeOrderItems(items: OrderPayload["items"]) {
-  const merged = new Map<string, number>();
+export async function listDeliveries(ownerId: string) {
+  const [deliverySnapshots, orders] = await Promise.all([
+    getDocs(
+      query(collection(db, "deliveries"), where("ownerId", "==", ownerId)),
+    ),
+    listOrders(ownerId),
+  ]);
 
-  for (const item of items) {
-    if (!item.productId || item.quantity <= 0) {
-      continue;
-    }
+  const deliveries = deliverySnapshots.docs
+    .map((snapshot) => mapDelivery(snapshot))
+    .filter((item): item is Delivery => Boolean(item));
+  const deliveryMap = new Map(deliveries.map((delivery) => [delivery.trackingId, delivery]));
 
-    merged.set(item.productId, (merged.get(item.productId) ?? 0) + item.quantity);
-  }
-
-  return Array.from(merged.entries()).map(([productId, quantity]) => ({
-    productId,
-    quantity,
-  }));
-}
-
-function orderShouldDeductStock(input: {
-  paymentStatus: Order["paymentStatus"];
-  orderStatus: Order["orderStatus"];
-}) {
-  return input.paymentStatus === "paid" || input.orderStatus === "completed";
-}
-
-function buildStoredOrderItems(items: Order["items"]) {
-  return mergeOrderItems(
-    items.map((item) => ({
-      productId: item.productId,
-      quantity: item.quantity,
-    })),
-  );
-}
-
-async function loadStockTransactionItems(
-  transaction: Parameters<typeof runTransaction>[1] extends (
-    transaction: infer T,
-  ) => Promise<unknown>
-    ? T
-    : never,
-  items: OrderQuantityItem[],
-  ownerId: string,
-  businessId: string,
-) {
-  const productRefs = items.map((item) => doc(db, "products", item.productId));
-  const productSnapshots = await Promise.all(
-    productRefs.map((productRef) => transaction.get(productRef)),
-  );
-
-  return items.map((item, index) => {
-    const snapshot = productSnapshots[index];
-
-    if (!snapshot.exists()) {
-      throw new Error("One of the selected products no longer exists.");
-    }
-
-    const product = mapProduct(snapshot);
-
-    if (!product) {
-      throw new Error("Unable to read one of the selected products.");
-    }
-
-    if (product.ownerId !== ownerId || product.businessId !== businessId) {
-      throw new Error("You can only sell products from your own business.");
-    }
-
-    return {
-      productRef: productRefs[index],
-      product,
-      quantity: item.quantity,
-    } satisfies StockTransactionItem;
-  });
-}
-
-function ensureStockAvailable(
-  items: StockTransactionItem[],
-  message: string | ((product: Product) => string),
-) {
-  for (const item of items) {
-    if (item.quantity > item.product.quantity) {
-      throw new Error(
-        typeof message === "function" ? message(item.product) : message,
-      );
+  for (const order of orders) {
+    const fallbackDelivery = deriveDeliveryFromOrder(order);
+    if (!deliveryMap.has(fallbackDelivery.trackingId)) {
+      deliveryMap.set(fallbackDelivery.trackingId, fallbackDelivery);
     }
   }
+
+  return sortByUpdatedDesc(Array.from(deliveryMap.values()));
 }
 
-function applyStockDelta(
-  transaction: Parameters<typeof runTransaction>[1] extends (
-    transaction: infer T,
-  ) => Promise<unknown>
-    ? T
-    : never,
-  items: StockTransactionItem[],
-  direction: "deduct" | "restore",
-) {
-  for (const item of items) {
-    const nextQuantity =
-      direction === "deduct"
-        ? item.product.quantity - item.quantity
-        : item.product.quantity + item.quantity;
-
-    transaction.update(item.productRef, {
-      quantity: nextQuantity,
-      updatedAt: serverTimestamp(),
-    });
-  }
-}
-
-function buildOrderLineItems(items: StockTransactionItem[]) {
-  let orderTotal = 0;
-  const finalItems: OrderItem[] = [];
-
-  for (const item of items) {
-    const lineTotal = item.product.sellingPrice * item.quantity;
-
-    finalItems.push({
-      productId: item.product.id,
-      productName: item.product.name,
-      quantity: item.quantity,
-      unitPrice: item.product.sellingPrice,
-      total: lineTotal,
-    });
-
-    orderTotal += lineTotal;
-  }
-
-  return {
-    finalItems,
-    orderTotal,
-  };
-}
-
-async function getOrderForUpdate(
-  transaction: Parameters<typeof runTransaction>[1] extends (
-    transaction: infer T,
-  ) => Promise<unknown>
-    ? T
-    : never,
-  orderId: string,
-) {
-  const orderRef = doc(db, "orders", orderId);
-  const snapshot = await transaction.get(orderRef);
-
-  if (!snapshot.exists()) {
-    throw new Error("Order not found.");
-  }
-
-  const order = mapOrder(snapshot);
+export async function getDeliveryByOrderId(orderId: string) {
+  const order = await getOrder(orderId);
 
   if (!order) {
-    throw new Error("Unable to read this order.");
+    return null;
   }
 
-  return {
-    orderRef,
-    order,
-  };
+  const deliveryRef = doc(db, "deliveries", order.trackingId ?? buildTrackingId(order.id));
+  const snapshot = await getDoc(deliveryRef);
+  return mapDelivery(snapshot) ?? deriveDeliveryFromOrder(order);
+}
+
+export async function getPublicTrackingRecord(trackingId: string) {
+  const normalizedTrackingId = trackingId.trim();
+  const deliveryRef = doc(db, "deliveries", normalizedTrackingId);
+  const deliverySnapshot = await getDoc(deliveryRef);
+  const delivery = mapDelivery(deliverySnapshot);
+
+  if (delivery) {
+    return toPublicTrackingRecord(delivery);
+  }
+
+  const orderId = parseOrderIdFromTrackingId(normalizedTrackingId);
+
+  if (!orderId) {
+    return null;
+  }
+
+  const order = await getOrder(orderId);
+
+  if (!order) {
+    return null;
+  }
+
+  return toPublicTrackingRecord(deriveDeliveryFromOrder(order));
 }
 
 export async function createOrder(input: OrderPayload) {
@@ -478,6 +632,9 @@ export async function createOrder(input: OrderPayload) {
     }
 
     const orderRef = doc(collection(db, "orders"));
+    const trackingId = buildTrackingId(orderRef.id);
+    const orderNumber = buildOrderNumber(orderRef.id);
+    const deliveryStatus = deriveDeliveryStatus(input.orderStatus);
 
     transaction.set(orderRef, {
       customerName: input.customerName.trim(),
@@ -491,6 +648,28 @@ export async function createOrder(input: OrderPayload) {
       ownerId: input.ownerId,
       businessId: input.businessId,
       createdAt: serverTimestamp(),
+      orderNumber,
+      trackingId,
+      deliveryStatus,
+      updatedAt: serverTimestamp(),
+    });
+
+    transaction.set(doc(db, "deliveries", trackingId), {
+      orderId: orderRef.id,
+      orderNumber,
+      trackingId,
+      customerName: input.customerName.trim(),
+      customerPhone: input.customerPhone.trim(),
+      deliveryAddress: "",
+      deliveryNotes: "",
+      assignedCourier: "",
+      estimatedDeliveryTime: "",
+      deliveryStatus,
+      supportPhone: "",
+      ownerId: input.ownerId,
+      businessId: input.businessId,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     });
 
     return orderRef.id;
@@ -526,6 +705,14 @@ export async function markOrderAsPaid(orderId: string) {
     transaction.update(orderRef, {
       paymentStatus: "paid",
       stockDeducted,
+      updatedAt: serverTimestamp(),
+    });
+
+    await syncDeliveryFromOrder(transaction, {
+      ...order,
+      paymentStatus: "paid",
+      stockDeducted,
+      updatedAt: new Date(),
     });
   });
 }
@@ -558,7 +745,17 @@ export async function completeOrder(orderId: string) {
 
     transaction.update(orderRef, {
       orderStatus: "completed",
+      deliveryStatus: "delivered",
       stockDeducted,
+      updatedAt: serverTimestamp(),
+    });
+
+    await syncDeliveryFromOrder(transaction, {
+      ...order,
+      orderStatus: "completed",
+      deliveryStatus: "delivered",
+      stockDeducted,
+      updatedAt: new Date(),
     });
   });
 }
@@ -578,7 +775,17 @@ export async function cancelOrder(orderId: string) {
 
       transaction.update(orderRef, {
         orderStatus: "cancelled",
+        deliveryStatus: "cancelled",
         stockDeducted: false,
+        updatedAt: serverTimestamp(),
+      });
+
+      await syncDeliveryFromOrder(transaction, {
+        ...order,
+        orderStatus: "cancelled",
+        deliveryStatus: "cancelled",
+        stockDeducted: false,
+        updatedAt: new Date(),
       });
 
       return;
@@ -590,6 +797,15 @@ export async function cancelOrder(orderId: string) {
 
     transaction.update(orderRef, {
       orderStatus: "cancelled",
+      deliveryStatus: "cancelled",
+      updatedAt: serverTimestamp(),
+    });
+
+    await syncDeliveryFromOrder(transaction, {
+      ...order,
+      orderStatus: "cancelled",
+      deliveryStatus: "cancelled",
+      updatedAt: new Date(),
     });
   });
 }

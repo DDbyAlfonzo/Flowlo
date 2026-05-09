@@ -170,7 +170,7 @@ export default function LoginPage() {
 
   return (
     <AuthCard
-      eyebrow="Managed access login"
+      eyebrow="Sign in"
       title="Welcome back"
       description="Access your FlowLo dashboard to manage stock, orders, and customer updates."
       supportNote="FlowLo is a managed-access platform. Only approved businesses can sign in."
@@ -224,7 +224,7 @@ export default function LoginPage() {
           className="primary-button auth-submit-button mt-1"
           disabled={submitting}
         >
-          {submitting ? "Logging in..." : "Login"}
+          {submitting ? "Signing in..." : "Sign in"}
         </button>
       </form>
     </AuthCard>

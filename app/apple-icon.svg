@@ -1,0 +1,21 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="flowlo-apple-gradient" x1="52" y1="48" x2="206" y2="204" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3EF2CF" />
+      <stop offset="0.58" stop-color="#66E8FF" />
+      <stop offset="1" stop-color="#FFD45A" />
+    </linearGradient>
+    <linearGradient id="flowlo-apple-accent" x1="150" y1="64" x2="204" y2="194" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFD45A" />
+      <stop offset="1" stop-color="#3EF2CF" />
+    </linearGradient>
+  </defs>
+
+  <rect width="256" height="256" rx="72" fill="#071018" />
+  <rect x="1.5" y="1.5" width="253" height="253" rx="70.5" stroke="#FFFFFF" stroke-opacity="0.10" />
+  <path d="M66 48C66 48 66 148 66 190" stroke="url(#flowlo-apple-gradient)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M66 58H142C166 58 185.5 75 191 98.5" stroke="url(#flowlo-apple-gradient)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M66 126H124C156.5 126 181.5 148 189 180" stroke="url(#flowlo-apple-gradient)" stroke-width="26" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="191" cy="98.5" r="14" fill="url(#flowlo-apple-accent)" />
+  <circle cx="189" cy="180" r="14" fill="url(#flowlo-apple-accent)" />
+</svg>

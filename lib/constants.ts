@@ -16,6 +16,15 @@ export const PAYMENT_STATUSES = ["unpaid", "paid", "partial"] as const;
 
 export const ORDER_STATUSES = ["pending", "completed", "cancelled"] as const;
 
+export const DELIVERY_STATUSES = [
+  "pending",
+  "confirmed",
+  "packed",
+  "out_for_delivery",
+  "delivered",
+  "cancelled",
+] as const;
+
 export const ORDER_SOURCES = ["manual", "whatsapp"] as const;
 
 export const ACCESS_REQUEST_BUSINESS_TYPES = [
@@ -31,8 +40,9 @@ export const APP_NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/products", label: "Products" },
   { href: "/orders", label: "Orders" },
+  { href: "/deliveries", label: "Deliveries" },
   { href: "/settings/business", label: "Business" },
-];
+] as const;
 
 export function isAdminEmail(email?: string | null) {
   if (!email) {

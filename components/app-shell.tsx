@@ -57,7 +57,7 @@ export function AppShell({
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,rgba(62,242,207,0.12),transparent_45%),radial-gradient(circle_at_top_right,rgba(255,212,90,0.09),transparent_30%)]" />
         <div>
-          <BrandWordmark size="sm" showTagline={false} />
+          <BrandWordmark size="sm" showTagline={false} compact />
           <h1 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-romano-ink">
             {shellTitle ?? business?.businessName ?? "Your business"}
           </h1>
@@ -92,9 +92,12 @@ export function AppShell({
           initial={reduceMotion ? false : { opacity: 0, y: 22 }}
           animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed bottom-4 left-1/2 z-30 w-[calc(100%-2rem)] max-w-lg -translate-x-1/2 rounded-[26px] border border-white/10 bg-[linear-gradient(180deg,rgba(16,22,30,0.82),rgba(8,12,17,0.9))] p-1.5 shadow-soft backdrop-blur-2xl"
+          className="fixed bottom-4 left-1/2 z-30 w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 rounded-[26px] border border-white/10 bg-[linear-gradient(180deg,rgba(16,22,30,0.82),rgba(8,12,17,0.9))] p-1.5 shadow-soft backdrop-blur-2xl"
         >
-          <div className="grid grid-cols-4 gap-2">
+          <div
+            className="grid gap-2"
+            style={{ gridTemplateColumns: `repeat(${APP_NAV_ITEMS.length}, minmax(0, 1fr))` }}
+          >
             {APP_NAV_ITEMS.map((item) => {
               const active = isActive(pathname, item.href);
 

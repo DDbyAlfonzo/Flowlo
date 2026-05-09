@@ -110,7 +110,7 @@ export default function RegisterPage() {
 
   return (
     <AuthCard
-      eyebrow="Managed access"
+      eyebrow="Request access"
       title="Request access to FlowLo"
       description="Tell us about your business. We'll review your request and let you know once access is approved."
       supportNote="Built for WhatsApp-first sellers, resellers, and small businesses."
@@ -265,11 +265,6 @@ export default function RegisterPage() {
                 required
               />
             </label>
-          </div>
-
-          <div className="auth-note">
-            After you request access, we&apos;ll review your business details before
-            opening your FlowLo workspace.
           </div>
 
           {error ? (

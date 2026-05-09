@@ -10,6 +10,7 @@ const APPROVED_PATH_PREFIXES = [
   "/dashboard",
   "/products",
   "/orders",
+  "/deliveries",
   "/settings/business",
 ];
 const ADMIN_PATH_PREFIXES = ["/admin"];
@@ -54,6 +55,10 @@ export function middleware(request: NextRequest) {
   const hasSession = Boolean(request.cookies.get(AUTH_COOKIE_NAME)?.value);
   const accessStatus = request.cookies.get(ACCESS_COOKIE_NAME)?.value ?? "none";
   const isAdmin = request.cookies.get(ADMIN_COOKIE_NAME)?.value === "true";
+
+  if (pathname === "/track" || pathname.startsWith("/track/")) {
+    return NextResponse.next();
+  }
 
   if (PUBLIC_PATHS.has(pathname)) {
     if (hasSession && isAdmin) {
