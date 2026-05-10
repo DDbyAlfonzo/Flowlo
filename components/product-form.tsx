@@ -86,7 +86,7 @@ export function ProductForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="card-surface relative max-w-3xl overflow-hidden p-7 sm:p-9"
+      className="card-surface relative w-full max-w-3xl overflow-hidden p-5 sm:p-9"
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,rgba(62,242,207,0.12),transparent_42%),radial-gradient(circle_at_top_right,rgba(255,212,90,0.08),transparent_28%)]" />
 
@@ -197,8 +197,8 @@ export function ProductForm({
         </div>
       ) : null}
 
-      <div className="mt-8 flex flex-wrap gap-3">
-        <button type="submit" className="primary-button" disabled={submitting}>
+      <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
+        <button type="submit" className="primary-button w-full sm:w-auto" disabled={submitting}>
           {submitting
             ? "Saving..."
             : mode === "create"
@@ -207,7 +207,7 @@ export function ProductForm({
         </button>
         <button
           type="button"
-          className="secondary-button"
+          className="secondary-button w-full sm:w-auto"
           onClick={() => router.back()}
         >
           Cancel

@@ -208,33 +208,33 @@ const CINEMATIC_BEAMS: AmbientLayer[] = [
 const CINEMATIC_PANES: AmbientLayer[] = [
   {
     className:
-      "absolute left-[12%] top-[22%] hidden h-36 w-24 rounded-[32px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.015))] shadow-[0_28px_60px_-40px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-2xl md:block",
+      "absolute left-[6%] top-[20%] h-24 w-16 rounded-[26px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.012))] shadow-[0_24px_52px_-38px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-2xl sm:left-[10%] sm:top-[22%] sm:h-28 sm:w-20 md:h-36 md:w-24 md:rounded-[32px]",
     animate: {
-      opacity: [0.3, 0.44, 0.3],
-      y: [0, -16, 0],
-      x: [0, 10, 0],
-      rotate: [-8, -5, -8],
+      opacity: [0.16, 0.28, 0.16],
+      y: [0, -12, 0],
+      x: [0, 8, 0],
+      rotate: [-7, -4, -7],
     },
     transition: { duration: 16, repeat: Infinity, ease: "easeInOut" as const },
   },
   {
     className:
-      "absolute right-[12%] top-[18%] hidden h-24 w-24 rounded-[30px] border border-white/8 bg-[linear-gradient(180deg,rgba(62,242,207,0.08),rgba(255,255,255,0.015))] shadow-[0_24px_54px_-38px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-2xl md:block",
+      "absolute right-[6%] top-[18%] h-16 w-16 rounded-[24px] border border-white/8 bg-[linear-gradient(180deg,rgba(62,242,207,0.065),rgba(255,255,255,0.012))] shadow-[0_22px_46px_-34px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-2xl sm:right-[10%] sm:top-[18%] sm:h-20 sm:w-20 md:h-24 md:w-24 md:rounded-[30px]",
     animate: {
-      opacity: [0.24, 0.38, 0.24],
-      y: [0, 14, 0],
-      x: [0, -14, 0],
-      rotate: [12, 8, 12],
+      opacity: [0.14, 0.24, 0.14],
+      y: [0, 10, 0],
+      x: [0, -10, 0],
+      rotate: [10, 7, 10],
     },
     transition: { duration: 18, repeat: Infinity, ease: "easeInOut" as const, delay: 0.7 },
   },
   {
     className:
-      "absolute bottom-[16%] right-[18%] hidden h-16 w-36 rounded-full border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01))] shadow-[0_22px_46px_-34px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-2xl lg:block",
+      "absolute bottom-[19%] right-[12%] h-10 w-24 rounded-full border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0.01))] shadow-[0_18px_38px_-30px_rgba(0,0,0,0.95),inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-2xl sm:bottom-[16%] sm:right-[16%] sm:h-12 sm:w-28 lg:h-16 lg:w-36",
     animate: {
-      opacity: [0.18, 0.28, 0.18],
-      y: [0, -10, 0],
-      x: [0, 16, 0],
+      opacity: [0.1, 0.18, 0.1],
+      y: [0, -8, 0],
+      x: [0, 12, 0],
     },
     transition: { duration: 20, repeat: Infinity, ease: "easeInOut" as const, delay: 1.1 },
   },

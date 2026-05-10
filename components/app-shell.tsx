@@ -8,6 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { APP_NAV_ITEMS } from "@/lib/constants";
 import { logoutUser } from "@/lib/auth";
 import { useAuth } from "@/hooks/use-auth";
+import { useOverflowDebug } from "@/hooks/use-overflow-debug";
 
 function isActive(pathname: string, href: string) {
   if (href === "/dashboard") {
@@ -35,6 +36,7 @@ export function AppShell({
   const { business, isAdmin, user } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
   const reduceMotion = useReducedMotion();
+  useOverflowDebug("app-shell");
 
   const handleLogout = async () => {
     setSigningOut(true);
@@ -48,28 +50,28 @@ export function AppShell({
   };
 
   return (
-    <div className="page-wrap">
+    <div className="page-wrap w-full max-w-full">
       <motion.header
         initial={reduceMotion ? false : { opacity: 0, y: 18 }}
         animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
         transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
-        className="card-surface relative sticky top-4 z-20 flex flex-col gap-4 overflow-hidden p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6"
+        className="card-surface relative sticky top-3 z-20 flex flex-col gap-4 overflow-hidden rounded-[1.6rem] p-4 sm:top-4 sm:rounded-4xl sm:p-6 sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,rgba(62,242,207,0.12),transparent_45%),radial-gradient(circle_at_top_right,rgba(255,212,90,0.09),transparent_30%)]" />
-        <div>
+        <div className="min-w-0 flex-1">
           <BrandWordmark size="sm" showTagline={false} compact />
           <h1 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-romano-ink">
             {shellTitle ?? business?.businessName ?? "Your business"}
           </h1>
-          <p className="mt-1 text-sm text-romano-slate">
+          <p className="mt-1 break-words text-sm text-romano-slate">
             {shellSubtitle ??
               `${business?.category ?? "Inventory and order management"} · ${user?.email ?? ""}`}
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
           {isAdmin ? (
-            <Link href="/admin/access-requests" className="secondary-button">
+            <Link href="/admin/access-requests" className="secondary-button w-full sm:w-auto">
               Access Requests
             </Link>
           ) : null}
@@ -77,7 +79,7 @@ export function AppShell({
           <button
             type="button"
             onClick={handleLogout}
-            className="secondary-button"
+            className="secondary-button w-full sm:w-auto"
             disabled={signingOut}
           >
             {signingOut ? "Signing out..." : "Sign out"}
@@ -85,53 +87,68 @@ export function AppShell({
         </div>
       </motion.header>
 
-      <main className="mt-8 flex-1">{children}</main>
+      <main className="mt-8 flex-1 w-full max-w-full min-w-0 overflow-x-hidden">{children}</main>
 
       {showNav ? (
-        <motion.nav
-          initial={reduceMotion ? false : { opacity: 0, y: 22 }}
-          animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed bottom-4 left-1/2 z-30 w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 rounded-[26px] border border-white/10 bg-[linear-gradient(180deg,rgba(16,22,30,0.82),rgba(8,12,17,0.9))] p-1.5 shadow-soft backdrop-blur-2xl"
+        <div
+          className="fixed left-1/2 z-30 w-[min(calc(100vw-24px),720px)] max-w-[calc(100vw-24px)] -translate-x-1/2 overflow-hidden sm:max-w-xl"
+          style={{ bottom: "max(env(safe-area-inset-bottom), 0.75rem)" }}
         >
-          <div
-            className="grid gap-2"
-            style={{ gridTemplateColumns: `repeat(${APP_NAV_ITEMS.length}, minmax(0, 1fr))` }}
+          <motion.nav
+            initial={reduceMotion ? false : { opacity: 0, y: 22 }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(16,22,30,0.86),rgba(8,12,17,0.92))] p-1 shadow-soft backdrop-blur-2xl sm:rounded-[28px] sm:p-1.5"
           >
-            {APP_NAV_ITEMS.map((item) => {
-              const active = isActive(pathname, item.href);
+            <div
+              className="grid items-stretch gap-1"
+              style={{ gridTemplateColumns: `repeat(${APP_NAV_ITEMS.length}, minmax(0, 1fr))` }}
+            >
+              {APP_NAV_ITEMS.map((item) => {
+                const active = isActive(pathname, item.href);
 
-              return (
-                <motion.div
-                  key={item.href}
-                  whileHover={reduceMotion ? undefined : { y: -1.5 }}
-                  whileTap={reduceMotion ? undefined : { scale: 0.985 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <Link
-                    href={item.href}
-                    className={`group relative block overflow-hidden rounded-[20px] px-3 py-2.5 text-center text-[11px] font-semibold transition sm:text-sm ${
-                      active
-                        ? "text-[#041215]"
-                        : "text-romano-slate hover:text-romano-ink"
-                    }`}
+                return (
+                  <motion.div
+                    key={item.href}
+                    whileHover={reduceMotion ? undefined : { y: -1.5 }}
+                    whileTap={reduceMotion ? undefined : { scale: 0.985 }}
+                    transition={{ duration: 0.2 }}
+                    className="min-w-0"
                   >
-                    {active ? (
-                      <motion.span
-                        layoutId="flowlo-nav-pill"
-                        className="absolute inset-0 rounded-[20px] border border-romano-navy/25 bg-romano-primary shadow-[0_0_26px_-16px_rgba(62,242,207,0.75)]"
-                        transition={{ type: "spring", stiffness: 380, damping: 34 }}
+                    <Link
+                      href={item.href}
+                      className={`group relative flex min-h-[3.55rem] min-w-0 w-full flex-col items-center justify-center gap-1 overflow-hidden rounded-[18px] px-0 py-1.5 text-center font-semibold leading-none transition sm:min-h-[4.35rem] sm:gap-2 sm:rounded-[22px] sm:px-2 ${
+                        active
+                          ? "text-[#041215]"
+                          : "text-romano-slate hover:text-romano-ink"
+                      }`}
+                    >
+                      {active ? (
+                        <motion.span
+                          layoutId="flowlo-nav-pill"
+                          className="absolute inset-0 rounded-[18px] border border-romano-navy/25 bg-[linear-gradient(180deg,rgba(62,242,207,0.96),rgba(98,236,215,0.9))] shadow-[0_0_34px_-18px_rgba(62,242,207,0.88)] sm:rounded-[22px]"
+                          transition={{ type: "spring", stiffness: 380, damping: 34 }}
+                        />
+                      ) : (
+                        <span className="absolute inset-0 rounded-[18px] bg-[linear-gradient(180deg,rgba(255,255,255,0.035),rgba(255,255,255,0.01))] opacity-0 transition duration-300 group-hover:opacity-100 sm:rounded-[22px]" />
+                      )}
+                      <span
+                        className={`relative z-10 h-1.5 w-1.5 flex-shrink-0 rounded-full transition duration-300 ${
+                          active
+                            ? "bg-[#041215] shadow-[0_0_12px_-4px_rgba(4,18,21,0.9)]"
+                            : "bg-white/15 group-hover:bg-romano-primary/50"
+                        }`}
                       />
-                    ) : (
-                      <span className="absolute inset-0 rounded-[20px] bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01))] opacity-0 transition duration-300 group-hover:opacity-100" />
-                    )}
-                    <span className="relative z-10">{item.label}</span>
-                  </Link>
-                </motion.div>
-              );
-            })}
-          </div>
-        </motion.nav>
+                      <span className="relative z-10 block max-w-full overflow-hidden px-0.5 text-[7px] leading-[1.02] tracking-[0.02em] [overflow-wrap:anywhere] min-[360px]:text-[8px] sm:text-[11px] sm:leading-none">
+                        {item.label}
+                      </span>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </motion.nav>
+        </div>
       ) : null}
     </div>
   );

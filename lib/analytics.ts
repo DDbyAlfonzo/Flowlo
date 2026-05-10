@@ -1,5 +1,5 @@
-import { listOrders, listProducts } from "@/lib/firestore";
-import { DashboardSummary, Order, Product } from "@/types";
+import { listDeliveries, listOrders, listProducts } from "@/lib/firestore";
+import { DashboardSummary, Delivery, Order, Product } from "@/types";
 
 function startOfToday() {
   const value = new Date();
@@ -84,13 +84,45 @@ function getBestSellingProducts(orders: Order[]) {
     .slice(0, 5);
 }
 
+function getDeliveryStatusSummary(deliveries: Delivery[]) {
+  return deliveries.reduce(
+    (summary, delivery) => {
+      if (delivery.deliveryStatus === "delivered") {
+        summary.delivered += 1;
+        return summary;
+      }
+
+      if (delivery.deliveryStatus === "out_for_delivery") {
+        summary.outForDelivery += 1;
+        return summary;
+      }
+
+      if (delivery.deliveryStatus === "cancelled") {
+        summary.cancelled += 1;
+        return summary;
+      }
+
+      summary.pending += 1;
+      return summary;
+    },
+    {
+      pending: 0,
+      outForDelivery: 0,
+      delivered: 0,
+      cancelled: 0,
+    },
+  );
+}
+
 export function calculateDashboardAnalytics(input: {
   orders: Order[];
   products: Product[];
+  deliveries: Delivery[];
 }): DashboardSummary {
   const todayStart = startOfToday();
   const orders = sortByDateDesc(input.orders);
   const products = [...input.products];
+  const deliveries = sortByDateDesc(input.deliveries);
   const revenueOrders = orders.filter(isCountedRevenueOrder);
   const todaysOrders = orders.filter((order) => isCreatedToday(order, todayStart));
   const todaysRevenueOrders = todaysOrders.filter(isCountedRevenueOrder);
@@ -117,6 +149,7 @@ export function calculateDashboardAnalytics(input: {
     ).length,
     totalRevenue,
     todaysRevenue,
+    deliveryStatusSummary: getDeliveryStatusSummary(deliveries),
     ordersToday: todaysOrders.length,
     ordersTodayBreakdown: {
       pending: todaysOrders.filter((order) => order.orderStatus === "pending").length,
@@ -132,13 +165,15 @@ export function calculateDashboardAnalytics(input: {
 }
 
 export async function getDashboardAnalytics(ownerId: string, businessId: string) {
-  const [orders, products] = await Promise.all([
+  const [orders, products, deliveries] = await Promise.all([
     listOrders(ownerId),
     listProducts(ownerId),
+    listDeliveries(ownerId),
   ]);
 
   return calculateDashboardAnalytics({
     orders: filterBusinessRecords(orders, businessId),
     products: filterBusinessRecords(products, businessId),
+    deliveries: filterBusinessRecords(deliveries, businessId),
   });
 }

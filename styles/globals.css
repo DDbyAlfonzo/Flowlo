@@ -8,11 +8,18 @@
 
 html {
   min-height: 100%;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
   background-color: #070b0f;
 }
 
 body {
   min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  position: relative;
   color: #f8fafc;
   background:
     radial-gradient(circle at -8% -10%, rgba(62, 242, 207, 0.14), transparent 34%),
@@ -21,6 +28,24 @@ body {
     linear-gradient(180deg, rgba(12, 18, 24, 0.32) 0%, rgba(7, 11, 15, 0) 34%),
     linear-gradient(180deg, #070b0f 0%, #091017 38%, #06090d 100%);
   font-feature-settings: "ss01" on, "cv02" on, "cv11" on;
+}
+
+main,
+section,
+article,
+aside,
+header,
+footer,
+form,
+div {
+  max-width: 100%;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
 }
 
 a {
@@ -43,12 +68,14 @@ textarea {
 @layer base {
   * {
     @apply border-romano-line;
+    box-sizing: border-box;
+    min-width: 0;
   }
 }
 
 @layer components {
   .card-surface {
-    @apply relative rounded-4xl border border-romano-line bg-[linear-gradient(180deg,rgba(22,30,40,0.88),rgba(12,16,22,0.9))] shadow-soft backdrop-blur-2xl transition duration-300;
+    @apply relative w-full min-w-0 max-w-full rounded-4xl border border-romano-line bg-[linear-gradient(180deg,rgba(22,30,40,0.88),rgba(12,16,22,0.9))] shadow-soft backdrop-blur-2xl transition duration-300;
     box-shadow:
       0 30px 80px -42px rgba(0, 0, 0, 0.96),
       0 10px 30px -18px rgba(0, 0, 0, 0.58),
@@ -72,7 +99,7 @@ textarea {
   }
 
   .page-wrap {
-    @apply mx-auto flex min-h-screen w-full max-w-6xl flex-col px-4 pb-32 pt-8 sm:px-6 lg:px-8;
+    @apply mx-auto flex min-h-screen w-full max-w-full min-w-0 flex-col overflow-x-hidden px-4 pb-36 pt-6 sm:max-w-6xl sm:px-5 sm:pb-32 sm:pt-8 lg:px-8;
   }
 
   .section-title {
@@ -84,12 +111,12 @@ textarea {
   }
 
   .primary-button {
-    @apply inline-flex items-center justify-center rounded-2xl border border-romano-navy/25 bg-romano-primary px-5 py-3 text-sm font-semibold text-[#051215] shadow-glow transition duration-300 hover:-translate-y-0.5 hover:border-romano-navy/40 hover:shadow-[0_24px_62px_-28px_rgba(62,242,207,0.72)] disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex min-h-[2.9rem] items-center justify-center rounded-2xl border border-romano-navy/25 bg-romano-primary px-5 py-3 text-sm font-semibold text-[#051215] shadow-glow transition duration-300 hover:-translate-y-0.5 hover:border-romano-navy/40 hover:shadow-[0_24px_62px_-28px_rgba(62,242,207,0.72)] disabled:cursor-not-allowed disabled:opacity-60;
     background-size: 140% 140%;
   }
 
   .secondary-button {
-    @apply inline-flex items-center justify-center rounded-2xl border border-romano-line bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.025))] px-5 py-3 text-sm font-semibold text-romano-ink transition duration-300 hover:-translate-y-0.5 hover:border-romano-navy/35 hover:bg-[linear-gradient(180deg,rgba(62,242,207,0.08),rgba(255,255,255,0.04))] hover:text-white;
+    @apply inline-flex min-h-[2.9rem] items-center justify-center rounded-2xl border border-romano-line bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.025))] px-5 py-3 text-sm font-semibold text-romano-ink transition duration-300 hover:-translate-y-0.5 hover:border-romano-navy/35 hover:bg-[linear-gradient(180deg,rgba(62,242,207,0.08),rgba(255,255,255,0.04))] hover:text-white;
   }
 
   .input-shell {
@@ -121,7 +148,7 @@ textarea {
   }
 
   .auth-floating-card {
-    @apply relative overflow-hidden rounded-[2rem] border border-romano-line bg-[linear-gradient(180deg,rgba(18,24,32,0.76),rgba(9,14,19,0.88))] shadow-soft backdrop-blur-2xl;
+    @apply relative w-full min-w-0 max-w-full overflow-hidden rounded-[2rem] border border-romano-line bg-[linear-gradient(180deg,rgba(18,24,32,0.76),rgba(9,14,19,0.88))] shadow-soft backdrop-blur-2xl;
     box-shadow:
       0 32px 82px -44px rgba(0, 0, 0, 0.96),
       0 18px 44px -30px rgba(0, 0, 0, 0.72),
@@ -149,14 +176,14 @@ textarea {
   }
 
   .surface-elevated {
-    @apply rounded-3xl border border-romano-line bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.045))] shadow-soft backdrop-blur-xl;
+    @apply w-full min-w-0 max-w-full rounded-3xl border border-romano-line bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.045))] shadow-soft backdrop-blur-xl;
     box-shadow:
       0 20px 50px -36px rgba(0, 0, 0, 0.9),
       inset 0 1px 0 rgba(255, 255, 255, 0.07);
   }
 
   .surface-muted {
-    @apply rounded-3xl border border-romano-line bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.022))] backdrop-blur-lg;
+    @apply w-full min-w-0 max-w-full rounded-3xl border border-romano-line bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.022))] backdrop-blur-lg;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.05),
       0 14px 34px -26px rgba(0, 0, 0, 0.75);

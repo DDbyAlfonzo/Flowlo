@@ -97,8 +97,8 @@ export function OrderForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
-      <div className="card-surface relative overflow-hidden p-7 sm:p-9">
+    <form onSubmit={handleSubmit} className="grid w-full min-w-0 gap-6 lg:grid-cols-[1.25fr_0.75fr]">
+      <div className="card-surface relative overflow-hidden p-5 sm:p-9">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,rgba(62,242,207,0.12),transparent_42%),radial-gradient(circle_at_top_right,rgba(255,212,90,0.08),transparent_28%)]" />
         <div className="grid gap-5">
           <label className="grid gap-2">
@@ -172,9 +172,9 @@ export function OrderForm({
         </div>
 
         <div className="mt-10">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <h3 className="text-lg font-semibold text-romano-ink">Order Items</h3>
-            <button type="button" className="secondary-button" onClick={addRow}>
+            <button type="button" className="secondary-button w-full sm:w-auto" onClick={addRow}>
               Add Line
             </button>
           </div>
@@ -256,7 +256,7 @@ export function OrderForm({
         ) : null}
       </div>
 
-      <aside className="card-surface relative h-fit overflow-hidden p-7">
+      <aside className="card-surface relative h-fit overflow-hidden p-5 sm:p-7">
         <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,rgba(62,242,207,0.12),transparent_42%),radial-gradient(circle_at_top_right,rgba(255,212,90,0.08),transparent_28%)]" />
         <p className="eyebrow-label">
           Order Summary

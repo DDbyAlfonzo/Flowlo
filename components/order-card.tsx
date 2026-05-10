@@ -30,6 +30,30 @@ function paymentTone(status: Order["paymentStatus"]) {
   return "danger";
 }
 
+function orderLabel(status: Order["orderStatus"]) {
+  if (status === "completed") {
+    return "Completed";
+  }
+
+  if (status === "cancelled") {
+    return "Cancelled";
+  }
+
+  return "Pending";
+}
+
+function paymentLabel(status: Order["paymentStatus"]) {
+  if (status === "paid") {
+    return "Paid";
+  }
+
+  if (status === "partial") {
+    return "Partial";
+  }
+
+  return "Unpaid";
+}
+
 export function OrderCard({ order }: { order: Order }) {
   const reduceMotion = useReducedMotion();
 
@@ -40,34 +64,53 @@ export function OrderCard({ order }: { order: Order }) {
     >
       <Link
         href={`/orders/${order.id}`}
-        className="card-surface block p-5 sm:p-6"
+        className="card-surface block w-full max-w-full p-4 sm:p-6"
       >
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <h3 className="text-lg font-semibold text-romano-ink">{order.customerName}</h3>
-            <p className="mt-2 text-sm leading-7 text-romano-slate">
+          <div className="min-w-0 flex-1">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-romano-amberText [overflow-wrap:anywhere]">
+              {order.orderNumber ?? "Customer order"}
+            </p>
+            <h3 className="mt-2 text-base font-semibold text-romano-ink [overflow-wrap:anywhere] sm:text-lg">
+              {order.customerName}
+            </h3>
+            <p className="mt-1 text-sm leading-6 text-romano-slate [overflow-wrap:anywhere]">
               {order.customerPhone || "No phone number added"}
             </p>
           </div>
-          <p className="text-lg font-semibold text-romano-ink">
-            {formatCurrency(order.orderTotal)}
-          </p>
+          <div className="min-w-0 text-left sm:text-right">
+            <p className="field-label">Order total</p>
+            <p className="mt-2 text-xl font-semibold tracking-[-0.04em] text-romano-ink sm:text-2xl">
+              {formatCurrency(order.orderTotal)}
+            </p>
+          </div>
         </div>
 
-        <div className="mt-5 flex flex-wrap gap-2">
-          <StatusBadge tone={orderTone(order.orderStatus)} label={order.orderStatus} />
+        <div className="mt-4 flex flex-wrap gap-2">
+          <StatusBadge tone={orderTone(order.orderStatus)} label={orderLabel(order.orderStatus)} />
           <StatusBadge
             tone={paymentTone(order.paymentStatus)}
-            label={order.paymentStatus}
+            label={paymentLabel(order.paymentStatus)}
           />
-          <StatusBadge tone="neutral" label={order.source} />
+          <StatusBadge
+            tone="neutral"
+            label={order.source === "manual" ? "Manual" : "WhatsApp"}
+          />
         </div>
 
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 rounded-3xl border border-romano-line bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] px-4 py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-          <p className="text-sm text-romano-slate">
-            {order.items.length} item{order.items.length === 1 ? "" : "s"}
-          </p>
-          <p className="text-sm text-romano-slate">{formatDateTime(order.createdAt)}</p>
+        <div className="mt-4 grid gap-2.5 sm:grid-cols-2">
+          <div className="surface-muted p-3.5 sm:p-4">
+            <p className="field-label">Items</p>
+            <p className="mt-2 text-sm font-medium text-romano-ink">
+              {order.items.length} item{order.items.length === 1 ? "" : "s"}
+            </p>
+          </div>
+          <div className="surface-muted p-3.5 sm:p-4">
+            <p className="field-label">Created</p>
+            <p className="mt-2 text-sm font-medium text-romano-ink">
+              {formatDateTime(order.createdAt)}
+            </p>
+          </div>
         </div>
       </Link>
     </motion.div>

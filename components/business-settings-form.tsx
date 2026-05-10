@@ -67,7 +67,7 @@ export function BusinessSettingsForm({
       className={
         embedded
           ? "grid gap-5"
-          : "card-surface relative max-w-2xl overflow-hidden p-7 sm:p-9"
+          : "card-surface relative w-full max-w-2xl overflow-hidden p-5 sm:p-9"
       }
     >
       {!embedded ? (
@@ -108,8 +108,8 @@ export function BusinessSettingsForm({
         </div>
       ) : null}
 
-      <div className="mt-6 flex flex-wrap gap-3">
-        <button type="submit" className="primary-button" disabled={saving}>
+      <div className="mt-6 grid gap-3 sm:flex sm:flex-wrap">
+        <button type="submit" className="primary-button w-full sm:w-auto" disabled={saving}>
           {saving
             ? "Saving..."
             : mode === "onboarding"

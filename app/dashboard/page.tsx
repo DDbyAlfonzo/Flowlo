@@ -46,6 +46,17 @@ export default function DashboardPage() {
       summary.totalProducts === 0 &&
       summary.recentOrders.length === 0,
   );
+  const ordersTodayBreakdown = summary?.ordersTodayBreakdown ?? {
+    pending: 0,
+    completed: 0,
+    cancelled: 0,
+  };
+  const deliveryStatusSummary = summary?.deliveryStatusSummary ?? {
+    pending: 0,
+    outForDelivery: 0,
+    delivered: 0,
+    cancelled: 0,
+  };
 
   return (
     <ProtectedPage>
@@ -59,43 +70,79 @@ export default function DashboardPage() {
         {showOnboardingState ? <DashboardOnboarding /> : null}
 
         <Reveal>
-          <section className="mt-2">
-          <div className="mb-4">
+          <section className="mt-2 w-full max-w-full min-w-0 space-y-4">
+          <div className="mb-1">
             <h3 className="text-xl font-semibold text-romano-ink">Performance</h3>
             <p className="mt-1 text-sm text-romano-slate">
-              Revenue and order numbers based on paid or completed sales only.
+              The core numbers to check first when you open FlowLo on the go.
             </p>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <StatCard
+              label="Revenue Today"
+              value={loading ? "..." : formatCurrency(summary?.todaysRevenue ?? 0)}
+              helper="Paid or completed sales captured today."
+              tone="primary"
+            />
+            <StatCard
+              label="Orders Today"
+              value={loading ? "..." : String(summary?.ordersToday ?? 0)}
+              helper={
+                loading
+                  ? "Loading today's order flow."
+                  : `${ordersTodayBreakdown.pending} pending · ${ordersTodayBreakdown.completed} completed`
+              }
+              tone="neutral"
+            />
+            <StatCard
+              label="Pending Deliveries"
+              value={loading ? "..." : String(deliveryStatusSummary.pending)}
+              helper={
+                loading
+                  ? "Loading delivery flow."
+                  : `${deliveryStatusSummary.outForDelivery} out now · ${deliveryStatusSummary.delivered} delivered`
+              }
+              tone="warning"
+            />
+            <StatCard
+              label="Low Stock Alerts"
+              value={loading ? "..." : String(summary?.lowStockCount ?? 0)}
+              helper="Products needing attention right now."
+              tone="warning"
+            />
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <StatCard
               label="Total Revenue"
               value={loading ? "..." : formatCurrency(summary?.totalRevenue ?? 0)}
-              helper="All paid or completed orders, excluding cancelled orders."
-            />
-            <StatCard
-              label="Today's Revenue"
-              value={loading ? "..." : formatCurrency(summary?.todaysRevenue ?? 0)}
-              helper="Revenue from paid or completed orders created today."
+              helper="All paid or completed sales, excluding cancelled orders."
+              tone="primary"
+              compact
             />
             <StatCard
               label="Units Sold Today"
               value={loading ? "..." : String(summary?.unitsSoldToday ?? 0)}
-              helper="Total item quantities from today’s paid or completed sales."
+              helper="Item quantities from today's paid or completed sales."
+              tone="neutral"
+              compact
             />
             <StatCard
               label="Total Products"
               value={loading ? "..." : String(summary?.totalProducts ?? 0)}
-              helper="Everything currently available in your catalog."
-            />
-            <StatCard
-              label="Low Stock Products"
-              value={loading ? "..." : String(summary?.lowStockCount ?? 0)}
-              helper="Products currently at or below their low stock threshold."
+              helper="Products currently tracked inside FlowLo."
+              tone="neutral"
+              compact
             />
             <div className="card-surface relative overflow-hidden p-5">
               <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-[radial-gradient(circle_at_top_left,rgba(62,242,207,0.12),transparent_44%),radial-gradient(circle_at_top_right,rgba(255,212,90,0.08),transparent_28%)]" />
-              <p className="eyebrow-label">Quick Actions</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-romano-mintText">
+                Quick Actions
+              </p>
+              <p className="mt-3 text-sm leading-6 text-romano-slate">
+                Keep the next step easy to reach while you monitor today's activity.
+              </p>
               <div className="mt-4 grid gap-3">
                 <Link href="/products/new" className="primary-button">
                   Add Product
@@ -121,7 +168,98 @@ export default function DashboardPage() {
         </Reveal>
 
         <Reveal delay={0.04}>
-          <section className="mt-12">
+          <section className="mt-10 w-full max-w-full min-w-0">
+          <div className="mb-4">
+            <h3 className="text-xl font-semibold text-romano-ink">Sales activity</h3>
+            <p className="mt-1 text-sm text-romano-slate">
+              Today’s order flow and delivery momentum, grouped for fast scanning.
+            </p>
+          </div>
+
+          <div className="grid gap-4 xl:grid-cols-2">
+            <div className="card-surface p-5 sm:p-7">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <h4 className="text-lg font-semibold text-romano-ink">Orders today</h4>
+                  <p className="mt-1 text-sm text-romano-slate">
+                    Track the pace of today’s new sales at a glance.
+                  </p>
+                </div>
+                <StatusBadge
+                  tone="neutral"
+                  label={loading ? "Loading" : `${summary?.ordersToday ?? 0} today`}
+                />
+              </div>
+
+              <div className="mt-5 grid grid-cols-3 gap-2.5 sm:gap-3">
+                <div className="surface-muted p-3.5 sm:p-4">
+                  <p className="field-label">Pending</p>
+                  <p className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-romano-ink sm:text-[2rem]">
+                    {loading ? "..." : ordersTodayBreakdown.pending}
+                  </p>
+                </div>
+                <div className="surface-muted p-3.5 sm:p-4">
+                  <p className="field-label">Completed</p>
+                  <p className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-romano-ink sm:text-[2rem]">
+                    {loading ? "..." : ordersTodayBreakdown.completed}
+                  </p>
+                </div>
+                <div className="surface-muted p-3.5 sm:p-4">
+                  <p className="field-label">Cancelled</p>
+                  <p className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-romano-ink sm:text-[2rem]">
+                    {loading ? "..." : ordersTodayBreakdown.cancelled}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="card-surface p-5 sm:p-7">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h4 className="text-lg font-semibold text-romano-ink">Delivery flow</h4>
+                  <p className="mt-1 text-sm text-romano-slate">
+                    See what still needs attention before the next handoff.
+                  </p>
+                </div>
+                <Link href="/deliveries" className="secondary-button w-full sm:w-auto">
+                  View Deliveries
+                </Link>
+              </div>
+
+              <div className="mt-5 grid grid-cols-3 gap-2.5 sm:gap-3">
+                <div className="surface-muted p-3.5 sm:p-4">
+                  <p className="field-label">Pending</p>
+                  <p className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-romano-ink sm:text-[2rem]">
+                    {loading ? "..." : deliveryStatusSummary.pending}
+                  </p>
+                </div>
+                <div className="surface-muted p-3.5 sm:p-4">
+                  <p className="field-label">Out now</p>
+                  <p className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-romano-ink sm:text-[2rem]">
+                    {loading ? "..." : deliveryStatusSummary.outForDelivery}
+                  </p>
+                </div>
+                <div className="surface-muted p-3.5 sm:p-4">
+                  <p className="field-label">Delivered</p>
+                  <p className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-romano-ink sm:text-[2rem]">
+                    {loading ? "..." : deliveryStatusSummary.delivered}
+                  </p>
+                </div>
+              </div>
+
+              {!loading && deliveryStatusSummary.cancelled > 0 ? (
+                <p className="mt-4 text-sm text-romano-slate">
+                  {deliveryStatusSummary.cancelled} cancelled delivery
+                  {deliveryStatusSummary.cancelled === 1 ? "" : "ies"} recorded.
+                </p>
+              ) : null}
+            </div>
+          </div>
+          </section>
+        </Reveal>
+
+        <Reveal delay={0.08}>
+          <section className="mt-10">
           <div className="mb-4">
             <h3 className="text-xl font-semibold text-romano-ink">Stock health</h3>
             <p className="mt-1 text-sm text-romano-slate">
@@ -129,9 +267,9 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <div className="grid gap-6 xl:grid-cols-2">
-            <div className="card-surface p-7">
-              <div className="flex items-center justify-between gap-4">
+          <div className="grid gap-5 xl:grid-cols-2">
+            <div className="card-surface p-5 sm:p-7">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <h4 className="text-lg font-semibold text-romano-ink">
                     Low stock products
@@ -140,7 +278,7 @@ export default function DashboardPage() {
                     Top 5 products that need your attention first.
                   </p>
                 </div>
-                <Link href="/products" className="secondary-button">
+                <Link href="/products" className="secondary-button w-full sm:w-auto">
                   View Products
                 </Link>
               </div>
@@ -149,7 +287,7 @@ export default function DashboardPage() {
                 {!loading && !summary?.lowStockProducts.length ? (
                   <EmptyState
                     title="No low stock items right now."
-                    description="Your current stock levels look healthy across the business."
+                    description="Stock looks healthy across the business for now."
                   />
                 ) : null}
 
@@ -178,7 +316,7 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="card-surface p-7">
+            <div className="card-surface p-5 sm:p-7">
               <div>
                 <h4 className="text-lg font-semibold text-romano-ink">
                   Best-selling products
@@ -192,7 +330,7 @@ export default function DashboardPage() {
                 {!loading && !summary?.bestSellingProducts.length ? (
                   <EmptyState
                     title="Best sellers will appear after completed sales."
-                    description="As paid or completed orders come in, FlowLo will surface your top movers here."
+                    description="Completed sales will surface your top movers here automatically."
                   />
                 ) : null}
 
@@ -226,76 +364,40 @@ export default function DashboardPage() {
           </section>
         </Reveal>
 
-        <Reveal delay={0.08}>
-          <section className="mt-12">
+        <Reveal delay={0.12}>
+          <section className="mt-10">
           <div className="mb-4">
-            <h3 className="text-xl font-semibold text-romano-ink">Sales activity</h3>
+            <h3 className="text-xl font-semibold text-romano-ink">Recent activity</h3>
             <p className="mt-1 text-sm text-romano-slate">
-              Today’s order flow and the latest customer activity.
+              The latest customer orders, payment states, and order progress.
             </p>
           </div>
 
-          <div className="grid gap-6 xl:grid-cols-[0.78fr_1.22fr]">
-            <div className="card-surface p-7">
-              <h4 className="text-lg font-semibold text-romano-ink">Orders today</h4>
-              <p className="mt-1 text-sm text-romano-slate">
-                Every order created today, with a quick status breakdown.
-              </p>
-
-              <p className="mt-5 text-4xl font-semibold tracking-[-0.05em] text-romano-ink">
-                {loading ? "..." : summary?.ordersToday ?? 0}
-              </p>
-
-              <div className="mt-5 grid gap-3">
-                <div className="surface-muted p-4">
-                  <p className="text-sm text-romano-slate">Pending</p>
-                  <p className="mt-2 text-2xl font-semibold text-romano-ink">
-                    {loading ? "..." : summary?.ordersTodayBreakdown.pending ?? 0}
-                  </p>
-                </div>
-                <div className="surface-muted p-4">
-                  <p className="text-sm text-romano-slate">Completed</p>
-                  <p className="mt-2 text-2xl font-semibold text-romano-ink">
-                    {loading ? "..." : summary?.ordersTodayBreakdown.completed ?? 0}
-                  </p>
-                </div>
-                <div className="surface-muted p-4">
-                  <p className="text-sm text-romano-slate">Cancelled</p>
-                  <p className="mt-2 text-2xl font-semibold text-romano-ink">
-                    {loading ? "..." : summary?.ordersTodayBreakdown.cancelled ?? 0}
-                  </p>
-                </div>
-              </div>
-            </div>
-
+          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <div className="mb-4 flex items-center justify-between gap-4">
-                <div>
-                  <h4 className="text-lg font-semibold text-romano-ink">Recent orders</h4>
-                  <p className="mt-1 text-sm text-romano-slate">
-                    The latest 5 orders with payment status, order status, and date.
-                  </p>
-                </div>
-                <Link href="/orders" className="secondary-button">
-                  View Orders
-                </Link>
-              </div>
-
-              <div className="grid gap-4">
-                {!loading && !summary?.recentOrders.length ? (
-                  <EmptyState
-                    title="No orders yet"
-                    description="Create your first order to start tracking customer activity here."
-                    actionHref="/orders/new"
-                    actionLabel="Create Order"
-                  />
-                ) : null}
-
-                {summary?.recentOrders.map((order) => (
-                  <OrderCard key={order.id} order={order} />
-                ))}
-              </div>
+              <h4 className="text-lg font-semibold text-romano-ink">Recent orders</h4>
+              <p className="mt-1 text-sm text-romano-slate">
+                The latest 5 orders with payment state, order status, and timing.
+              </p>
             </div>
+            <Link href="/orders" className="secondary-button w-full sm:w-auto">
+              View Orders
+            </Link>
+          </div>
+
+          <div className="grid gap-4">
+            {!loading && !summary?.recentOrders.length ? (
+              <EmptyState
+                title="No orders yet"
+                description="Create your first order to start tracking customer activity here."
+                actionHref="/orders/new"
+                actionLabel="Create Order"
+              />
+            ) : null}
+
+            {summary?.recentOrders.map((order) => (
+              <OrderCard key={order.id} order={order} />
+            ))}
           </div>
           </section>
         </Reveal>

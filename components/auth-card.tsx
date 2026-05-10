@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import { AmbientBackground } from "@/components/ambient-background";
 import { BrandWordmark } from "@/components/brand-wordmark";
+import { useOverflowDebug } from "@/hooks/use-overflow-debug";
 import { Reveal } from "@/components/reveal";
 
 type AuthCardProps = {
@@ -26,12 +27,14 @@ export function AuthCard({
   supportNote,
   trustNote = "Secure access for your business dashboard.",
 }: AuthCardProps) {
+  useOverflowDebug("auth-card");
+
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-screen w-full max-w-full overflow-hidden">
       <AmbientBackground variant="auth" />
 
-      <div className="page-wrap relative z-10 justify-center">
-        <div className="mx-auto grid w-full max-w-6xl gap-10 lg:grid-cols-[minmax(0,0.95fr)_minmax(420px,480px)] lg:items-center lg:gap-16">
+      <div className="page-wrap relative z-10 w-full max-w-full justify-center overflow-x-hidden">
+        <div className="mx-auto grid w-full max-w-6xl min-w-0 gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(420px,480px)] lg:items-center lg:gap-16">
           <Reveal delay={0.08} className="order-1 lg:order-2">
             <section className="auth-floating-card flex min-h-full flex-col p-6 sm:p-8 lg:p-9">
               <div className="glass-pill inline-flex w-fit items-center px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-romano-amberText">
@@ -58,10 +61,10 @@ export function AuthCard({
           </Reveal>
 
           <Reveal delay={0.02} className="order-2 lg:order-1">
-            <section className="flex flex-col justify-center px-1 sm:px-2 lg:pr-8">
+            <section className="min-w-0 flex flex-col justify-center px-1 sm:px-2 lg:pr-8">
               <BrandWordmark size="lg" showTagline={false} />
 
-              <div className="mt-8 max-w-xl">
+              <div className="mt-8 max-w-xl min-w-0">
                 <h1 className="text-[2.3rem] font-bold tracking-[-0.068em] text-romano-ink sm:text-[3.2rem] sm:leading-[1.02]">
                   {panelTitle}
                 </h1>

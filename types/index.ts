@@ -111,6 +111,12 @@ export type DashboardSummary = {
   lowStockCount: number;
   totalRevenue: number;
   todaysRevenue: number;
+  deliveryStatusSummary: {
+    pending: number;
+    outForDelivery: number;
+    delivered: number;
+    cancelled: number;
+  };
   ordersToday: number;
   ordersTodayBreakdown: {
     pending: number;

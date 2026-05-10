@@ -116,13 +116,13 @@ export function LandingPage() {
         initial={reduceMotion ? false : { opacity: 0, y: -18 }}
         animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-        className="relative z-20 mx-auto w-full max-w-7xl px-4 pt-5 sm:px-6 lg:px-8"
+        className="relative z-20 mx-auto w-full max-w-7xl px-4 pt-4 sm:px-6 sm:pt-5 lg:px-8"
       >
         <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(18,24,33,0.72),rgba(8,12,17,0.84))] shadow-[0_30px_90px_-48px_rgba(0,0,0,0.98),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl before:absolute before:inset-px before:rounded-[29px] before:bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01))] before:content-['']">
-          <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(62,242,207,0.44),rgba(255,212,90,0.18),transparent)]" />
-          <div className="relative z-10 flex items-center justify-between gap-4 px-4 py-4 sm:px-6">
+          <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(62,242,207,0.44),rgba(255,212,90,0.18),transparent)] sm:inset-x-10" />
+          <div className="relative z-10 flex items-center justify-between gap-3 px-3.5 py-3.5 sm:gap-4 sm:px-6 sm:py-4">
             <Link href="/" aria-label="FlowLo home">
-              <BrandWordmark size="md" compact />
+              <BrandWordmark size="md" compact className="origin-left scale-[0.9] sm:scale-100" />
             </Link>
 
             <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-romano-amberText md:inline-flex">
@@ -130,14 +130,17 @@ export function LandingPage() {
               Launching Soon
             </div>
 
-            <div className="flex items-center gap-2.5 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <Link
                 href="/login"
-                className="rounded-full px-3 py-2 text-sm font-medium text-romano-slate transition duration-300 hover:text-romano-ink hover:drop-shadow-[0_0_10px_rgba(62,242,207,0.35)]"
+                className="rounded-full px-2 py-2 text-[13px] font-medium text-romano-slate transition duration-300 hover:text-romano-ink hover:drop-shadow-[0_0_10px_rgba(62,242,207,0.35)] sm:px-3 sm:text-sm"
               >
                 Login
               </Link>
-              <Link href="/register" className="primary-button px-4 sm:px-5">
+              <Link
+                href="/register"
+                className="primary-button min-h-[2.75rem] whitespace-nowrap px-3.5 py-2.5 text-[13px] sm:min-h-[3rem] sm:px-5 sm:text-sm"
+              >
                 Request Access
               </Link>
             </div>
@@ -145,13 +148,13 @@ export function LandingPage() {
         </div>
       </motion.header>
 
-      <main className="relative z-10 mx-auto flex min-h-[calc(100vh-6.5rem)] w-full max-w-6xl flex-col px-4 pb-10 pt-8 sm:px-6 sm:pb-14 lg:px-8">
-        <section className="relative flex flex-1 items-center justify-center py-10 sm:py-16">
+      <main className="relative z-10 mx-auto flex min-h-[calc(100svh-6rem)] w-full max-w-6xl flex-col px-4 pb-8 pt-6 sm:min-h-[calc(100vh-6.5rem)] sm:px-6 sm:pb-14 sm:pt-8 lg:px-8">
+        <section className="relative flex flex-1 items-center justify-center py-8 sm:py-16">
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
             <motion.div
               animate={reduceMotion ? undefined : { opacity: [0.2, 0.34, 0.2], scale: [1, 1.04, 1] }}
               transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute left-1/2 top-1/2 h-[16rem] w-[16rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(62,242,207,0.18),transparent_68%)] blur-[70px] sm:h-[24rem] sm:w-[24rem] sm:blur-[96px]"
+              className="absolute left-1/2 top-[47%] h-[18rem] w-[18rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(62,242,207,0.2),transparent_68%)] blur-[80px] sm:top-1/2 sm:h-[24rem] sm:w-[24rem] sm:blur-[96px]"
             />
             <motion.div
               animate={
@@ -160,7 +163,7 @@ export function LandingPage() {
                   : { y: [0, -12, 0], x: [0, 10, 0], rotate: [-7, -5, -7] }
               }
               transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute left-[8%] top-[22%] hidden h-28 w-20 rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.07),rgba(255,255,255,0.02))] shadow-[0_20px_50px_-34px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-2xl md:block"
+              className="absolute left-[4%] top-[17%] h-20 w-14 rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.015))] shadow-[0_18px_42px_-28px_rgba(0,0,0,0.9),inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-2xl sm:left-[8%] sm:top-[22%] sm:h-24 sm:w-16 md:h-28 md:w-20 md:rounded-[28px]"
             />
             <motion.div
               animate={
@@ -169,17 +172,17 @@ export function LandingPage() {
                   : { y: [0, 14, 0], x: [0, -12, 0], rotate: [10, 8, 10] }
               }
               transition={{ duration: 16, repeat: Infinity, ease: "easeInOut", delay: 0.6 }}
-              className="absolute right-[9%] top-[20%] hidden h-24 w-24 rounded-[32px] border border-white/10 bg-[linear-gradient(180deg,rgba(62,242,207,0.08),rgba(255,255,255,0.02))] shadow-[0_24px_58px_-36px_rgba(0,0,0,0.92),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-2xl md:block"
+              className="absolute right-[4%] top-[16%] h-16 w-16 rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(62,242,207,0.07),rgba(255,255,255,0.015))] shadow-[0_20px_48px_-32px_rgba(0,0,0,0.92),inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-2xl sm:right-[9%] sm:top-[20%] sm:h-20 sm:w-20 md:h-24 md:w-24 md:rounded-[32px]"
             />
             <motion.div
               animate={reduceMotion ? undefined : { x: [0, 20, 0], opacity: [0.16, 0.28, 0.16] }}
               transition={{ duration: 18, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
-              className="absolute bottom-[18%] left-[14%] hidden h-px w-40 bg-[linear-gradient(90deg,transparent,rgba(62,242,207,0.5),transparent)] blur-[1px] md:block"
+              className="absolute bottom-[24%] left-[10%] h-px w-24 bg-[linear-gradient(90deg,transparent,rgba(62,242,207,0.4),transparent)] blur-[1px] sm:bottom-[18%] sm:left-[14%] sm:w-40"
             />
             <motion.div
               animate={reduceMotion ? undefined : { x: [0, -18, 0], opacity: [0.1, 0.22, 0.1] }}
               transition={{ duration: 20, repeat: Infinity, ease: "easeInOut", delay: 1.1 }}
-              className="absolute right-[12%] top-[30%] hidden h-px w-48 bg-[linear-gradient(90deg,transparent,rgba(255,212,90,0.32),transparent)] blur-[1px] md:block"
+              className="absolute right-[10%] top-[29%] h-px w-28 bg-[linear-gradient(90deg,transparent,rgba(255,212,90,0.26),transparent)] blur-[1px] sm:right-[12%] sm:w-48"
             />
           </div>
 
@@ -189,26 +192,26 @@ export function LandingPage() {
               Managed Access
             </div>
 
-            <h1 className="mx-auto mt-6 max-w-5xl text-5xl font-bold tracking-[-0.09em] text-romano-ink sm:text-6xl lg:text-[5.5rem] lg:leading-[0.95]">
+            <h1 className="mx-auto mt-6 max-w-5xl text-[3.15rem] font-bold leading-[0.95] tracking-[-0.085em] text-romano-ink sm:text-6xl lg:text-[5.5rem] lg:leading-[0.95]">
               Clean stock. Clean orders. Faster sales.
             </h1>
 
-            <p className="mx-auto mt-6 max-w-3xl text-lg leading-8 text-romano-mintText sm:text-xl">
+            <p className="mx-auto mt-6 max-w-3xl text-base leading-7 text-romano-mintText sm:text-xl sm:leading-8">
+              Manage stock, orders, and customer updates in one flow.
+            </p>
+
+            <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-romano-slate sm:text-base sm:leading-8">
               FlowLo helps South African businesses manage stock, orders, and customer communication in one seamless flow.
             </p>
 
-            <p className="mx-auto mt-5 max-w-2xl text-sm leading-8 text-romano-slate sm:text-base">
-              Built for modern South African businesses that want a calmer way to track sales, fulfil orders, and keep customers updated.
-            </p>
-
-            <div className="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row">
-              <Link href="/register" className="primary-button min-w-[12rem]">
+            <div className="mx-auto mt-10 flex w-full max-w-sm flex-col items-stretch justify-center gap-3 sm:max-w-none sm:flex-row">
+              <Link href="/register" className="primary-button min-w-[12rem] w-full sm:w-auto">
                 Request Access
               </Link>
               <button
                 type="button"
                 onClick={() => setPreviewOpen(true)}
-                className="secondary-button min-w-[12rem]"
+                className="secondary-button min-w-[12rem] w-full sm:w-auto"
               >
                 Watch Preview
               </button>
@@ -217,7 +220,7 @@ export function LandingPage() {
         </section>
 
         <Reveal className="relative z-10 pt-2" delay={0.08} y={18}>
-          <footer className="flex flex-col items-center justify-between gap-4 rounded-[28px] border border-white/8 bg-[linear-gradient(180deg,rgba(13,18,24,0.52),rgba(8,12,16,0.36))] px-5 py-5 text-center shadow-[0_20px_50px_-40px_rgba(0,0,0,0.92)] backdrop-blur-2xl sm:flex-row sm:text-left">
+          <footer className="flex flex-col items-center justify-between gap-3 rounded-[28px] border border-white/8 bg-[linear-gradient(180deg,rgba(13,18,24,0.52),rgba(8,12,16,0.36))] px-4 py-4 text-center shadow-[0_20px_50px_-40px_rgba(0,0,0,0.92)] backdrop-blur-2xl sm:flex-row sm:gap-4 sm:px-5 sm:py-5 sm:text-left">
             <div className="text-sm text-romano-slate">
               Built by{" "}
               <span className="font-medium tracking-[0.08em] text-romano-amberText">
@@ -225,7 +228,7 @@ export function LandingPage() {
               </span>
             </div>
 
-            <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-romano-slate sm:justify-end">
+            <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-romano-slate sm:justify-end sm:gap-4">
               <Link href="/privacy" className="transition hover:text-romano-ink">
                 Privacy
               </Link>
