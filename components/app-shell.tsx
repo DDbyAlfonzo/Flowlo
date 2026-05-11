@@ -59,7 +59,7 @@ export function AppShell({
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,rgba(62,242,207,0.12),transparent_45%),radial-gradient(circle_at_top_right,rgba(255,212,90,0.09),transparent_30%)]" />
         <div className="min-w-0 flex-1">
-          <BrandWordmark size="sm" showTagline={false} compact />
+          <BrandWordmark size="sm" showTagline={false} compact priority />
           <h1 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-romano-ink">
             {shellTitle ?? business?.businessName ?? "Your business"}
           </h1>

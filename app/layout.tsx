@@ -11,10 +11,10 @@ export const metadata: Metadata = {
   description: "Manage stock, orders, and customer updates in one flow.",
   icons: {
     icon: [
-      { url: "/flowlo-logo-mark.svg", type: "image/svg+xml" },
+      { url: "/flowlo-logo-mark.svg", type: "image/svg+xml", sizes: "any" },
     ],
     apple: [
-      { url: "/flowlo-logo-mark.svg", type: "image/svg+xml" },
+      { url: "/flowlo-logo-mark.svg", type: "image/svg+xml", sizes: "180x180" },
     ],
     shortcut: ["/flowlo-logo-mark.svg"],
   },

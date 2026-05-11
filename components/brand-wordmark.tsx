@@ -1,22 +1,31 @@
+import Image from "next/image";
+
 type BrandWordmarkProps = {
   size?: "sm" | "md" | "lg";
   showTagline?: boolean;
   compact?: boolean;
   className?: string;
   tagline?: string;
+  priority?: boolean;
 };
 
 const sizeClasses = {
   sm: {
-    logo: "h-8 sm:h-9",
+    width: 135,
+    height: 36,
+    logo: "w-[126px] sm:w-[135px]",
     tag: "text-[10px] tracking-[0.3em]",
   },
   md: {
-    logo: "h-10 sm:h-11",
+    width: 165,
+    height: 44,
+    logo: "w-[146px] sm:w-[165px]",
     tag: "text-[10px] tracking-[0.32em]",
   },
   lg: {
-    logo: "h-12 sm:h-14",
+    width: 210,
+    height: 56,
+    logo: "w-[180px] sm:w-[210px]",
     tag: "text-[11px] tracking-[0.34em]",
   },
 } as const;
@@ -27,6 +36,7 @@ export function BrandWordmark({
   compact = false,
   className = "",
   tagline = "Manage stock, orders, and customer updates in one flow.",
+  priority = false,
 }: BrandWordmarkProps) {
   const classes = sizeClasses[size];
 
@@ -34,10 +44,16 @@ export function BrandWordmark({
     <div
       className={`group/brand inline-flex min-w-0 flex-col items-start ${compact ? "gap-1.5" : "gap-2"} ${className}`.trim()}
     >
-      <img
+      <Image
         src="/flowlo-logo.svg"
         alt="FlowLo"
-        className={`${classes.logo} w-auto max-w-full select-none drop-shadow-[0_0_20px_rgba(62,242,207,0.18)]`}
+        width={classes.width}
+        height={classes.height}
+        priority={priority}
+        unoptimized
+        sizes={`${classes.width}px`}
+        draggable={false}
+        className={`${classes.logo} h-auto max-w-full select-none`}
       />
 
       {showTagline ? (

@@ -76,7 +76,7 @@ export function AuthCard({
                 </div>
 
                 <div className="max-w-xl">
-                  <BrandWordmark size="lg" showTagline={false} className="items-start" />
+                  <BrandWordmark size="lg" showTagline={false} className="items-start" priority />
                   <p className="mt-4 max-w-md text-base leading-8 text-romano-mintText sm:text-lg">
                     {panelTitle}
                   </p>
@@ -147,7 +147,7 @@ export function AuthCard({
                 </div>
 
                 <div className="flex flex-col items-center text-center">
-                  <BrandWordmark size="lg" showTagline={false} className="mx-auto items-center" />
+                  <BrandWordmark size="lg" showTagline={false} className="mx-auto items-center" priority />
                 </div>
 
                 <div className="text-center">

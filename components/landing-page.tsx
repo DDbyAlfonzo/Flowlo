@@ -122,7 +122,7 @@ export function LandingPage() {
           <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(62,242,207,0.44),rgba(255,212,90,0.18),transparent)] sm:inset-x-10" />
           <div className="relative z-10 flex items-center justify-between gap-3 px-3.5 py-3.5 sm:gap-4 sm:px-6 sm:py-4">
             <Link href="/" aria-label="FlowLo home">
-              <BrandWordmark size="md" compact className="origin-left scale-[0.9] sm:scale-100" />
+              <BrandWordmark size="sm" compact priority />
             </Link>
 
             <div className="hidden items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.28em] text-romano-amberText md:inline-flex">

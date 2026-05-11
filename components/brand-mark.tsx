@@ -1,7 +1,10 @@
+import Image from "next/image";
+
 type BrandMarkProps = {
   size?: "sm" | "md" | "lg";
   plate?: "glass" | "soft" | "none";
   className?: string;
+  priority?: boolean;
 };
 
 const sizeClasses = {
@@ -11,9 +14,21 @@ const sizeClasses = {
 } as const;
 
 const imageClasses = {
-  sm: "h-6 w-6",
-  md: "h-7 w-7",
-  lg: "h-8 w-8",
+  sm: {
+    width: 24,
+    height: 24,
+    className: "h-6 w-6",
+  },
+  md: {
+    width: 28,
+    height: 28,
+    className: "h-7 w-7",
+  },
+  lg: {
+    width: 32,
+    height: 32,
+    className: "h-8 w-8",
+  },
 } as const;
 
 const plateClasses = {
@@ -28,15 +43,24 @@ export function BrandMark({
   size = "md",
   plate = "glass",
   className = "",
+  priority = false,
 }: BrandMarkProps) {
+  const imageSize = imageClasses[size];
+
   return (
     <div
       className={`relative grid place-items-center ${sizeClasses[size]} ${plateClasses[plate]} ${className}`.trim()}
     >
-      <img
+      <Image
         src="/flowlo-logo-mark.svg"
         alt="FlowLo"
-        className={`${imageClasses[size]} select-none drop-shadow-[0_0_22px_rgba(62,242,207,0.22)]`}
+        width={imageSize.width}
+        height={imageSize.height}
+        priority={priority}
+        unoptimized
+        sizes={`${imageSize.width}px`}
+        draggable={false}
+        className={`${imageSize.className} select-none`}
       />
     </div>
   );
