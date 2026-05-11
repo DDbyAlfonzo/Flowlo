@@ -116,7 +116,6 @@ export default function RegisterPage() {
       description="Tell us about your business. We'll review your request and let you know once access is approved."
       panelTitle="From inbox order to delivered update."
       panelDescription="FlowLo keeps stock, orders, customer updates, and dropoffs moving in one calmer rhythm."
-      supportNote="Built for WhatsApp-first sellers and modern small businesses."
       footer={
         <>
           Already have access?{" "}

@@ -196,12 +196,11 @@ export default function LoginPage() {
 
   return (
     <AuthCard
-      eyebrow="Secure sign in"
+      eyebrow="Sign in"
       title="Welcome back"
       description="Access your FlowLo dashboard to manage stock, orders, and customer updates."
       panelTitle="From inbox order to delivered update."
       panelDescription="FlowLo keeps stock, orders, customer updates, and dropoffs moving in one calmer rhythm."
-      supportNote="Only approved businesses can sign in to FlowLo."
       trustNote="Secure access for approved FlowLo businesses."
       footer={
         <>

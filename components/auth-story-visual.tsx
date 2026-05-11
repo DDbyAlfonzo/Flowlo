@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
-import { BrandMark } from "@/components/brand-mark";
 
 type AuthStoryVisualProps = {
   title: string;
@@ -20,25 +19,13 @@ const STORY_CHIPS = [
     label: "WhatsApp sent",
     detail: "Customer updated",
     tone: "gold",
-    className: "right-4 top-[14%] flex lg:right-6",
-  },
-  {
-    label: "3 low stock alerts",
-    detail: "Restock soon",
-    tone: "teal",
-    className: "left-4 bottom-[28%] flex lg:left-8",
-  },
-  {
-    label: "Revenue +12%",
-    detail: "This week",
-    tone: "gold",
-    className: "right-5 bottom-[24%] hidden md:flex lg:right-8",
+    className: "right-4 top-[16%] flex lg:right-6",
   },
   {
     label: "Delivery out for dropoff",
     detail: "Courier en route",
     tone: "teal",
-    className: "right-4 bottom-[8%] hidden sm:flex lg:right-6",
+    className: "left-4 bottom-[12%] hidden sm:flex lg:left-8",
   },
 ] as const;
 
@@ -75,8 +62,8 @@ export function AuthStoryVisual({
         />
       </motion.div>
 
-      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(5,9,13,0.08),rgba(6,10,14,0.18)_28%,rgba(5,9,13,0.38)_58%,rgba(5,9,13,0.82)_100%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_76%_18%,rgba(62,242,207,0.14),transparent_18%),radial-gradient(circle_at_18%_74%,rgba(255,212,90,0.09),transparent_18%)] mix-blend-screen" />
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(5,9,13,0.14),rgba(6,10,14,0.2)_24%,rgba(5,9,13,0.36)_56%,rgba(5,9,13,0.84)_100%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_76%_18%,rgba(62,242,207,0.1),transparent_18%),radial-gradient(circle_at_18%_74%,rgba(255,212,90,0.08),transparent_18%)] mix-blend-screen" />
 
       {STORY_CHIPS.map((chip, index) => (
         <motion.div
@@ -113,24 +100,16 @@ export function AuthStoryVisual({
 
       <div className="absolute inset-x-0 bottom-0 p-4 sm:p-6 lg:p-7">
         <motion.div
-          className="max-w-md"
+          className="max-w-[27rem]"
           initial={reduceMotion ? false : { opacity: 0, y: 18 }}
           animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.18, ease: [0.22, 1, 0.36, 1] }}
         >
-          <div className="inline-flex items-center gap-3 rounded-full border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] px-3 py-2 shadow-[0_18px_40px_-30px_rgba(0,0,0,0.78)] backdrop-blur-xl">
-            <BrandMark
-              size="sm"
-              plate="none"
-              priority
-              className="h-9 w-9 rounded-[14px] border border-white/10 bg-white/[0.04] p-1.5"
-            />
-            <span className="text-[10px] font-semibold uppercase tracking-[0.24em] text-romano-amberText">
-              Commerce in motion
-            </span>
-          </div>
+          <span className="inline-flex rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-romano-amberText backdrop-blur-xl">
+            Modern commerce in motion
+          </span>
 
-          <h2 className="mt-5 text-[1.9rem] font-semibold leading-[1.02] tracking-[-0.065em] text-romano-ink sm:text-[2.35rem]">
+          <h2 className="mt-5 text-[1.85rem] font-semibold leading-[1.02] tracking-[-0.065em] text-romano-ink sm:text-[2.25rem]">
             {title}
           </h2>
           <p className="mt-4 max-w-sm text-sm leading-7 text-romano-slate sm:text-[15px] sm:leading-8">
