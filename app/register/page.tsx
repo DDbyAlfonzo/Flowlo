@@ -123,7 +123,7 @@ export default function RegisterPage() {
           </Link>
         </>
       }
-      trustNote="Managed access helps us onboard the right businesses with a cleaner setup experience."
+      trustNote="We review each request before opening your FlowLo workspace."
     >
       {success ? (
         <div className="grid gap-5">

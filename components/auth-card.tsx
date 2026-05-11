@@ -30,51 +30,56 @@ export function AuthCard({
   useOverflowDebug("auth-card");
 
   return (
-    <div className="mobile-safe relative min-h-screen overflow-hidden">
-      <AmbientBackground variant="auth" />
+    <div className="mobile-safe relative min-h-screen overflow-hidden bg-[#06090d]">
+      <AmbientBackground variant="cinematic" />
 
-      <div className="page-wrap mobile-safe relative z-10 justify-center">
-        <div className="mx-auto grid w-full max-w-6xl min-w-0 gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(420px,480px)] lg:items-center lg:gap-16">
-          <Reveal delay={0.08} className="order-1 lg:order-2">
-            <section className="auth-floating-card flex min-h-full flex-col p-6 sm:p-8 lg:p-9">
-              <div className="glass-pill inline-flex w-fit items-center px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-romano-amberText">
+      <div className="page-wrap mobile-safe relative z-10 justify-center px-4 pb-[max(7rem,env(safe-area-inset-bottom))] pt-6 sm:px-6 sm:pt-8">
+        <Reveal delay={0.05} className="mx-auto w-full max-w-[34rem]" y={28}>
+          <section className="auth-floating-card relative overflow-hidden p-5 sm:p-7">
+            <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(62,242,207,0.42),rgba(255,212,90,0.16),transparent)]" />
+
+            <div className="relative z-10 flex flex-col gap-5 sm:gap-6">
+              <div className="glass-pill mx-auto inline-flex w-fit items-center gap-2 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-romano-amberText">
+                <span className="h-2 w-2 rounded-full bg-romano-primary shadow-[0_0_18px_-6px_rgba(62,242,207,0.95)]" />
                 Managed Access
               </div>
 
-              <p className="eyebrow-label mt-6">{eyebrow}</p>
-              <h2 className="mt-5 text-[2rem] font-bold tracking-[-0.065em] text-romano-ink sm:text-[2.45rem]">
-                {title}
-              </h2>
-              <p className="mt-4 max-w-md text-sm leading-8 text-romano-slate sm:text-base">
-                {description}
-              </p>
-              {supportNote ? (
-                <p className="mt-4 max-w-md text-sm leading-7 text-romano-mintText/85">
-                  {supportNote}
-                </p>
-              ) : null}
-
-              <div className="mt-8 flex-1">{children}</div>
-              <div className="mt-7 text-sm leading-7 text-romano-slate">{footer}</div>
-              <p className="mt-6 text-sm leading-7 text-romano-slate/92">{trustNote}</p>
-            </section>
-          </Reveal>
-
-          <Reveal delay={0.02} className="order-2 lg:order-1">
-            <section className="min-w-0 flex flex-col justify-center px-1 sm:px-2 lg:pr-8">
-              <BrandWordmark size="lg" showTagline={false} />
-
-              <div className="mt-8 max-w-xl min-w-0">
-                <h1 className="text-[2.3rem] font-bold tracking-[-0.068em] text-romano-ink sm:text-[3.2rem] sm:leading-[1.02]">
+              <div className="flex flex-col items-center text-center">
+                <BrandWordmark size="lg" showTagline={false} className="mx-auto items-center" />
+                <p className="mt-4 max-w-sm text-sm leading-7 text-romano-mintText sm:text-base">
                   {panelTitle}
-                </h1>
-                <p className="mt-5 max-w-lg text-base leading-8 text-romano-slate sm:text-lg">
+                </p>
+                <p className="mt-2 max-w-sm text-sm leading-7 text-romano-slate">
                   {panelDescription}
                 </p>
               </div>
-            </section>
-          </Reveal>
-        </div>
+
+              <div className="text-center">
+                <p className="eyebrow-label text-romano-amberText/90">{eyebrow}</p>
+                <h1 className="mt-4 text-[2rem] font-bold tracking-[-0.065em] text-romano-ink sm:text-[2.45rem]">
+                  {title}
+                </h1>
+                <p className="mx-auto mt-4 max-w-md text-sm leading-7 text-romano-slate sm:text-base sm:leading-8">
+                  {description}
+                </p>
+                {supportNote ? (
+                  <p className="mx-auto mt-4 max-w-md text-sm leading-7 text-romano-mintText/85">
+                    {supportNote}
+                  </p>
+                ) : null}
+              </div>
+
+              <div className="mt-1">{children}</div>
+
+              <div className="border-t border-white/8 pt-5">
+                <div className="text-center text-sm leading-7 text-romano-slate">{footer}</div>
+                <p className="mt-4 text-center text-sm leading-7 text-romano-slate/92">
+                  {trustNote}
+                </p>
+              </div>
+            </div>
+          </section>
+        </Reveal>
       </div>
     </div>
   );

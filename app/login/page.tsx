@@ -200,6 +200,7 @@ export default function LoginPage() {
       title="Welcome back"
       description="Access your FlowLo dashboard to manage stock, orders, and customer updates."
       supportNote="FlowLo is a managed-access platform. Only approved businesses can sign in."
+      trustNote="Secure access for approved FlowLo businesses."
       footer={
         <>
           Need access?{" "}
