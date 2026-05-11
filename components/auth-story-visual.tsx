@@ -27,7 +27,7 @@ export function AuthStoryVisual({
 
   return (
     <section
-      className={`${compact ? "auth-story-shell auth-story-shell-compact" : "auth-story-shell"} ${className}`.trim()}
+      className={`relative w-full min-w-0 max-w-full overflow-hidden ${compact ? "min-h-[11rem]" : "min-h-[27rem] lg:min-h-[31rem]"} ${className}`.trim()}
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(62,242,207,0.08),transparent_24%),radial-gradient(circle_at_84%_16%,rgba(255,212,90,0.06),transparent_22%),radial-gradient(circle_at_50%_88%,rgba(102,232,255,0.05),transparent_28%)]" />
       <motion.div
@@ -43,8 +43,8 @@ export function AuthStoryVisual({
         transition={{ duration: compact ? 16 : 18, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      <div className={`relative z-10 flex h-full flex-col ${compact ? "p-5 sm:p-6" : "p-6 sm:p-7 lg:p-9"}`}>
-        <div className={compact ? "max-w-[15rem]" : "max-w-[24rem]"}>
+      <div className={`relative z-10 flex h-full flex-col ${compact ? "px-2 py-2 sm:px-3 sm:py-3" : "px-3 py-4 sm:px-4 sm:py-6 lg:px-5 lg:py-8"}`}>
+        <div className={compact ? "max-w-[15rem]" : "max-w-[23rem]"}>
           <p className="eyebrow-label text-romano-mintText">FlowLo</p>
           <h2
             className={`mt-4 font-semibold tracking-[-0.065em] text-romano-ink ${
@@ -71,11 +71,9 @@ export function AuthStoryVisual({
           </ul>
         </div>
 
-        <div className={`mt-auto ${compact ? "pt-6" : "pt-8 lg:pt-10"}`}>
+        <div className={`mt-auto ${compact ? "pt-5" : "pt-8 lg:pt-10"}`}>
           <motion.div
-            className={`relative overflow-hidden rounded-[1.8rem] border border-white/6 bg-[linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01))] ${
-              compact ? "h-[11.5rem]" : "h-[15rem] sm:h-[17rem]"
-            }`}
+            className={`relative ${compact ? "h-[7.5rem]" : "h-[11.5rem] sm:h-[13rem]"}`}
             animate={
               reduceMotion
                 ? undefined
@@ -86,14 +84,16 @@ export function AuthStoryVisual({
             }
             transition={{ duration: compact ? 18 : 20, repeat: Infinity, ease: "easeInOut" }}
           >
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(6,10,14,0.06),rgba(6,10,14,0.32)_74%,rgba(6,10,14,0.64)_100%)]" />
+            <div className="pointer-events-none absolute inset-x-[10%] bottom-[12%] top-[18%] rounded-[50%] bg-[radial-gradient(circle,rgba(62,242,207,0.08),transparent_62%)] blur-[30px]" />
+            <div className="pointer-events-none absolute inset-y-[16%] left-[8%] w-px bg-[linear-gradient(180deg,transparent,rgba(62,242,207,0.3),transparent)]" />
+            <div className="pointer-events-none absolute inset-y-[10%] right-[10%] w-px bg-[linear-gradient(180deg,transparent,rgba(255,212,90,0.22),transparent)]" />
             <Image
               src="/flowlo-auth-story.svg"
               alt="A subtle FlowLo illustration showing stock, order flow, customer updates, and deliveries."
               fill
               priority
               sizes={compact ? "(max-width: 1023px) 100vw, 30rem" : "(min-width: 1024px) 42vw, 30rem"}
-              className="object-contain object-center p-4 opacity-[0.88] sm:p-5"
+              className="object-contain object-center opacity-[0.8]"
             />
           </motion.div>
 
