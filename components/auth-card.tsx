@@ -37,12 +37,12 @@ export function AuthCard({
             <AuthStoryVisual />
           </Reveal>
 
-          <Reveal delay={0.05} className="order-1 min-w-0 lg:order-2 lg:mx-auto lg:w-full lg:max-w-[32rem]" y={28}>
-            <section className="auth-floating-card relative overflow-hidden p-5 sm:p-7 lg:p-8">
+          <Reveal delay={0.05} className="order-1 w-full min-w-0 lg:order-2 lg:mx-auto lg:max-w-[32rem]" y={28}>
+            <section className="auth-floating-card relative w-full overflow-hidden p-5 sm:p-7 lg:p-8">
               <div className="pointer-events-none absolute inset-x-10 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(62,242,207,0.28),rgba(255,212,90,0.12),transparent)]" />
               <div className="pointer-events-none absolute right-[-16%] top-[12%] h-36 w-36 rounded-full bg-[radial-gradient(circle,rgba(62,242,207,0.1),transparent_72%)] blur-[86px]" />
 
-              <div className="relative z-10 mx-auto flex h-full w-full max-w-[25rem] flex-col gap-6 sm:gap-7">
+              <div className="relative z-10 mx-auto flex h-full w-full max-w-[24.75rem] flex-col gap-6 sm:gap-7">
                 <div className="flex flex-col gap-4">
                   <BrandWordmark size="sm" showTagline={false} compact priority />
                   <span className="auth-inline-pill self-start">Managed access</span>

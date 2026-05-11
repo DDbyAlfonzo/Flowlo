@@ -1,22 +1,15 @@
-<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
   <defs>
     <linearGradient id="flowlo-icon-gradient" x1="52" y1="44" x2="214" y2="210" gradientUnits="userSpaceOnUse">
       <stop offset="0" stop-color="#3EF2CF" />
       <stop offset="0.58" stop-color="#66E8FF" />
       <stop offset="1" stop-color="#FFD45A" />
     </linearGradient>
-    <filter id="flowlo-icon-glow" x="8" y="4" width="240" height="248" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-      <feFlood flood-opacity="0" result="BackgroundImageFix" />
-      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
-      <feGaussianBlur stdDeviation="10" result="effect1_foregroundBlur_0_1" />
-    </filter>
   </defs>
 
   <rect width="256" height="256" rx="72" fill="#071018" />
   <rect x="1.5" y="1.5" width="253" height="253" rx="70.5" stroke="#FFFFFF" stroke-opacity="0.1" />
-  <g filter="url(#flowlo-icon-glow)">
-    <path d="M64 48C64 43.5817 67.5817 40 72 40H188L165 63H94V84H165L144 105H94V184H64V48Z" fill="url(#flowlo-icon-gradient)" />
-    <path d="M112 126L134 104H188L154 138C147.716 144.284 137.528 144.284 131.243 138L112 119H126V126Z" fill="#FFD45A" fill-opacity="0.92" />
-    <path d="M64 48C64 43.5817 67.5817 40 72 40H188L165 63H94V84H165L144 105H94V184" stroke="white" stroke-opacity="0.12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-  </g>
+  <path d="M64 48C64 43.5817 67.5817 40 72 40H188L165 63H94V84H165L144 105H94V184H64V48Z" fill="url(#flowlo-icon-gradient)" />
+  <path d="M112 126L134 104H188L154 138C147.716 144.284 137.528 144.284 131.243 138L112 119H126V126Z" fill="#FFD45A" fill-opacity="0.92" />
+  <path d="M64 48C64 43.5817 67.5817 40 72 40H188L165 63H94V84H165L144 105H94V184" stroke="white" stroke-opacity="0.12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
 </svg>

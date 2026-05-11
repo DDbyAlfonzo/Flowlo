@@ -17,8 +17,8 @@ const DESKTOP_CHIPS = [
     className: "left-5 top-5 hidden lg:flex",
   },
   {
-    label: "WhatsApp sent",
-    detail: "Customer updated",
+    label: "Tracking live",
+    detail: "Delivery in motion",
     tone: "gold",
     className: "right-5 top-[17%] hidden lg:flex",
   },
@@ -26,8 +26,8 @@ const DESKTOP_CHIPS = [
 
 const MOBILE_CHIPS = [
   {
-    label: "WhatsApp sent",
-    detail: "Customer updated",
+    label: "Tracking live",
+    detail: "Delivery in motion",
     tone: "gold",
     className: "right-4 top-4 flex",
   },
@@ -61,11 +61,11 @@ export function AuthStoryVisual({
       >
         <Image
           src="/flowlo-auth-story.svg"
-          alt="A cinematic FlowLo scene showing mobile-first commerce, customer updates, and delivery flow."
+          alt="A cinematic FlowLo scene showing stock, orders, WhatsApp updates, and deliveries moving through one business flow."
           fill
           priority
           sizes={compact ? "(max-width: 1023px) 100vw, 38vw" : "(min-width: 1024px) 38vw, 100vw"}
-          className={`object-cover opacity-[0.88] ${compact ? "object-center" : "object-center"}`}
+          className={`object-cover opacity-[0.82] ${compact ? "object-center" : "object-center"}`}
         />
       </motion.div>
 
@@ -118,7 +118,7 @@ export function AuthStoryVisual({
         >
           <BrandWordmark size="sm" showTagline={false} compact priority />
           <p className={`mt-4 text-sm text-romano-slate ${compact ? "leading-6" : "leading-7 sm:text-[15px] sm:leading-8"}`}>
-            Built for stock, orders, and customer updates that move with less friction.
+            Built for stock, orders, and deliveries that stay in flow.
           </p>
         </motion.div>
       </div>
