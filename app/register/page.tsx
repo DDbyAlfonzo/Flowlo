@@ -112,12 +112,12 @@ export default function RegisterPage() {
   return (
     <AuthCard
       eyebrow="Request access"
-      title="Request access to FlowLo"
+      title="Request access"
       description="Tell us about your business. We'll review your request and let you know once access is approved."
       supportNote="Built for WhatsApp-first sellers, resellers, and small businesses."
       footer={
         <>
-          Already requested access?{" "}
+          Already have access?{" "}
           <Link href="/login" className="font-semibold text-romano-mintText">
             Login
           </Link>
