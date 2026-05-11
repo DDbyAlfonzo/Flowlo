@@ -17,20 +17,20 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <Reveal>
-      <div className="card-surface relative w-full max-w-full overflow-hidden p-6 text-center sm:p-10">
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,rgba(62,242,207,0.1),transparent_44%),radial-gradient(circle_at_top_right,rgba(255,212,90,0.06),transparent_26%)]" />
+      <div className="card-surface relative w-full max-w-full overflow-hidden p-5 text-center sm:p-8">
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-16 bg-[radial-gradient(circle_at_top_left,rgba(62,242,207,0.08),transparent_44%),radial-gradient(circle_at_top_right,rgba(255,212,90,0.05),transparent_26%)]" />
         <div className="mx-auto">
-          <BrandMark size="md" />
+          <BrandMark size="sm" />
         </div>
-        <h3 className="mt-5 text-xl font-semibold tracking-[-0.04em] text-romano-ink sm:mt-6 sm:text-2xl">
+        <h3 className="mt-4 text-xl font-semibold tracking-[-0.04em] text-romano-ink sm:mt-5 sm:text-[1.7rem]">
           {title}
         </h3>
-        <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-romano-slate [overflow-wrap:anywhere] sm:max-w-md sm:leading-7">
+        <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-romano-slate [overflow-wrap:anywhere] sm:max-w-md">
           {description}
         </p>
 
         {actionHref && actionLabel ? (
-          <Link href={actionHref} className="primary-button mt-6 w-full sm:mt-7 sm:w-auto">
+          <Link href={actionHref} className="primary-button mt-5 w-full sm:mt-6 sm:w-auto">
             {actionLabel}
           </Link>
         ) : null}

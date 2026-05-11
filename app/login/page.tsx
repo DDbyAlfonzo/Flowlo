@@ -198,7 +198,7 @@ export default function LoginPage() {
     <AuthCard
       eyebrow="Sign in"
       title="Welcome back"
-      description="Access your FlowLo dashboard to manage stock, orders, and customer updates."
+      description="Manage stock, orders, and customer updates from one clean dashboard."
       trustNote="Managed access platform."
       footer={
         <>

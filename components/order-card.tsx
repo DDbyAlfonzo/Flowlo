@@ -54,8 +54,54 @@ function paymentLabel(status: Order["paymentStatus"]) {
   return "Unpaid";
 }
 
-export function OrderCard({ order }: { order: Order }) {
+export function OrderCard({
+  order,
+  compact = false,
+}: {
+  order: Order;
+  compact?: boolean;
+}) {
   const reduceMotion = useReducedMotion();
+
+  if (compact) {
+    return (
+      <motion.div
+        whileHover={reduceMotion ? undefined : { y: -2 }}
+        transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <Link
+          href={`/orders/${order.id}`}
+          className="card-surface block w-full max-w-full p-4 sm:p-5"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-romano-amberText [overflow-wrap:anywhere]">
+                {order.orderNumber ?? "Customer order"}
+              </p>
+              <h3 className="mt-2 text-base font-semibold text-romano-ink [overflow-wrap:anywhere]">
+                {order.customerName}
+              </h3>
+              <p className="mt-1 text-sm leading-6 text-romano-slate [overflow-wrap:anywhere]">
+                {formatCurrency(order.orderTotal)} · {formatDateTime(order.createdAt)}
+              </p>
+            </div>
+            <StatusBadge tone={orderTone(order.orderStatus)} label={orderLabel(order.orderStatus)} />
+          </div>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            <StatusBadge
+              tone={paymentTone(order.paymentStatus)}
+              label={paymentLabel(order.paymentStatus)}
+            />
+            <StatusBadge
+              tone="neutral"
+              label={`${order.items.length} item${order.items.length === 1 ? "" : "s"}`}
+            />
+          </div>
+        </Link>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div

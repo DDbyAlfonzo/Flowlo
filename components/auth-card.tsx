@@ -14,6 +14,7 @@ type AuthCardProps = {
   panelTitle?: string;
   panelDescription?: string;
   supportNote?: string;
+  panelPoints?: string[];
   trustNote?: string;
 };
 
@@ -23,6 +24,10 @@ export function AuthCard({
   footer,
   children,
   eyebrow = "Welcome",
+  panelTitle = "Manage your business in one clean flow.",
+  panelDescription = "Track stock, manage orders, send customer updates, and monitor deliveries from one premium dashboard.",
+  supportNote = "Designed for growing South African businesses.",
+  panelPoints = ["Stock management", "Order tracking", "Delivery updates"],
   trustNote = "Secure access for your business dashboard.",
 }: AuthCardProps) {
   useOverflowDebug("auth-card");
@@ -32,9 +37,14 @@ export function AuthCard({
       <AmbientBackground variant="cinematic" />
 
       <div className="page-wrap mobile-safe relative z-10 justify-center px-4 pb-[max(7.5rem,env(safe-area-inset-bottom))] pt-5 sm:px-5 sm:pt-7">
-        <div className="mx-auto grid w-full max-w-[72rem] min-w-0 items-center gap-5 lg:grid-cols-[minmax(0,0.82fr)_minmax(22rem,1fr)] lg:gap-10">
+        <div className="mx-auto grid w-full max-w-[70rem] min-w-0 items-center gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(23rem,28rem)] lg:gap-8">
           <Reveal delay={0.08} className="order-2 hidden min-w-0 lg:block" y={24}>
-            <AuthStoryVisual />
+            <AuthStoryVisual
+              title={panelTitle}
+              description={panelDescription}
+              supportNote={supportNote}
+              points={panelPoints}
+            />
           </Reveal>
 
           <Reveal delay={0.05} className="order-1 w-full min-w-0 lg:order-2 lg:mx-auto lg:max-w-[32rem]" y={28}>
@@ -71,7 +81,14 @@ export function AuthCard({
           </Reveal>
 
           <Reveal delay={0.06} className="order-2 min-w-0 lg:hidden" y={20}>
-            <AuthStoryVisual compact className="mx-auto w-full max-w-[32rem]" />
+            <AuthStoryVisual
+              compact
+              className="mx-auto w-full max-w-[32rem]"
+              title={panelTitle}
+              description={panelDescription}
+              supportNote={supportNote}
+              points={panelPoints}
+            />
           </Reveal>
         </div>
       </div>

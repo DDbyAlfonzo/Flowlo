@@ -149,6 +149,7 @@ export function calculateDashboardAnalytics(input: {
     ).length,
     totalRevenue,
     todaysRevenue,
+    pendingOrdersCount: orders.filter((order) => order.orderStatus === "pending").length,
     deliveryStatusSummary: getDeliveryStatusSummary(deliveries),
     ordersToday: todaysOrders.length,
     ordersTodayBreakdown: {

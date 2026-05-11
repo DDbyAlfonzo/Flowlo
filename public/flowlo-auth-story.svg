@@ -1,144 +1,63 @@
-<svg width="960" height="1200" viewBox="0 0 960 1200" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
+<svg width="960" height="720" viewBox="0 0 960 720" fill="none" xmlns="http://www.w3.org/2000/svg" shape-rendering="geometricPrecision">
   <defs>
-    <linearGradient id="story-bg" x1="112" y1="92" x2="822" y2="1114" gradientUnits="userSpaceOnUse">
-      <stop offset="0" stop-color="#0D141C" />
-      <stop offset="0.48" stop-color="#091118" />
-      <stop offset="1" stop-color="#06090D" />
-    </linearGradient>
-    <radialGradient id="story-mint" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(690 250) rotate(133.186) scale(354.908 318.48)">
-      <stop stop-color="#3EF2CF" stop-opacity="0.28" />
-      <stop offset="0.5" stop-color="#3EF2CF" stop-opacity="0.09" />
+    <radialGradient id="flowlo-auth-mint" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(312 214) rotate(38.659) scale(220.761 180.83)">
+      <stop stop-color="#3EF2CF" stop-opacity="0.26" />
+      <stop offset="0.56" stop-color="#3EF2CF" stop-opacity="0.08" />
       <stop offset="1" stop-color="#3EF2CF" stop-opacity="0" />
     </radialGradient>
-    <radialGradient id="story-gold" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(798 182) rotate(151.276) scale(274.748 214.001)">
-      <stop stop-color="#FFD45A" stop-opacity="0.22" />
-      <stop offset="0.58" stop-color="#FFD45A" stop-opacity="0.06" />
+    <radialGradient id="flowlo-auth-gold" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(760 154) rotate(137.941) scale(168.552 130.267)">
+      <stop stop-color="#FFD45A" stop-opacity="0.2" />
+      <stop offset="0.54" stop-color="#FFD45A" stop-opacity="0.06" />
       <stop offset="1" stop-color="#FFD45A" stop-opacity="0" />
     </radialGradient>
-    <radialGradient id="story-cyan" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(312 964) rotate(92.06) scale(362.805 394.067)">
-      <stop stop-color="#66E8FF" stop-opacity="0.14" />
-      <stop offset="0.54" stop-color="#66E8FF" stop-opacity="0.05" />
-      <stop offset="1" stop-color="#66E8FF" stop-opacity="0" />
-    </radialGradient>
-    <linearGradient id="glass-panel" x1="118" y1="156" x2="430" y2="952" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#FFFFFF" stop-opacity="0.07" />
-      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.03" />
-    </linearGradient>
-    <linearGradient id="counter-front" x1="120" y1="650" x2="470" y2="954" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#121B23" />
-      <stop offset="1" stop-color="#0A0F14" />
-    </linearGradient>
-    <linearGradient id="phone-shell" x1="564" y1="212" x2="776" y2="624" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#131E27" />
-      <stop offset="1" stop-color="#081018" />
-    </linearGradient>
-    <linearGradient id="phone-screen" x1="584" y1="236" x2="746" y2="610" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#FFFFFF" stop-opacity="0.06" />
-      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0.02" />
-    </linearGradient>
-    <linearGradient id="route-line" x1="478" y1="720" x2="826" y2="886" gradientUnits="userSpaceOnUse">
+    <linearGradient id="flowlo-line" x1="242" y1="490" x2="724" y2="430" gradientUnits="userSpaceOnUse">
       <stop stop-color="#3EF2CF" />
-      <stop offset="0.64" stop-color="#66E8FF" />
+      <stop offset="0.58" stop-color="#66E8FF" />
       <stop offset="1" stop-color="#FFD45A" />
-    </linearGradient>
-    <linearGradient id="truck-shell" x1="598" y1="800" x2="850" y2="1048" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#16222D" />
-      <stop offset="1" stop-color="#0A1016" />
-    </linearGradient>
-    <linearGradient id="accent-chip" x1="612" y1="156" x2="784" y2="216" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#3EF2CF" stop-opacity="0.14" />
-      <stop offset="1" stop-color="#FFD45A" stop-opacity="0.12" />
     </linearGradient>
   </defs>
 
-  <rect width="960" height="1200" rx="72" fill="url(#story-bg)" />
-  <rect width="960" height="1200" rx="72" fill="url(#story-mint)" />
-  <rect width="960" height="1200" rx="72" fill="url(#story-gold)" />
-  <rect width="960" height="1200" rx="72" fill="url(#story-cyan)" />
+  <ellipse cx="296" cy="216" rx="188" ry="150" fill="url(#flowlo-auth-mint)" />
+  <ellipse cx="758" cy="156" rx="144" ry="116" fill="url(#flowlo-auth-gold)" />
 
-  <path d="M94 880C186.793 789.373 305.568 734 436.497 722H882V1118H78V895.024C78 889.243 80.5054 883.743 84.8685 879.96L94 880Z" fill="rgba(255,255,255,0.02)" />
-
-  <rect x="112" y="156" width="366" height="764" rx="54" fill="url(#glass-panel)" stroke="rgba(255,255,255,0.08)" stroke-width="2.5" />
-  <rect x="136" y="184" width="132" height="14" rx="7" fill="rgba(255,255,255,0.08)" />
-  <rect x="136" y="220" width="104" height="10" rx="5" fill="rgba(62,242,207,0.16)" />
-  <rect x="136" y="248" width="88" height="10" rx="5" fill="rgba(255,255,255,0.08)" />
-
-  <rect x="136" y="286" width="144" height="126" rx="30" fill="rgba(255,255,255,0.03)" />
-  <rect x="160" y="320" width="40" height="26" rx="9" fill="rgba(62,242,207,0.18)" />
-  <rect x="210" y="320" width="44" height="26" rx="9" fill="rgba(255,255,255,0.08)" />
-  <rect x="160" y="356" width="92" height="20" rx="10" fill="rgba(255,255,255,0.05)" />
-
-  <rect x="112" y="646" width="366" height="274" rx="54" fill="url(#counter-front)" stroke="rgba(255,255,255,0.05)" stroke-width="2" />
-  <path d="M200 650C200 565.5 268.5 497 353 497C437.5 497 506 565.5 506 650V656H200V650Z" fill="rgba(255,255,255,0.03)" />
-  <circle cx="356" cy="438" r="76" fill="#14202A" />
-  <path d="M314 426C314 390.654 342.654 362 378 362C413.346 362 442 390.654 442 426V472H314V426Z" fill="#0E161D" />
-  <path d="M248 648C248 589.458 295.458 542 354 542C412.542 542 460 589.458 460 648V656H248V648Z" fill="#1A2731" />
-  <rect x="328" y="596" width="54" height="112" rx="27" fill="rgba(62,242,207,0.1)" />
-  <rect x="342" y="614" width="26" height="56" rx="13" fill="rgba(255,255,255,0.08)" />
-
-  <rect x="156" y="720" width="108" height="88" rx="24" fill="rgba(255,255,255,0.04)" />
-  <rect x="174" y="740" width="34" height="28" rx="9" fill="rgba(62,242,207,0.18)" />
-  <rect x="214" y="740" width="32" height="28" rx="9" fill="rgba(255,255,255,0.08)" />
-  <rect x="174" y="778" width="72" height="12" rx="6" fill="rgba(255,255,255,0.08)" />
-
-  <rect x="278" y="738" width="140" height="104" rx="30" fill="rgba(255,255,255,0.035)" />
-  <path d="M330 762H364C370.627 762 376 767.373 376 774V808C376 814.627 370.627 820 364 820H330C323.373 820 318 814.627 318 808V774C318 767.373 323.373 762 330 762Z" fill="rgba(255,212,90,0.16)" />
-  <path d="M310 808H388" stroke="rgba(255,255,255,0.12)" stroke-width="6" stroke-linecap="round" />
-
-  <rect x="590" y="158" width="188" height="62" rx="22" fill="url(#accent-chip)" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" />
-  <circle cx="626" cy="189" r="9" fill="#3EF2CF" />
-  <text x="646" y="186" fill="#F8FAFC" font-family="'Inter',sans-serif" font-size="13" font-weight="600" letter-spacing="-0.2">
-    Delivery tracking live
-  </text>
-  <text x="646" y="206" fill="#A8B3C2" font-family="'Inter',sans-serif" font-size="10.5" font-weight="600" letter-spacing="1.8">
-    ETA UPDATED
-  </text>
-
-  <g transform="rotate(-7 682 426)">
-    <rect x="560" y="210" width="236" height="430" rx="44" fill="url(#phone-shell)" stroke="rgba(255,255,255,0.1)" stroke-width="2.5" />
-    <rect x="578" y="232" width="200" height="386" rx="34" fill="url(#phone-screen)" />
-    <rect x="635" y="252" width="86" height="8" rx="4" fill="rgba(255,255,255,0.14)" />
-    <rect x="604" y="292" width="148" height="94" rx="26" fill="rgba(62,242,207,0.08)" />
-    <rect x="624" y="318" width="70" height="10" rx="5" fill="rgba(62,242,207,0.42)" />
-    <rect x="624" y="344" width="98" height="10" rx="5" fill="rgba(255,255,255,0.12)" />
-    <rect x="604" y="410" width="160" height="70" rx="24" fill="rgba(255,255,255,0.05)" />
-    <circle cx="632" cy="444" r="15" fill="rgba(62,242,207,0.16)" />
-    <path d="M626 444.5L630.5 449L639 438.5" stroke="#3EF2CF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
-    <rect x="658" y="430" width="70" height="8" rx="4" fill="rgba(255,255,255,0.15)" />
-    <rect x="658" y="452" width="88" height="8" rx="4" fill="rgba(255,212,90,0.22)" />
-    <rect x="604" y="504" width="176" height="82" rx="30" fill="rgba(255,255,255,0.045)" />
-    <path d="M632 536C632 526.059 640.059 518 650 518H718C727.941 518 736 526.059 736 536V554C736 563.941 727.941 572 718 572H664L650 584V572C640.059 572 632 563.941 632 554V536Z" fill="rgba(62,242,207,0.12)" />
-    <path d="M656 542H708" stroke="rgba(62,242,207,0.45)" stroke-width="6" stroke-linecap="round" />
-    <path d="M656 560H694" stroke="rgba(255,255,255,0.16)" stroke-width="6" stroke-linecap="round" />
+  <g opacity="0.9">
+    <rect x="152" y="184" width="222" height="310" rx="38" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.1)" stroke-width="2.5" />
+    <rect x="172" y="206" width="182" height="270" rx="28" fill="rgba(255,255,255,0.015)" />
+    <rect x="226" y="226" width="74" height="8" rx="4" fill="rgba(255,255,255,0.16)" />
+    <rect x="196" y="260" width="136" height="74" rx="24" stroke="rgba(62,242,207,0.26)" stroke-width="2" />
+    <path d="M220 294H266" stroke="rgba(62,242,207,0.42)" stroke-width="6" stroke-linecap="round" />
+    <path d="M220 318H298" stroke="rgba(255,255,255,0.14)" stroke-width="6" stroke-linecap="round" />
+    <path d="M194 370H334" stroke="rgba(255,255,255,0.08)" stroke-width="2" stroke-linecap="round" />
+    <path d="M194 398H304" stroke="rgba(255,255,255,0.08)" stroke-width="2" stroke-linecap="round" />
+    <path d="M194 426H288" stroke="rgba(255,212,90,0.18)" stroke-width="2" stroke-linecap="round" />
   </g>
 
-  <path d="M458 768C533 722.5 621 719.5 689.5 749.5C743 772.923 785.5 813 826 850" stroke="url(#route-line)" stroke-width="5" stroke-linecap="round" stroke-dasharray="12 16" />
-  <circle cx="460" cy="768" r="10" fill="#3EF2CF" />
-  <circle cx="826" cy="850" r="10" fill="#FFD45A" />
+  <g opacity="0.9">
+    <rect x="410" y="274" width="156" height="122" rx="30" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.1)" stroke-width="2.5" />
+    <path d="M432 318L488 284L544 318V384H432V318Z" stroke="rgba(255,255,255,0.13)" stroke-width="2.5" stroke-linejoin="round" />
+    <path d="M432 318L488 352L544 318" stroke="rgba(62,242,207,0.26)" stroke-width="2.5" stroke-linejoin="round" />
+    <path d="M488 352V384" stroke="rgba(255,255,255,0.13)" stroke-width="2.5" />
+  </g>
 
-  <rect x="584" y="786" width="282" height="186" rx="46" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.07)" stroke-width="2" />
-  <path d="M624 850C624 818.52 649.52 793 681 793H742C773.48 793 799 818.52 799 850V866H624V850Z" fill="url(#truck-shell)" />
-  <path d="M792 824H836C852.569 824 866 837.431 866 854V880H792V824Z" fill="rgba(255,255,255,0.045)" />
-  <path d="M612 882H868" stroke="rgba(255,255,255,0.12)" stroke-width="12" stroke-linecap="round" />
-  <circle cx="680" cy="898" r="38" fill="#0D141A" stroke="rgba(255,255,255,0.09)" stroke-width="4" />
-  <circle cx="680" cy="898" r="14" fill="#1A2732" />
-  <circle cx="822" cy="898" r="38" fill="#0D141A" stroke="rgba(255,255,255,0.09)" stroke-width="4" />
-  <circle cx="822" cy="898" r="14" fill="#1A2732" />
-  <rect x="650" y="814" width="56" height="12" rx="6" fill="rgba(62,242,207,0.22)" />
-  <rect x="712" y="814" width="44" height="12" rx="6" fill="rgba(255,255,255,0.12)" />
-  <path d="M814 842H850" stroke="rgba(255,212,90,0.28)" stroke-width="6" stroke-linecap="round" />
+  <path d="M260 494C352 542 430 548 504 526C578 504 656 452 722 436" stroke="url(#flowlo-line)" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="12 16" />
+  <circle cx="260" cy="494" r="9" fill="#3EF2CF" />
+  <circle cx="722" cy="436" r="9" fill="#FFD45A" />
 
-  <rect x="142" y="854" width="176" height="58" rx="22" fill="rgba(255,255,255,0.035)" stroke="rgba(255,255,255,0.06)" stroke-width="1.5" />
-  <circle cx="176" cy="883" r="8" fill="#FFD45A" />
-  <text x="196" y="880" fill="#F8FAFC" font-family="'Inter',sans-serif" font-size="12.8" font-weight="600" letter-spacing="-0.15">
-    Stock running low
-  </text>
-  <text x="196" y="900" fill="#A8B3C2" font-family="'Inter',sans-serif" font-size="10.2" font-weight="600" letter-spacing="1.5">
-    3 ITEMS NEED TOP-UP
-  </text>
+  <g opacity="0.9">
+    <path d="M678 426C678 393.967 703.967 368 736 368H798C830.033 368 856 393.967 856 426V444H678V426Z" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.1)" stroke-width="2.5" />
+    <path d="M848 404H880C896.569 404 910 417.431 910 434V456H848V404Z" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.08)" stroke-width="2.5" />
+    <path d="M664 456H910" stroke="rgba(255,255,255,0.12)" stroke-width="10" stroke-linecap="round" />
+    <circle cx="728" cy="470" r="32" fill="#0B1218" stroke="rgba(255,255,255,0.1)" stroke-width="3" />
+    <circle cx="728" cy="470" r="12" fill="#1B2933" />
+    <circle cx="854" cy="470" r="32" fill="#0B1218" stroke="rgba(255,255,255,0.1)" stroke-width="3" />
+    <circle cx="854" cy="470" r="12" fill="#1B2933" />
+  </g>
 
-  <path d="M128 1018C206 992 286.5 978 369.5 978C454.5 978 546 990.5 655 1030" stroke="rgba(255,255,255,0.05)" stroke-width="2" />
-  <path d="M104 1046C182 1016 271 1000 370 1000C477 1000 586 1020 720 1072" stroke="rgba(62,242,207,0.08)" stroke-width="2" />
+  <g opacity="0.88">
+    <path d="M640 182C640 170.954 648.954 162 660 162H810C821.046 162 830 170.954 830 182V214C830 225.046 821.046 234 810 234H700L676 252V234H660C648.954 234 640 225.046 640 214V182Z" fill="rgba(255,255,255,0.02)" stroke="rgba(255,255,255,0.1)" stroke-width="2.5" />
+    <path d="M674 192H780" stroke="rgba(62,242,207,0.32)" stroke-width="6" stroke-linecap="round" />
+    <path d="M674 214H750" stroke="rgba(255,255,255,0.14)" stroke-width="6" stroke-linecap="round" />
+  </g>
 
-  <rect x="1.5" y="1.5" width="957" height="1197" rx="70.5" stroke="rgba(255,255,255,0.08)" stroke-width="3" />
+  <path d="M148 604C248 578 362 564 492 564C614 564 720 580 812 614" stroke="rgba(255,255,255,0.05)" stroke-width="2.5" stroke-linecap="round" />
 </svg>

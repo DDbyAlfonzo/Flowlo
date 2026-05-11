@@ -113,7 +113,7 @@ export default function RegisterPage() {
     <AuthCard
       eyebrow="Managed access"
       title="Request access"
-      description="Tell us about your business. We'll review your request and let you know once access is approved."
+      description="Tell us about your business. We'll review your request and let you know once approved."
       footer={
         <>
           Already approved?{" "}
