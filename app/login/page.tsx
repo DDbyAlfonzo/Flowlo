@@ -196,21 +196,23 @@ export default function LoginPage() {
 
   return (
     <AuthCard
-      eyebrow="Sign in"
+      eyebrow="Secure sign in"
       title="Welcome back"
       description="Access your FlowLo dashboard to manage stock, orders, and customer updates."
-      supportNote="FlowLo is a managed-access platform. Only approved businesses can sign in."
+      panelTitle="From inbox order to delivered update."
+      panelDescription="FlowLo keeps stock, orders, customer updates, and dropoffs moving in one calmer rhythm."
+      supportNote="Only approved businesses can sign in to FlowLo."
       trustNote="Secure access for approved FlowLo businesses."
       footer={
         <>
-          Need access?{" "}
+          New to FlowLo?{" "}
           <Link href="/register" className="font-semibold text-romano-mintText">
             Request access
           </Link>
         </>
       }
     >
-      <form onSubmit={handleSubmit} className="grid gap-5">
+      <form onSubmit={handleSubmit} className="grid gap-4">
         <label className="grid gap-2">
           <span className="field-label">Email Address</span>
           <input
@@ -244,7 +246,7 @@ export default function LoginPage() {
 
         <button
           type="submit"
-          className="primary-button auth-submit-button mt-1"
+          className="primary-button auth-submit-button mt-2"
           disabled={submitting}
         >
           {submitting ? "Signing in..." : "Sign in"}

@@ -139,10 +139,19 @@ textarea {
   }
 
   .auth-input-shell {
-    @apply w-full rounded-[1.35rem] border border-romano-line bg-[linear-gradient(180deg,rgba(18,25,34,0.78),rgba(9,14,20,0.88))] px-4 py-3.5 text-sm text-romano-ink outline-none transition duration-300 hover:border-romano-navy/25 focus:border-romano-navy/40 focus:bg-[linear-gradient(180deg,rgba(20,28,38,0.9),rgba(11,16,22,0.96))] focus:ring-4 focus:ring-romano-navy/10;
+    @apply w-full min-w-0 rounded-[1.4rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,21,29,0.84),rgba(8,12,18,0.92))] px-4 py-3.5 text-[15px] text-romano-ink outline-none transition duration-300 focus:bg-[linear-gradient(180deg,rgba(18,25,34,0.92),rgba(10,14,20,0.98))] focus:ring-4 focus:ring-romano-navy/10 sm:px-5 sm:py-4;
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.035),
-      0 18px 40px -30px rgba(0, 0, 0, 0.75);
+      inset 0 0 0 1px rgba(255, 255, 255, 0.01),
+      0 22px 46px -34px rgba(0, 0, 0, 0.82);
+  }
+
+  .auth-input-shell:hover {
+    border-color: rgba(31, 74, 96, 0.28);
+  }
+
+  .auth-input-shell:focus {
+    border-color: rgba(31, 74, 96, 0.42);
   }
 
   .auth-input-shell::placeholder {
@@ -163,12 +172,12 @@ textarea {
   }
 
   .auth-floating-card {
-    @apply relative w-full min-w-0 max-w-full overflow-hidden rounded-[2rem] border border-romano-line bg-[linear-gradient(180deg,rgba(18,24,32,0.76),rgba(9,14,19,0.88))] shadow-soft backdrop-blur-2xl;
+    @apply relative w-full min-w-0 max-w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(17,23,31,0.72),rgba(8,12,18,0.9))] shadow-soft backdrop-blur-[26px];
     box-shadow:
-      0 32px 82px -44px rgba(0, 0, 0, 0.96),
-      0 18px 44px -30px rgba(0, 0, 0, 0.72),
-      inset 0 1px 0 rgba(255, 255, 255, 0.06),
-      inset 0 0 26px rgba(62, 242, 207, 0.02);
+      0 38px 96px -52px rgba(0, 0, 0, 0.98),
+      0 18px 46px -30px rgba(0, 0, 0, 0.76),
+      inset 0 1px 0 rgba(255, 255, 255, 0.055),
+      inset 0 0 34px rgba(62, 242, 207, 0.024);
   }
 
   .auth-floating-card::before {
@@ -176,8 +185,10 @@ textarea {
     position: absolute;
     inset: 1px;
     border-radius: calc(2rem - 1px);
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.01));
-    opacity: 0.85;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.01)),
+      radial-gradient(circle at top right, rgba(62, 242, 207, 0.06), transparent 24%);
+    opacity: 0.88;
     pointer-events: none;
   }
 
@@ -186,74 +197,79 @@ textarea {
     z-index: 1;
   }
 
-  .auth-visual-shell {
-    @apply relative w-full min-w-0 max-w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(16,21,29,0.56),rgba(8,12,17,0.4))] p-5 shadow-soft backdrop-blur-2xl sm:p-6 lg:min-h-[39rem] lg:p-7;
+  .auth-story-shell {
+    @apply relative w-full min-w-0 max-w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(13,18,25,0.62),rgba(8,11,16,0.48))] shadow-soft backdrop-blur-2xl min-h-[18rem] sm:min-h-[24rem] lg:min-h-[44rem];
     box-shadow:
-      0 36px 88px -52px rgba(0, 0, 0, 0.98),
-      0 18px 42px -28px rgba(0, 0, 0, 0.72),
+      0 40px 104px -58px rgba(0, 0, 0, 0.98),
+      0 18px 44px -28px rgba(0, 0, 0, 0.76),
       inset 0 1px 0 rgba(255, 255, 255, 0.06),
-      inset 0 0 32px rgba(62, 242, 207, 0.025);
+      inset 0 0 42px rgba(62, 242, 207, 0.02);
   }
 
-  .auth-visual-shell::before {
+  .auth-story-shell::before {
     content: "";
     position: absolute;
     inset: 1px;
     border-radius: calc(2rem - 1px);
     background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.01)),
-      radial-gradient(circle at top right, rgba(62, 242, 207, 0.08), transparent 30%);
-    opacity: 0.82;
+      linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+      radial-gradient(circle at top right, rgba(62, 242, 207, 0.08), transparent 28%);
+    opacity: 0.86;
     pointer-events: none;
   }
 
-  .auth-visual-shell > * {
+  .auth-story-shell > * {
     position: relative;
     z-index: 1;
   }
 
-  .auth-preview-card {
-    @apply relative w-full min-w-0 max-w-full overflow-hidden rounded-[1.6rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] px-4 py-4 backdrop-blur-xl transition duration-300 hover:border-romano-navy/30 hover:bg-[linear-gradient(180deg,rgba(62,242,207,0.06),rgba(255,255,255,0.025))] sm:px-5 sm:py-5;
+  .auth-story-chip {
+    @apply absolute z-10 flex max-w-[12.75rem] min-w-0 items-start gap-3 rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(18,24,32,0.74),rgba(8,12,17,0.86))] px-3 py-3 shadow-[0_20px_48px_-32px_rgba(0,0,0,0.9)] backdrop-blur-2xl sm:max-w-[14.25rem] sm:px-3.5 sm:py-3.5;
     box-shadow:
-      0 18px 42px -32px rgba(0, 0, 0, 0.82),
+      0 20px 48px -32px rgba(0, 0, 0, 0.9),
       inset 0 1px 0 rgba(255, 255, 255, 0.05),
-      inset 0 0 20px rgba(62, 242, 207, 0.012);
+      inset 0 0 18px rgba(62, 242, 207, 0.014);
   }
 
-  .auth-preview-card::before {
+  .auth-story-chip::before {
     content: "";
     position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.04), transparent 36%);
-    opacity: 0.75;
+    inset: 1px;
+    border-radius: calc(1.1rem - 1px);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.01));
+    opacity: 0.8;
     pointer-events: none;
   }
 
-  .auth-preview-card > * {
+  .auth-story-chip > * {
     position: relative;
     z-index: 1;
   }
 
-  .auth-preview-chip {
-    @apply inline-flex items-center rounded-full px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.22em];
+  .auth-story-chip-dot {
+    @apply mt-1 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-romano-primary;
+    box-shadow: 0 0 18px -6px rgba(62, 242, 207, 0.92);
   }
 
-  .auth-preview-chip-teal {
-    @apply border text-romano-mintText;
-    border-color: rgba(31, 74, 96, 0.28);
-    background-color: rgba(62, 242, 207, 0.1);
-    box-shadow: 0 12px 24px -18px rgba(62, 242, 207, 0.34);
+  .auth-story-chip-teal {
+    border-color: rgba(62, 242, 207, 0.12);
   }
 
-  .auth-preview-chip-gold {
-    @apply border text-romano-amberText;
-    border-color: rgba(255, 212, 90, 0.25);
-    background-color: rgba(255, 212, 90, 0.1);
-    box-shadow: 0 12px 24px -18px rgba(255, 212, 90, 0.24);
+  .auth-story-chip-gold {
+    border-color: rgba(255, 212, 90, 0.14);
+  }
+
+  .auth-story-chip-gold .auth-story-chip-dot {
+    background: #ffd45a;
+    box-shadow: 0 0 18px -6px rgba(255, 212, 90, 0.88);
+  }
+
+  .auth-inline-pill {
+    @apply inline-flex items-center rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-romano-amberText shadow-[0_16px_36px_-28px_rgba(0,0,0,0.72)] backdrop-blur-xl;
   }
 
   .auth-submit-button {
-    @apply min-h-[3.45rem] w-full rounded-[1.35rem] text-sm;
+    @apply min-h-[3.65rem] w-full rounded-[1.35rem] text-sm;
   }
 
   .surface-elevated {

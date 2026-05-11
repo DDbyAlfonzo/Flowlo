@@ -111,10 +111,12 @@ export default function RegisterPage() {
 
   return (
     <AuthCard
-      eyebrow="Request access"
+      eyebrow="Managed access"
       title="Request access"
       description="Tell us about your business. We'll review your request and let you know once access is approved."
-      supportNote="Built for WhatsApp-first sellers, resellers, and small businesses."
+      panelTitle="From inbox order to delivered update."
+      panelDescription="FlowLo keeps stock, orders, customer updates, and dropoffs moving in one calmer rhythm."
+      supportNote="Built for WhatsApp-first sellers and modern small businesses."
       footer={
         <>
           Already have access?{" "}
@@ -127,7 +129,7 @@ export default function RegisterPage() {
     >
       {success ? (
         <div className="grid gap-5">
-          <div className="surface-elevated rounded-[1.7rem] p-6">
+          <div className="rounded-[1.65rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] p-6 shadow-[0_24px_54px_-38px_rgba(0,0,0,0.88)] backdrop-blur-2xl">
             <p className="eyebrow-label text-romano-mintText">Request received</p>
             <h3 className="mt-4 text-2xl font-semibold tracking-[-0.05em] text-romano-ink">
               You&apos;re on the list.
@@ -148,70 +150,74 @@ export default function RegisterPage() {
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="grid gap-5">
-          <label className="grid gap-2">
-            <span className="field-label">Full Name</span>
-            <input
-              className="auth-input-shell"
-              value={form.fullName}
-              onChange={(event) =>
-                setForm((current) => ({ ...current, fullName: event.target.value }))
-              }
-              placeholder="Lebo Nkosi"
-              autoComplete="name"
-              required
-            />
-          </label>
+        <form onSubmit={handleSubmit} className="grid gap-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <label className="grid gap-2">
+              <span className="field-label">Full Name</span>
+              <input
+                className="auth-input-shell"
+                value={form.fullName}
+                onChange={(event) =>
+                  setForm((current) => ({ ...current, fullName: event.target.value }))
+                }
+                placeholder="Lebo Nkosi"
+                autoComplete="name"
+                required
+              />
+            </label>
 
-          <label className="grid gap-2">
-            <span className="field-label">Email Address</span>
-            <input
-              type="email"
-              className="auth-input-shell"
-              value={form.email}
-              onChange={(event) =>
-                setForm((current) => ({ ...current, email: event.target.value }))
-              }
-              placeholder="owner@business.co.za"
-              autoComplete="email"
-              inputMode="email"
-              required
-            />
-          </label>
+            <label className="grid gap-2">
+              <span className="field-label">Email Address</span>
+              <input
+                type="email"
+                className="auth-input-shell"
+                value={form.email}
+                onChange={(event) =>
+                  setForm((current) => ({ ...current, email: event.target.value }))
+                }
+                placeholder="owner@business.co.za"
+                autoComplete="email"
+                inputMode="email"
+                required
+              />
+            </label>
+          </div>
 
-          <label className="grid gap-2">
-            <span className="field-label">Business Name</span>
-            <input
-              className="auth-input-shell"
-              value={form.businessName}
-              onChange={(event) =>
-                setForm((current) => ({ ...current, businessName: event.target.value }))
-              }
-              placeholder="FlowLo Fragrance House"
-              autoComplete="organization"
-              required
-            />
-          </label>
+          <div className="grid gap-4 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)]">
+            <label className="grid gap-2">
+              <span className="field-label">Business Name</span>
+              <input
+                className="auth-input-shell"
+                value={form.businessName}
+                onChange={(event) =>
+                  setForm((current) => ({ ...current, businessName: event.target.value }))
+                }
+                placeholder="FlowLo Fragrance House"
+                autoComplete="organization"
+                required
+              />
+            </label>
 
-          <label className="grid gap-2">
-            <span className="field-label">Business Type</span>
-            <select
-              className="auth-input-shell"
-              value={form.businessType}
-              onChange={(event) =>
-                setForm((current) => ({
-                  ...current,
-                  businessType: event.target.value as AccessRequestFormState["businessType"],
-                }))
-              }
-            >
-              {ACCESS_REQUEST_BUSINESS_TYPES.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </label>
+            <label className="grid gap-2">
+              <span className="field-label">Business Type</span>
+              <select
+                className="auth-input-shell"
+                value={form.businessType}
+                onChange={(event) =>
+                  setForm((current) => ({
+                    ...current,
+                    businessType: event.target.value as AccessRequestFormState["businessType"],
+                  }))
+                }
+              >
+                {ACCESS_REQUEST_BUSINESS_TYPES.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
 
           <label className="grid gap-2">
             <span className="field-label">WhatsApp Number</span>
@@ -231,7 +237,7 @@ export default function RegisterPage() {
             />
           </label>
 
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <PasswordField
               label="Password"
               minLength={6}
@@ -268,7 +274,7 @@ export default function RegisterPage() {
 
           <button
             type="submit"
-            className="primary-button auth-submit-button mt-1"
+            className="primary-button auth-submit-button mt-2"
             disabled={submitting}
           >
             {submitting ? "Sending request..." : "Request access"}
