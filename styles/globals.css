@@ -206,6 +206,15 @@ textarea {
       inset 0 0 34px rgba(62, 242, 207, 0.018);
   }
 
+  .auth-story-shell-compact {
+    @apply min-h-[12.5rem] rounded-[1.85rem] sm:min-h-[13.5rem];
+    box-shadow:
+      0 24px 64px -46px rgba(0, 0, 0, 0.92),
+      0 12px 28px -22px rgba(0, 0, 0, 0.7),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      inset 0 0 22px rgba(62, 242, 207, 0.012);
+  }
+
   .auth-story-shell::before {
     content: "";
     position: absolute;
@@ -229,6 +238,14 @@ textarea {
       0 18px 42px -32px rgba(0, 0, 0, 0.88),
       inset 0 1px 0 rgba(255, 255, 255, 0.05),
       inset 0 0 14px rgba(62, 242, 207, 0.012);
+  }
+
+  .auth-story-shell-compact .auth-story-chip {
+    @apply max-w-[10rem] px-2.5 py-2.5;
+    box-shadow:
+      0 14px 32px -26px rgba(0, 0, 0, 0.82),
+      inset 0 1px 0 rgba(255, 255, 255, 0.05),
+      inset 0 0 10px rgba(62, 242, 207, 0.01);
   }
 
   .auth-story-chip::before {

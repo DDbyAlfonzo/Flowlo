@@ -69,6 +69,10 @@ export function AuthCard({
               </div>
             </section>
           </Reveal>
+
+          <Reveal delay={0.06} className="order-2 min-w-0 lg:hidden" y={20}>
+            <AuthStoryVisual compact className="mx-auto w-full max-w-[32rem]" />
+          </Reveal>
         </div>
       </div>
     </div>
