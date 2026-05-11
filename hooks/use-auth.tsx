@@ -80,6 +80,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setAccessRequest(nextAccessRequest);
       setAccessStatus(nextStatus);
+      if (nextStatus !== "approved") {
+        setBusiness(null);
+        setBusinessLoading(false);
+      }
       syncAuthCookies({
         user: nextUser,
         accessStatus: nextStatus,
@@ -90,6 +94,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch {
       setAccessRequest(null);
       setAccessStatus("none");
+      setBusiness(null);
+      setBusinessLoading(false);
       syncAuthCookies({
         user: nextUser,
         accessStatus: "none",

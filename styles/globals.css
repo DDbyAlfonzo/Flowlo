@@ -9,7 +9,7 @@
 html {
   min-height: 100%;
   width: 100%;
-  max-width: 100%;
+  max-width: 100vw;
   overflow-x: hidden;
   background-color: #070b0f;
 }
@@ -17,7 +17,7 @@ html {
 body {
   min-height: 100vh;
   width: 100%;
-  max-width: 100%;
+  max-width: 100vw;
   overflow-x: hidden;
   position: relative;
   color: #f8fafc;
@@ -28,6 +28,14 @@ body {
     linear-gradient(180deg, rgba(12, 18, 24, 0.32) 0%, rgba(7, 11, 15, 0) 34%),
     linear-gradient(180deg, #070b0f 0%, #091017 38%, #06090d 100%);
   font-feature-settings: "ss01" on, "cv02" on, "cv11" on;
+}
+
+#__next,
+#__next > *,
+body > * {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 main,
@@ -99,7 +107,14 @@ textarea {
   }
 
   .page-wrap {
-    @apply mx-auto flex min-h-screen w-full max-w-full min-w-0 flex-col overflow-x-hidden px-4 pb-36 pt-6 sm:max-w-6xl sm:px-5 sm:pb-32 sm:pt-8 lg:px-8;
+    @apply mx-auto flex min-h-screen w-full max-w-[100vw] min-w-0 flex-col overflow-x-hidden px-4 pb-36 pt-6 sm:max-w-6xl sm:px-5 sm:pb-32 sm:pt-8 lg:px-8;
+  }
+
+  .mobile-safe {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: clip;
   }
 
   .section-title {

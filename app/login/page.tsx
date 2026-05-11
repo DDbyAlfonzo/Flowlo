@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthCard } from "@/components/auth-card";
 import { LoadingScreen } from "@/components/loading-screen";
+import { PasswordField } from "@/components/password-field";
 import { useAuth } from "@/hooks/use-auth";
 import { loginWithEmail, logoutUser, syncAuthCookies } from "@/lib/auth";
 import { isAdminEmail } from "@/lib/constants";
@@ -13,6 +14,7 @@ import { getAccessRequest } from "@/lib/firestore";
 const ACCESS_REASON_COPY = {
   pending: "Your FlowLo access is still pending approval.",
   rejected: "Your FlowLo access request was not approved at this time.",
+  disabled: "Your FlowLo access has been disabled.",
   "no-request": "No access request found. Please request access first.",
   "admin-only": "This page is only available to FlowLo admins.",
 } as const;
@@ -42,7 +44,16 @@ function resolveLoginDestination(input: {
 
 export default function LoginPage() {
   const router = useRouter();
-  const { user, business, isAdmin, isApproved, loading, accessLoading, businessLoading } = useAuth();
+  const {
+    user,
+    business,
+    accessStatus,
+    isAdmin,
+    isApproved,
+    loading,
+    accessLoading,
+    businessLoading,
+  } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nextPath, setNextPath] = useState("");
@@ -98,6 +109,21 @@ export default function LoginPage() {
     }
   }, []);
 
+  useEffect(() => {
+    if (loading || accessLoading || !user || isAdmin || isApproved) {
+      return;
+    }
+
+    void logoutUser();
+    setError(
+      ACCESS_REASON_COPY[
+        accessStatus === "pending" || accessStatus === "rejected" || accessStatus === "disabled"
+          ? accessStatus
+          : "no-request"
+      ],
+    );
+  }, [accessLoading, accessStatus, isAdmin, isApproved, loading, user]);
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSubmitting(true);
@@ -148,7 +174,7 @@ export default function LoginPage() {
       await logoutUser();
       setError(
         ACCESS_REASON_COPY[
-          accessStatus === "pending" || accessStatus === "rejected"
+          accessStatus === "pending" || accessStatus === "rejected" || accessStatus === "disabled"
             ? accessStatus
             : "no-request"
         ],
@@ -199,19 +225,15 @@ export default function LoginPage() {
           />
         </label>
 
-        <label className="grid gap-2">
-          <span className="field-label">Password</span>
-          <input
-            type="password"
-            className="auth-input-shell"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="Enter your password"
-            autoComplete="current-password"
-            aria-invalid={Boolean(error)}
-            required
-          />
-        </label>
+        <PasswordField
+          label="Password"
+          value={password}
+          onChange={(event) => setPassword(event.target.value)}
+          placeholder="Enter your password"
+          autoComplete="current-password"
+          aria-invalid={Boolean(error)}
+          required
+        />
 
         {error ? (
           <div className="auth-feedback auth-feedback-error" aria-live="polite">

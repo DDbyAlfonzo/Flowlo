@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthCard } from "@/components/auth-card";
 import { LoadingScreen } from "@/components/loading-screen";
+import { PasswordField } from "@/components/password-field";
 import { logoutUser, registerWithEmail } from "@/lib/auth";
 import { ACCESS_REQUEST_BUSINESS_TYPES } from "@/lib/constants";
 import { createAccessRequest } from "@/lib/firestore";
@@ -231,40 +232,32 @@ export default function RegisterPage() {
           </label>
 
           <div className="grid gap-5 sm:grid-cols-2">
-            <label className="grid gap-2">
-              <span className="field-label">Password</span>
-              <input
-                type="password"
-                minLength={6}
-                className="auth-input-shell"
-                value={form.password}
-                onChange={(event) =>
-                  setForm((current) => ({ ...current, password: event.target.value }))
-                }
-                placeholder="At least 6 characters"
-                autoComplete="new-password"
-                required
-              />
-            </label>
+            <PasswordField
+              label="Password"
+              minLength={6}
+              value={form.password}
+              onChange={(event) =>
+                setForm((current) => ({ ...current, password: event.target.value }))
+              }
+              placeholder="At least 6 characters"
+              autoComplete="new-password"
+              required
+            />
 
-            <label className="grid gap-2">
-              <span className="field-label">Confirm Password</span>
-              <input
-                type="password"
-                minLength={6}
-                className="auth-input-shell"
-                value={form.confirmPassword}
-                onChange={(event) =>
-                  setForm((current) => ({
-                    ...current,
-                    confirmPassword: event.target.value,
-                  }))
-                }
-                placeholder="Repeat your password"
-                autoComplete="new-password"
-                required
-              />
-            </label>
+            <PasswordField
+              label="Confirm Password"
+              minLength={6}
+              value={form.confirmPassword}
+              onChange={(event) =>
+                setForm((current) => ({
+                  ...current,
+                  confirmPassword: event.target.value,
+                }))
+              }
+              placeholder="Repeat your password"
+              autoComplete="new-password"
+              required
+            />
           </div>
 
           {error ? (

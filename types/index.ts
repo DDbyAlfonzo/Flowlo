@@ -15,7 +15,7 @@ export type DeliveryStatus =
   | "delivered"
   | "cancelled";
 export type OrderSource = "manual" | "whatsapp";
-export type AccessRequestStatus = "pending" | "approved" | "rejected";
+export type AccessRequestStatus = "pending" | "approved" | "rejected" | "disabled";
 export type AccessRequestRole = "user";
 export type AccessCookieStatus = AccessRequestStatus | "none";
 

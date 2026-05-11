@@ -50,12 +50,12 @@ export function AppShell({
   };
 
   return (
-    <div className="page-wrap w-full max-w-full">
+    <div className="page-wrap mobile-safe">
       <motion.header
         initial={reduceMotion ? false : { opacity: 0, y: 18 }}
         animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
         transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
-        className="card-surface relative sticky top-3 z-20 flex flex-col gap-4 overflow-hidden rounded-[1.6rem] p-4 sm:top-4 sm:rounded-4xl sm:p-6 sm:flex-row sm:items-center sm:justify-between"
+        className="card-surface mobile-safe relative sticky top-3 z-20 flex flex-col gap-4 overflow-hidden rounded-[1.45rem] p-4 sm:top-4 sm:rounded-4xl sm:p-6 sm:flex-row sm:items-center sm:justify-between"
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,rgba(62,242,207,0.12),transparent_45%),radial-gradient(circle_at_top_right,rgba(255,212,90,0.09),transparent_30%)]" />
         <div className="min-w-0 flex-1">
@@ -63,7 +63,7 @@ export function AppShell({
           <h1 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-romano-ink">
             {shellTitle ?? business?.businessName ?? "Your business"}
           </h1>
-          <p className="mt-1 break-words text-sm text-romano-slate">
+          <p className="mt-1 text-sm text-romano-slate [overflow-wrap:anywhere]">
             {shellSubtitle ??
               `${business?.category ?? "Inventory and order management"} · ${user?.email ?? ""}`}
           </p>
@@ -87,18 +87,18 @@ export function AppShell({
         </div>
       </motion.header>
 
-      <main className="mt-8 flex-1 w-full max-w-full min-w-0 overflow-x-hidden">{children}</main>
+      <main className="mobile-safe mt-8 flex-1">{children}</main>
 
       {showNav ? (
         <div
-          className="fixed left-1/2 z-30 w-[min(calc(100vw-24px),720px)] max-w-[calc(100vw-24px)] -translate-x-1/2 overflow-hidden sm:max-w-xl"
+          className="pointer-events-none fixed inset-x-0 z-30 px-3"
           style={{ bottom: "max(env(safe-area-inset-bottom), 0.75rem)" }}
         >
           <motion.nav
             initial={reduceMotion ? false : { opacity: 0, y: 22 }}
-            animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.55, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(16,22,30,0.86),rgba(8,12,17,0.92))] p-1 shadow-soft backdrop-blur-2xl sm:rounded-[28px] sm:p-1.5"
+            className="pointer-events-auto mx-auto grid w-full max-w-[430px] overflow-hidden rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(16,22,30,0.86),rgba(8,12,17,0.92))] p-1 shadow-soft backdrop-blur-2xl sm:rounded-[28px] sm:p-1.5"
           >
             <div
               className="grid items-stretch gap-1"
@@ -117,7 +117,7 @@ export function AppShell({
                   >
                     <Link
                       href={item.href}
-                      className={`group relative flex min-h-[3.55rem] min-w-0 w-full flex-col items-center justify-center gap-1 overflow-hidden rounded-[18px] px-0 py-1.5 text-center font-semibold leading-none transition sm:min-h-[4.35rem] sm:gap-2 sm:rounded-[22px] sm:px-2 ${
+                      className={`group relative flex min-h-[3.5rem] min-w-0 w-full flex-col items-center justify-center gap-1 overflow-hidden rounded-[18px] px-0.5 py-1.5 text-center font-semibold leading-none transition sm:min-h-[4.35rem] sm:gap-2 sm:rounded-[22px] sm:px-2 ${
                         active
                           ? "text-[#041215]"
                           : "text-romano-slate hover:text-romano-ink"
@@ -139,7 +139,10 @@ export function AppShell({
                             : "bg-white/15 group-hover:bg-romano-primary/50"
                         }`}
                       />
-                      <span className="relative z-10 block max-w-full overflow-hidden px-0.5 text-[7px] leading-[1.02] tracking-[0.02em] [overflow-wrap:anywhere] min-[360px]:text-[8px] sm:text-[11px] sm:leading-none">
+                      <span className="relative z-10 block max-w-full truncate px-0.5 text-[9px] leading-none tracking-[0.01em] sm:hidden">
+                        {item.compactLabel}
+                      </span>
+                      <span className="relative z-10 hidden max-w-full truncate px-0.5 text-[11px] leading-none sm:block">
                         {item.label}
                       </span>
                     </Link>

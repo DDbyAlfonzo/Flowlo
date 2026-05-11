@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { AuthProvider } from "@/hooks/use-auth";
 import "@/styles/globals.css";
@@ -11,13 +11,19 @@ export const metadata: Metadata = {
   description: "Manage stock, orders, and customer updates in one flow.",
   icons: {
     icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/flowlo-logo-mark.svg", type: "image/svg+xml" },
     ],
     apple: [
-      { url: "/apple-icon.svg", type: "image/svg+xml" },
+      { url: "/flowlo-logo-mark.svg", type: "image/svg+xml" },
     ],
-    shortcut: ["/icon.svg"],
+    shortcut: ["/flowlo-logo-mark.svg"],
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

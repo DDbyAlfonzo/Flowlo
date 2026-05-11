@@ -4,6 +4,7 @@ import { ReactNode, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { LoadingScreen } from "@/components/loading-screen";
+import { logoutUser } from "@/lib/auth";
 
 type ProtectedPageProps = {
   children: ReactNode;
@@ -12,14 +13,18 @@ type ProtectedPageProps = {
 };
 
 function getLoginReason(
-  accessStatus: "pending" | "approved" | "rejected" | "none",
-): "pending" | "rejected" | "no-request" {
+  accessStatus: "pending" | "approved" | "rejected" | "disabled" | "none",
+): "pending" | "rejected" | "disabled" | "no-request" {
   if (accessStatus === "pending") {
     return "pending";
   }
 
   if (accessStatus === "rejected") {
     return "rejected";
+  }
+
+  if (accessStatus === "disabled") {
+    return "disabled";
   }
 
   return "no-request";
@@ -74,6 +79,7 @@ export function ProtectedPage({
         return;
       }
 
+      void logoutUser();
       router.replace(
         `/login?next=${encodeURIComponent(pathname)}&reason=${getLoginReason(accessStatus)}`,
       );

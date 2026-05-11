@@ -1,5 +1,3 @@
-import { BrandMark } from "@/components/brand-mark";
-
 type BrandWordmarkProps = {
   size?: "sm" | "md" | "lg";
   showTagline?: boolean;
@@ -10,22 +8,16 @@ type BrandWordmarkProps = {
 
 const sizeClasses = {
   sm: {
-    wrap: "gap-3",
-    mark: "sm",
-    name: "text-[1.08rem]",
-    tag: "text-[10px] tracking-[0.32em]",
+    logo: "h-8 sm:h-9",
+    tag: "text-[10px] tracking-[0.3em]",
   },
   md: {
-    wrap: "gap-3.5",
-    mark: "md",
-    name: "text-[1.26rem]",
-    tag: "text-[10px] tracking-[0.34em]",
+    logo: "h-10 sm:h-11",
+    tag: "text-[10px] tracking-[0.32em]",
   },
   lg: {
-    wrap: "gap-4",
-    mark: "lg",
-    name: "text-[1.52rem]",
-    tag: "text-[11px] tracking-[0.36em]",
+    logo: "h-12 sm:h-14",
+    tag: "text-[11px] tracking-[0.34em]",
   },
 } as const;
 
@@ -40,26 +32,19 @@ export function BrandWordmark({
 
   return (
     <div
-      className={`group/brand inline-flex items-center ${classes.wrap} ${compact ? "gap-2.5" : ""} ${className}`.trim()}
+      className={`group/brand inline-flex min-w-0 flex-col items-start ${compact ? "gap-1.5" : "gap-2"} ${className}`.trim()}
     >
-      <BrandMark size={classes.mark} plate={compact ? "soft" : "glass"} />
+      <img
+        src="/flowlo-logo.svg"
+        alt="FlowLo"
+        className={`${classes.logo} w-auto max-w-full select-none drop-shadow-[0_0_20px_rgba(62,242,207,0.18)]`}
+      />
 
-      <div className="min-w-0">
-        <p
-          className={`${classes.name} font-semibold leading-none tracking-[-0.09em] text-romano-ink`}
-        >
-          <span className="text-romano-ink">Flow</span>
-          <span className="bg-[linear-gradient(135deg,#3EF2CF_8%,#66E8FF_58%,#FFD45A_100%)] bg-clip-text text-transparent">
-            Lo
-          </span>
+      {showTagline ? (
+        <p className={`uppercase text-romano-slate ${classes.tag}`}>
+          {tagline}
         </p>
-
-        {showTagline ? (
-          <p className={`mt-1 uppercase text-romano-slate ${classes.tag}`}>
-            {tagline}
-          </p>
-        ) : null}
-      </div>
+      ) : null}
     </div>
   );
 }

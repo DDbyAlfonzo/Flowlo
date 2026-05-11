@@ -1,0 +1,51 @@
+<svg width="420" height="112" viewBox="0 0 420 112" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="flowlo-logo-gradient" x1="22" y1="14" x2="114" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3EF2CF" />
+      <stop offset="0.58" stop-color="#66E8FF" />
+      <stop offset="1" stop-color="#FFD45A" />
+    </linearGradient>
+    <linearGradient id="flowlo-wordmark-gradient" x1="230" y1="22" x2="324" y2="88" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3EF2CF" />
+      <stop offset="0.62" stop-color="#66E8FF" />
+      <stop offset="1" stop-color="#FFD45A" />
+    </linearGradient>
+    <filter id="flowlo-logo-glow" x="0" y="0" width="132" height="112" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+      <feGaussianBlur stdDeviation="8" result="effect1_foregroundBlur_0_1" />
+    </filter>
+  </defs>
+
+  <g filter="url(#flowlo-logo-glow)">
+    <path
+      d="M26 18C26 14.6863 28.6863 12 32 12H100.5L83.5 29H45.5V41H84.5L70 55.5H45.5V90H26V18Z"
+      fill="url(#flowlo-logo-gradient)"
+    />
+    <path
+      d="M61 64.5L75.5 50H100L77 73C72.8579 77.1421 66.1421 77.1421 62 73L50 61H61V64.5Z"
+      fill="#FFD45A"
+      fill-opacity="0.9"
+    />
+    <path
+      d="M27 12H100.5L83.5 29H45.5V41H84.5L70 55.5H45.5V90"
+      stroke="white"
+      stroke-opacity="0.12"
+      stroke-width="1.5"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
+  </g>
+
+  <g>
+    <text x="132" y="67" fill="#F8FAFC" font-family="'Space Grotesk','Sora','Inter',sans-serif" font-size="52" font-weight="700" letter-spacing="-3.8">
+      Flow
+    </text>
+    <text x="253" y="67" fill="url(#flowlo-wordmark-gradient)" font-family="'Space Grotesk','Sora','Inter',sans-serif" font-size="52" font-weight="700" letter-spacing="-3.8">
+      Lo
+    </text>
+    <text x="135" y="91" fill="#A8B3C2" font-family="'Inter',sans-serif" font-size="9.8" font-weight="600" letter-spacing="4.2">
+      BUSINESS FLOW PLATFORM
+    </text>
+  </g>
+</svg>

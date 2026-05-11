@@ -1,0 +1,27 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="flowlo-mark-gradient" x1="20" y1="14" x2="98" y2="100" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#3EF2CF" />
+      <stop offset="0.58" stop-color="#66E8FF" />
+      <stop offset="1" stop-color="#FFD45A" />
+    </linearGradient>
+  </defs>
+
+  <path
+    d="M26 18C26 14.6863 28.6863 12 32 12H100.5L83.5 29H45.5V41H84.5L70 55.5H45.5V90H26V18Z"
+    fill="url(#flowlo-mark-gradient)"
+  />
+  <path
+    d="M61 64.5L75.5 50H100L77 73C72.8579 77.1421 66.1421 77.1421 62 73L50 61H61V64.5Z"
+    fill="#FFD45A"
+    fill-opacity="0.9"
+  />
+  <path
+    d="M27 12H100.5L83.5 29H45.5V41H84.5L70 55.5H45.5V90"
+    stroke="white"
+    stroke-opacity="0.12"
+    stroke-width="1.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

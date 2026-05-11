@@ -11,8 +11,9 @@ export function useOverflowDebug(scope: string) {
     const reportOverflow = () => {
       const viewportWidth = window.innerWidth;
       const rootWidth = document.documentElement.scrollWidth;
+      const bodyWidth = document.body.scrollWidth;
 
-      if (rootWidth <= viewportWidth + 1) {
+      if (Math.max(rootWidth, bodyWidth) <= viewportWidth + 1) {
         return;
       }
 
@@ -35,6 +36,7 @@ export function useOverflowDebug(scope: string) {
         path: window.location.pathname,
         viewportWidth,
         rootWidth,
+        bodyWidth,
         offenders,
       });
     };

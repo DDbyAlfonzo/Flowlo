@@ -442,7 +442,7 @@ export async function createAccessRequest(input: AccessRequestPayload) {
 
 export async function reviewAccessRequest(
   requestId: string,
-  status: Extract<AccessRequestStatus, "approved" | "rejected">,
+  status: Extract<AccessRequestStatus, "approved" | "rejected" | "disabled">,
   reviewedBy: string,
 ) {
   const accessRequestRef = doc(db, "betaAccessRequests", requestId);
@@ -452,6 +452,10 @@ export async function reviewAccessRequest(
     reviewedAt: serverTimestamp(),
     reviewedBy: reviewedBy.trim().toLowerCase(),
   });
+}
+
+export async function deleteAccessRequestRecord(requestId: string) {
+  await deleteDoc(doc(db, "betaAccessRequests", requestId));
 }
 
 export async function upsertBusiness(input: {

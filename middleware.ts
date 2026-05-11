@@ -25,7 +25,7 @@ function buildLoginRedirect(
   request: NextRequest,
   input?: {
     next?: string;
-    reason?: "pending" | "rejected" | "no-request" | "admin-only";
+    reason?: "pending" | "rejected" | "disabled" | "no-request" | "admin-only";
   },
 ) {
   const loginUrl = new URL("/login", request.url);
@@ -108,6 +108,8 @@ export function middleware(request: NextRequest) {
           ? "pending"
           : accessStatus === "rejected"
             ? "rejected"
+            : accessStatus === "disabled"
+              ? "disabled"
             : "no-request",
     });
   }

@@ -81,11 +81,12 @@ service cloud.firestore {
         && (
           request.resource.data.status == 'approved'
           || request.resource.data.status == 'rejected'
+          || request.resource.data.status == 'disabled'
         )
         && request.resource.data.reviewedAt == request.time
         && validText(request.resource.data.reviewedBy, 5, 120);
 
-      allow delete: if false;
+      allow delete: if isAdmin();
     }
 
     match /businesses/{businessId} {

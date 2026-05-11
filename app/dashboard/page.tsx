@@ -70,30 +70,26 @@ export default function DashboardPage() {
         {showOnboardingState ? <DashboardOnboarding /> : null}
 
         <Reveal>
-          <section className="mt-2 w-full max-w-full min-w-0 space-y-4">
+          <section className="mobile-safe mt-2 space-y-4">
           <div className="mb-1">
-            <h3 className="text-xl font-semibold text-romano-ink">Performance</h3>
+            <h3 className="text-xl font-semibold text-romano-ink">Business snapshot</h3>
             <p className="mt-1 text-sm text-romano-slate">
-              The core numbers to check first when you open FlowLo on the go.
+              The first signals to scan when you open FlowLo and need the state of the business fast.
             </p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mobile-safe grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <StatCard
-              label="Revenue Today"
-              value={loading ? "..." : formatCurrency(summary?.todaysRevenue ?? 0)}
-              helper="Paid or completed sales captured today."
-              tone="primary"
+              label="Total Products"
+              value={loading ? "..." : String(summary?.totalProducts ?? 0)}
+              helper="Products currently tracked inside FlowLo."
+              tone="neutral"
             />
             <StatCard
-              label="Orders Today"
-              value={loading ? "..." : String(summary?.ordersToday ?? 0)}
-              helper={
-                loading
-                  ? "Loading today's order flow."
-                  : `${ordersTodayBreakdown.pending} pending · ${ordersTodayBreakdown.completed} completed`
-              }
-              tone="neutral"
+              label="Low Stock Alerts"
+              value={loading ? "..." : String(summary?.lowStockCount ?? 0)}
+              helper="Products needing attention right now."
+              tone="warning"
             />
             <StatCard
               label="Pending Deliveries"
@@ -105,37 +101,7 @@ export default function DashboardPage() {
               }
               tone="warning"
             />
-            <StatCard
-              label="Low Stock Alerts"
-              value={loading ? "..." : String(summary?.lowStockCount ?? 0)}
-              helper="Products needing attention right now."
-              tone="warning"
-            />
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <StatCard
-              label="Total Revenue"
-              value={loading ? "..." : formatCurrency(summary?.totalRevenue ?? 0)}
-              helper="All paid or completed sales, excluding cancelled orders."
-              tone="primary"
-              compact
-            />
-            <StatCard
-              label="Units Sold Today"
-              value={loading ? "..." : String(summary?.unitsSoldToday ?? 0)}
-              helper="Item quantities from today's paid or completed sales."
-              tone="neutral"
-              compact
-            />
-            <StatCard
-              label="Total Products"
-              value={loading ? "..." : String(summary?.totalProducts ?? 0)}
-              helper="Products currently tracked inside FlowLo."
-              tone="neutral"
-              compact
-            />
-            <div className="card-surface relative overflow-hidden p-5">
+            <div className="card-surface mobile-safe relative overflow-hidden p-4 sm:p-5">
               <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-[radial-gradient(circle_at_top_left,rgba(62,242,207,0.12),transparent_44%),radial-gradient(circle_at_top_right,rgba(255,212,90,0.08),transparent_28%)]" />
               <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-romano-mintText">
                 Quick Actions
@@ -168,20 +134,64 @@ export default function DashboardPage() {
         </Reveal>
 
         <Reveal delay={0.04}>
-          <section className="mt-10 w-full max-w-full min-w-0">
+          <section className="mobile-safe mt-10 space-y-4">
+            <div className="mb-1">
+              <h3 className="text-xl font-semibold text-romano-ink">Sales performance</h3>
+              <p className="mt-1 text-sm text-romano-slate">
+                Revenue and order pace from paid or completed sales, grouped for quick monitoring.
+              </p>
+            </div>
+
+            <div className="mobile-safe grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <StatCard
+                label="Revenue Today"
+                value={loading ? "..." : formatCurrency(summary?.todaysRevenue ?? 0)}
+                helper="Paid or completed sales captured today."
+                tone="primary"
+              />
+              <StatCard
+                label="Total Revenue"
+                value={loading ? "..." : formatCurrency(summary?.totalRevenue ?? 0)}
+                helper="All paid or completed sales, excluding cancelled orders."
+                tone="primary"
+                compact
+              />
+              <StatCard
+                label="Orders Today"
+                value={loading ? "..." : String(summary?.ordersToday ?? 0)}
+                helper={
+                  loading
+                    ? "Loading today's order flow."
+                    : `${ordersTodayBreakdown.pending} pending · ${ordersTodayBreakdown.completed} completed`
+                }
+                tone="neutral"
+              />
+              <StatCard
+                label="Units Sold Today"
+                value={loading ? "..." : String(summary?.unitsSoldToday ?? 0)}
+                helper="Item quantities from today's paid or completed sales."
+                tone="neutral"
+                compact
+              />
+            </div>
+          </section>
+        </Reveal>
+
+        <Reveal delay={0.08}>
+          <section className="mobile-safe mt-10">
           <div className="mb-4">
-            <h3 className="text-xl font-semibold text-romano-ink">Sales activity</h3>
+            <h3 className="text-xl font-semibold text-romano-ink">Orders & deliveries</h3>
             <p className="mt-1 text-sm text-romano-slate">
-              Today’s order flow and delivery momentum, grouped for fast scanning.
+              Today’s operational flow, from new orders to the next delivery handoff.
             </p>
           </div>
 
-          <div className="grid gap-4 xl:grid-cols-2">
-            <div className="card-surface p-5 sm:p-7">
-              <div className="flex items-start justify-between gap-4">
-                <div>
+          <div className="mobile-safe grid gap-4 xl:grid-cols-2">
+            <div className="card-surface mobile-safe p-4 sm:p-7">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div className="min-w-0">
                   <h4 className="text-lg font-semibold text-romano-ink">Orders today</h4>
-                  <p className="mt-1 text-sm text-romano-slate">
+                  <p className="mt-1 text-sm text-romano-slate [overflow-wrap:anywhere]">
                     Track the pace of today’s new sales at a glance.
                   </p>
                 </div>
@@ -191,7 +201,7 @@ export default function DashboardPage() {
                 />
               </div>
 
-              <div className="mt-5 grid grid-cols-3 gap-2.5 sm:gap-3">
+              <div className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-3 sm:gap-3">
                 <div className="surface-muted p-3.5 sm:p-4">
                   <p className="field-label">Pending</p>
                   <p className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-romano-ink sm:text-[2rem]">
@@ -213,11 +223,11 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className="card-surface p-5 sm:p-7">
+            <div className="card-surface mobile-safe p-4 sm:p-7">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                <div>
+                <div className="min-w-0">
                   <h4 className="text-lg font-semibold text-romano-ink">Delivery flow</h4>
-                  <p className="mt-1 text-sm text-romano-slate">
+                  <p className="mt-1 text-sm text-romano-slate [overflow-wrap:anywhere]">
                     See what still needs attention before the next handoff.
                   </p>
                 </div>
@@ -226,7 +236,7 @@ export default function DashboardPage() {
                 </Link>
               </div>
 
-              <div className="mt-5 grid grid-cols-3 gap-2.5 sm:gap-3">
+              <div className="mt-5 grid grid-cols-1 gap-2.5 sm:grid-cols-3 sm:gap-3">
                 <div className="surface-muted p-3.5 sm:p-4">
                   <p className="field-label">Pending</p>
                   <p className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-romano-ink sm:text-[2rem]">

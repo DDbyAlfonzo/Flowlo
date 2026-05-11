@@ -37,11 +37,11 @@ export const ACCESS_REQUEST_BUSINESS_TYPES = [
 ] as const;
 
 export const APP_NAV_ITEMS = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/products", label: "Products" },
-  { href: "/orders", label: "Orders" },
-  { href: "/deliveries", label: "Deliveries" },
-  { href: "/settings/business", label: "Business" },
+  { href: "/dashboard", label: "Dashboard", compactLabel: "Dash" },
+  { href: "/products", label: "Products", compactLabel: "Stock" },
+  { href: "/orders", label: "Orders", compactLabel: "Orders" },
+  { href: "/deliveries", label: "Deliveries", compactLabel: "Delivery" },
+  { href: "/settings/business", label: "Business", compactLabel: "Biz" },
 ] as const;
 
 export function isAdminEmail(email?: string | null) {

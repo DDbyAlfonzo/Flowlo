@@ -30,10 +30,10 @@ export function AuthCard({
   useOverflowDebug("auth-card");
 
   return (
-    <div className="relative min-h-screen w-full max-w-full overflow-hidden">
+    <div className="mobile-safe relative min-h-screen overflow-hidden">
       <AmbientBackground variant="auth" />
 
-      <div className="page-wrap relative z-10 w-full max-w-full justify-center overflow-x-hidden">
+      <div className="page-wrap mobile-safe relative z-10 justify-center">
         <div className="mx-auto grid w-full max-w-6xl min-w-0 gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(420px,480px)] lg:items-center lg:gap-16">
           <Reveal delay={0.08} className="order-1 lg:order-2">
             <section className="auth-floating-card flex min-h-full flex-col p-6 sm:p-8 lg:p-9">

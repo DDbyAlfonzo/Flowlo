@@ -8,7 +8,11 @@ import { ProtectedPage } from "@/components/protected-page";
 import { StatusBadge } from "@/components/status-badge";
 import { useAuth } from "@/hooks/use-auth";
 import { formatDate, formatDateTime } from "@/lib/format";
-import { listAccessRequests, reviewAccessRequest } from "@/lib/firestore";
+import {
+  deleteAccessRequestRecord,
+  listAccessRequests,
+  reviewAccessRequest,
+} from "@/lib/firestore";
 import { AccessRequest, AccessRequestStatus } from "@/types";
 
 const ACCESS_TABS: Array<{
@@ -31,6 +35,11 @@ const ACCESS_TABS: Array<{
     label: "Rejected",
     description: "Requests that were not approved this time.",
   },
+  {
+    key: "disabled",
+    label: "Disabled",
+    description: "Businesses whose FlowLo access has been switched off.",
+  },
 ];
 
 function getStatusTone(status: AccessRequestStatus) {
@@ -38,7 +47,7 @@ function getStatusTone(status: AccessRequestStatus) {
     return "success" as const;
   }
 
-  if (status === "rejected") {
+  if (status === "rejected" || status === "disabled") {
     return "danger" as const;
   }
 
@@ -50,7 +59,7 @@ export default function AdminAccessRequestsPage() {
   const [requests, setRequests] = useState<AccessRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<AccessRequestStatus>("pending");
-  const [actioningId, setActioningId] = useState("");
+  const [actioningKey, setActioningKey] = useState("");
   const [feedback, setFeedback] = useState<{
     tone: "success" | "danger";
     message: string;
@@ -91,30 +100,36 @@ export default function AdminAccessRequestsPage() {
           pending: 0,
           approved: 0,
           rejected: 0,
+          disabled: 0,
         },
       ),
     [requests],
   );
 
-  const handleReview = async (
+  const handleStatusChange = async (
     request: AccessRequest,
-    status: Extract<AccessRequestStatus, "approved" | "rejected">,
+    status: Extract<AccessRequestStatus, "approved" | "rejected" | "disabled">,
   ) => {
     if (!user?.email) {
       return;
     }
 
-    const confirmed = window.confirm(
-      `${
-        status === "approved" ? "Approve" : "Reject"
-      } access for ${request.fullName}?`,
-    );
+    const actionLabel =
+      status === "approved"
+        ? request.status === "disabled"
+          ? "Re-enable"
+          : "Approve"
+        : status === "disabled"
+          ? "Disable"
+          : "Reject";
+
+    const confirmed = window.confirm(`${actionLabel} access for ${request.fullName}?`);
 
     if (!confirmed) {
       return;
     }
 
-    setActioningId(request.id);
+    setActioningKey(`${request.id}:${status}`);
     setFeedback(null);
 
     try {
@@ -125,7 +140,9 @@ export default function AdminAccessRequestsPage() {
         message:
           status === "approved"
             ? `${request.fullName} has been approved.`
-            : `${request.fullName} has been rejected.`,
+            : status === "disabled"
+              ? `${request.fullName} has been disabled.`
+              : `${request.fullName} has been rejected.`,
       });
     } catch (reviewError) {
       setFeedback({
@@ -136,7 +153,39 @@ export default function AdminAccessRequestsPage() {
             : "We could not update that access request.",
       });
     } finally {
-      setActioningId("");
+      setActioningKey("");
+    }
+  };
+
+  const handleDelete = async (request: AccessRequest) => {
+    const confirmed = window.confirm(
+      `Delete the access record for ${request.fullName}? This removes the FlowLo app access record only. Their Firebase Auth account will still exist until you remove it separately from Firebase Console or Admin SDK.`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setActioningKey(`${request.id}:delete`);
+    setFeedback(null);
+
+    try {
+      await deleteAccessRequestRecord(request.id);
+      await loadRequests();
+      setFeedback({
+        tone: "success",
+        message: `${request.fullName}'s access record has been deleted. Firebase Auth still needs separate removal if you want the account deleted entirely.`,
+      });
+    } catch (deleteError) {
+      setFeedback({
+        tone: "danger",
+        message:
+          deleteError instanceof Error
+            ? deleteError.message
+            : "We could not delete that access record.",
+      });
+    } finally {
+      setActioningKey("");
     }
   };
 
@@ -145,12 +194,12 @@ export default function AdminAccessRequestsPage() {
       <AppShell
         showNav={false}
         shellTitle="Managed access"
-        shellSubtitle="Review, approve, and reject FlowLo access requests."
+        shellSubtitle="Review requests, manage approved users, and control FlowLo access."
       >
         <PageHeader
           eyebrow="Admin"
-          title="Access requests"
-          description="Review every request before a business gets into the FlowLo dashboard."
+          title="Access requests and users"
+          description="Review new businesses, manage approved users, and disable or remove app access when needed."
         />
 
         {feedback ? (
@@ -173,7 +222,7 @@ export default function AdminAccessRequestsPage() {
             </h3>
             <p className="mt-3 text-sm leading-7 text-romano-slate">
               FlowLo uses managed access permanently, so every business is reviewed
-              before it reaches products, orders, and the dashboard.
+              before it reaches products, orders, deliveries, and the dashboard.
             </p>
 
             <div className="mt-6 grid gap-3">
@@ -211,10 +260,10 @@ export default function AdminAccessRequestsPage() {
               <div>
                 <p className="eyebrow-label">{activeTab}</p>
                 <h3 className="mt-3 text-2xl font-semibold tracking-[-0.05em] text-romano-ink">
-                  {ACCESS_TABS.find((tab) => tab.key === activeTab)?.label} requests
+                  {ACCESS_TABS.find((tab) => tab.key === activeTab)?.label} access records
                 </h3>
                 <p className="mt-2 text-sm leading-7 text-romano-slate">
-                  Review request details, then approve or reject with one action.
+                  Review details, then approve, reject, disable, re-enable, or remove app access.
                 </p>
               </div>
               <button
@@ -230,12 +279,14 @@ export default function AdminAccessRequestsPage() {
             <div className="mt-6 grid gap-4">
               {!loading && !filteredRequests.length ? (
                 <EmptyState
-                  title={`No ${activeTab} requests`}
+                  title={`No ${activeTab} records`}
                   description={
                     activeTab === "pending"
                       ? "New access requests will appear here as businesses join FlowLo."
                       : activeTab === "approved"
                         ? "Approved businesses will appear here once you start reviewing requests."
+                        : activeTab === "disabled"
+                          ? "Disabled businesses will appear here once you switch off access."
                         : "Rejected requests will appear here if you decline access."
                   }
                 />
@@ -302,34 +353,59 @@ export default function AdminAccessRequestsPage() {
                         </div>
                       ) : null}
 
-                      <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-                        <button
-                          type="button"
-                          className="primary-button"
-                          disabled={
-                            actioningId === request.id || request.status === "approved"
-                          }
-                          onClick={() => void handleReview(request, "approved")}
-                        >
-                          {actioningId === request.id && request.status !== "approved"
-                            ? "Updating..."
-                            : request.status === "approved"
-                              ? "Approved"
-                              : "Approve"}
-                        </button>
-                        <button
-                          type="button"
-                          className="secondary-button"
-                          disabled={
-                            actioningId === request.id || request.status === "rejected"
-                          }
-                          onClick={() => void handleReview(request, "rejected")}
-                        >
-                          {actioningId === request.id && request.status !== "rejected"
-                            ? "Updating..."
-                            : request.status === "rejected"
-                              ? "Rejected"
+                      <div className="mt-5 grid gap-3 sm:flex sm:flex-wrap">
+                        {request.status === "pending" || request.status === "rejected" || request.status === "disabled" ? (
+                          <button
+                            type="button"
+                            className="primary-button"
+                            disabled={actioningKey.startsWith(`${request.id}:`)}
+                            onClick={() => void handleStatusChange(request, "approved")}
+                          >
+                            {actioningKey === `${request.id}:approved`
+                              ? request.status === "disabled"
+                                ? "Re-enabling..."
+                                : "Approving..."
+                              : request.status === "disabled"
+                                ? "Re-enable"
+                                : "Approve"}
+                          </button>
+                        ) : null}
+
+                        {request.status === "pending" || request.status === "approved" ? (
+                          <button
+                            type="button"
+                            className="secondary-button"
+                            disabled={actioningKey.startsWith(`${request.id}:`)}
+                            onClick={() => void handleStatusChange(request, "rejected")}
+                          >
+                            {actioningKey === `${request.id}:rejected`
+                              ? "Rejecting..."
                               : "Reject"}
+                          </button>
+                        ) : null}
+
+                        {request.status === "approved" ? (
+                          <button
+                            type="button"
+                            className="secondary-button"
+                            disabled={actioningKey.startsWith(`${request.id}:`)}
+                            onClick={() => void handleStatusChange(request, "disabled")}
+                          >
+                            {actioningKey === `${request.id}:disabled`
+                              ? "Disabling..."
+                              : "Disable"}
+                          </button>
+                        ) : null}
+
+                        <button
+                          type="button"
+                          className="inline-flex min-h-[2.9rem] items-center justify-center rounded-2xl border border-romano-roseText/24 bg-romano-rose px-5 py-3 text-sm font-semibold text-romano-roseText transition duration-300 hover:-translate-y-0.5 hover:border-romano-roseText/40"
+                          disabled={actioningKey.startsWith(`${request.id}:`)}
+                          onClick={() => void handleDelete(request)}
+                        >
+                          {actioningKey === `${request.id}:delete`
+                            ? "Deleting..."
+                            : "Delete Access Record"}
                         </button>
                       </div>
                     </div>
