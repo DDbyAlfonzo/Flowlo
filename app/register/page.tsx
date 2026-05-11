@@ -114,17 +114,15 @@ export default function RegisterPage() {
       eyebrow="Managed access"
       title="Request access"
       description="Tell us about your business. We'll review your request and let you know once access is approved."
-      panelTitle="From inbox order to delivered update."
-      panelDescription="FlowLo keeps stock, orders, customer updates, and dropoffs moving in one calmer rhythm."
       footer={
         <>
-          Already have access?{" "}
+          Already approved?{" "}
           <Link href="/login" className="font-semibold text-romano-mintText">
-            Login
+            Sign in
           </Link>
         </>
       }
-      trustNote="We review each request before opening your FlowLo workspace."
+      trustNote="Managed access platform."
     >
       {success ? (
         <div className="grid gap-5">

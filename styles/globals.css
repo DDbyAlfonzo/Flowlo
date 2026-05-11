@@ -172,12 +172,12 @@ textarea {
   }
 
   .auth-floating-card {
-    @apply relative w-full min-w-0 max-w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(17,23,31,0.72),rgba(8,12,18,0.9))] shadow-soft backdrop-blur-[26px];
+    @apply relative w-full min-w-0 max-w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(16,22,30,0.66),rgba(8,12,18,0.88))] shadow-soft backdrop-blur-[26px];
     box-shadow:
-      0 38px 96px -52px rgba(0, 0, 0, 0.98),
-      0 18px 46px -30px rgba(0, 0, 0, 0.76),
+      0 34px 90px -52px rgba(0, 0, 0, 0.96),
+      0 16px 40px -30px rgba(0, 0, 0, 0.72),
       inset 0 1px 0 rgba(255, 255, 255, 0.055),
-      inset 0 0 34px rgba(62, 242, 207, 0.024);
+      inset 0 0 26px rgba(62, 242, 207, 0.02);
   }
 
   .auth-floating-card::before {
@@ -198,12 +198,12 @@ textarea {
   }
 
   .auth-story-shell {
-    @apply relative w-full min-w-0 max-w-full overflow-hidden rounded-[2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(13,18,25,0.62),rgba(8,11,16,0.48))] shadow-soft backdrop-blur-2xl min-h-[18rem] sm:min-h-[24rem] lg:min-h-[44rem];
+    @apply relative w-full min-w-0 max-w-full overflow-hidden rounded-[2.2rem] border border-white/10 bg-[linear-gradient(180deg,rgba(13,18,25,0.54),rgba(8,11,16,0.42))] shadow-soft backdrop-blur-2xl min-h-[18rem] sm:min-h-[24rem] lg:min-h-[40rem];
     box-shadow:
-      0 40px 104px -58px rgba(0, 0, 0, 0.98),
-      0 18px 44px -28px rgba(0, 0, 0, 0.76),
+      0 34px 92px -56px rgba(0, 0, 0, 0.96),
+      0 18px 42px -28px rgba(0, 0, 0, 0.74),
       inset 0 1px 0 rgba(255, 255, 255, 0.06),
-      inset 0 0 42px rgba(62, 242, 207, 0.02);
+      inset 0 0 34px rgba(62, 242, 207, 0.018);
   }
 
   .auth-story-shell::before {
@@ -224,11 +224,11 @@ textarea {
   }
 
   .auth-story-chip {
-    @apply absolute z-10 flex max-w-[12.75rem] min-w-0 items-start gap-3 rounded-[1.1rem] border border-white/10 bg-[linear-gradient(180deg,rgba(18,24,32,0.74),rgba(8,12,17,0.86))] px-3 py-3 shadow-[0_20px_48px_-32px_rgba(0,0,0,0.9)] backdrop-blur-2xl sm:max-w-[14.25rem] sm:px-3.5 sm:py-3.5;
+    @apply absolute z-10 flex max-w-[11.75rem] min-w-0 items-start gap-3 rounded-[1.05rem] border border-white/10 bg-[linear-gradient(180deg,rgba(17,23,31,0.72),rgba(8,12,17,0.82))] px-3 py-3 shadow-[0_18px_42px_-32px_rgba(0,0,0,0.88)] backdrop-blur-2xl sm:max-w-[12.5rem];
     box-shadow:
-      0 20px 48px -32px rgba(0, 0, 0, 0.9),
+      0 18px 42px -32px rgba(0, 0, 0, 0.88),
       inset 0 1px 0 rgba(255, 255, 255, 0.05),
-      inset 0 0 18px rgba(62, 242, 207, 0.014);
+      inset 0 0 14px rgba(62, 242, 207, 0.012);
   }
 
   .auth-story-chip::before {
@@ -266,6 +266,10 @@ textarea {
 
   .auth-inline-pill {
     @apply inline-flex items-center rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-romano-amberText shadow-[0_16px_36px_-28px_rgba(0,0,0,0.72)] backdrop-blur-xl;
+  }
+
+  .auth-support-kicker {
+    @apply inline-flex rounded-full border border-white/10 bg-black/20 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-romano-amberText backdrop-blur-xl;
   }
 
   .auth-submit-button {

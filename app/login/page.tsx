@@ -199,9 +199,7 @@ export default function LoginPage() {
       eyebrow="Sign in"
       title="Welcome back"
       description="Access your FlowLo dashboard to manage stock, orders, and customer updates."
-      panelTitle="From inbox order to delivered update."
-      panelDescription="FlowLo keeps stock, orders, customer updates, and dropoffs moving in one calmer rhythm."
-      trustNote="Secure access for approved FlowLo businesses."
+      trustNote="Managed access platform."
       footer={
         <>
           New to FlowLo?{" "}
