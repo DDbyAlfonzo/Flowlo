@@ -22,8 +22,7 @@ export default function BusinessSettingsPage() {
           eyebrow="Quick setup"
           title="Set up your business"
           description="Add your business name and category so FlowLo can personalise your dashboard from day one."
-          panelTitle="One quick step, then you’re ready to sell with more clarity."
-          panelDescription="FlowLo is designed to help WhatsApp and Instagram sellers move from scattered chats to a cleaner operating rhythm."
+          badgeLabel="Business setup"
           footer="You can edit your business details later from Settings."
         >
           <BusinessSettingsForm mode="onboarding" embedded />

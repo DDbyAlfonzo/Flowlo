@@ -198,7 +198,8 @@ export default function LoginPage() {
     <AuthCard
       eyebrow="Sign in"
       title="Welcome back"
-      description="Manage stock, orders, and customer updates from one clean dashboard."
+      description="Sign in to manage stock, orders, and customer updates."
+      badgeLabel="Managed access"
       trustNote="Managed access platform."
       footer={
         <>

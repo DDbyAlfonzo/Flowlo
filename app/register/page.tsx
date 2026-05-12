@@ -114,6 +114,7 @@ export default function RegisterPage() {
       eyebrow="Managed access"
       title="Request access"
       description="Tell us about your business. We'll review your request and let you know once approved."
+      badgeLabel="Managed access"
       footer={
         <>
           Already approved?{" "}
@@ -126,12 +127,12 @@ export default function RegisterPage() {
     >
       {success ? (
         <div className="grid gap-5">
-          <div className="rounded-[1.65rem] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.02))] p-6 shadow-[0_24px_54px_-38px_rgba(0,0,0,0.88)] backdrop-blur-2xl">
+          <div className="grid gap-3 text-center">
             <p className="eyebrow-label text-romano-mintText">Request received</p>
-            <h3 className="mt-4 text-2xl font-semibold tracking-[-0.05em] text-romano-ink">
+            <h3 className="text-2xl font-semibold tracking-[-0.05em] text-romano-ink">
               You&apos;re on the list.
             </h3>
-            <p className="mt-4 text-sm leading-7 text-romano-slate">
+            <p className="text-sm leading-7 text-romano-slate">
               Your access request has been received. We&apos;ll review it and let you
               know once your account is approved.
             </p>
