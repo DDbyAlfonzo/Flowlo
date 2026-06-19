@@ -138,9 +138,11 @@ export function AppShell({
         initial={reduceMotion ? false : { opacity: 0, y: 18 }}
         animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
         transition={{ duration: 0.48, ease: [0.22, 1, 0.36, 1] }}
-        className="card-surface mobile-safe relative sticky top-3 z-20 flex flex-col gap-4 overflow-hidden rounded-[1.45rem] p-4 sm:top-4 sm:rounded-4xl sm:p-6 sm:flex-row sm:items-center sm:justify-between"
+        className="card-surface mobile-safe relative sticky top-3 z-20 flex flex-col gap-4 overflow-visible rounded-[1.45rem] p-4 sm:top-4 sm:rounded-4xl sm:p-6 sm:flex-row sm:items-center sm:justify-between"
       >
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,rgba(62,242,207,0.12),transparent_45%),radial-gradient(circle_at_top_right,rgba(255,212,90,0.09),transparent_30%)]" />
+        <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
+          <div className="absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,rgba(62,242,207,0.12),transparent_45%),radial-gradient(circle_at_top_right,rgba(255,212,90,0.09),transparent_30%)]" />
+        </div>
         <div className="min-w-0 flex-1">
           <BrandWordmark size="sm" showTagline={false} compact priority />
           <h1 className="mt-2 text-2xl font-semibold tracking-[-0.04em] text-romano-ink">
@@ -152,8 +154,8 @@ export function AppShell({
           </p>
         </div>
 
-        <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
-          <div ref={notificationsRef} className="relative">
+        <div className="relative z-20 flex w-full items-center justify-end gap-2 overflow-visible sm:w-auto">
+          <div ref={notificationsRef} className="relative z-20 flex-none overflow-visible">
             <button
               type="button"
               aria-label="Open notifications"
@@ -172,13 +174,13 @@ export function AppShell({
                 initial={reduceMotion ? false : { opacity: 0, y: 10, scale: 0.98 }}
                 animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute right-0 top-[calc(100%+0.7rem)] z-30 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(17,24,32,0.96),rgba(10,14,19,0.96))] p-4 shadow-[0_24px_70px_-28px_rgba(0,0,0,0.78)] backdrop-blur-2xl"
+                className="absolute right-0 top-full z-50 mt-3 w-[calc(100vw-2rem)] max-w-80 overflow-hidden rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(17,24,32,0.96),rgba(10,14,19,0.96))] p-4 shadow-[0_24px_70px_-28px_rgba(0,0,0,0.78)] backdrop-blur-2xl sm:w-80 sm:max-w-none"
               >
                 <div className="flex items-center justify-between gap-3">
                   <div>
                     <p className="eyebrow-label">Notifications</p>
                     <p className="mt-2 text-sm font-medium text-romano-ink">
-                      Nothing new right now
+                      No notifications
                     </p>
                   </div>
                   <span className="glass-pill px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-romano-slate">
@@ -188,14 +190,14 @@ export function AppShell({
 
                 <div className="surface-muted mt-4 rounded-[1.2rem] p-4">
                   <p className="text-sm leading-6 text-romano-slate">
-                    You&apos;re all caught up. New order, delivery, and stock alerts will appear here.
+                    You&apos;re all caught up. New orders, stock alerts, and delivery updates will appear here.
                   </p>
                 </div>
               </motion.div>
             ) : null}
           </div>
 
-          <div ref={profileMenuRef} className="relative">
+          <div ref={profileMenuRef} className="relative z-20 flex-none overflow-visible">
             <button
               type="button"
               aria-label="Open profile menu"
@@ -227,7 +229,7 @@ export function AppShell({
                 initial={reduceMotion ? false : { opacity: 0, y: 10, scale: 0.98 }}
                 animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute right-0 top-[calc(100%+0.7rem)] z-30 w-[min(21rem,calc(100vw-2rem))] overflow-hidden rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(17,24,32,0.96),rgba(10,14,19,0.96))] p-3 shadow-[0_24px_70px_-28px_rgba(0,0,0,0.78)] backdrop-blur-2xl"
+                className="absolute right-0 top-full z-50 mt-3 w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(17,24,32,0.96),rgba(10,14,19,0.96))] p-3 shadow-[0_24px_70px_-28px_rgba(0,0,0,0.78)] backdrop-blur-2xl sm:w-[min(21rem,calc(100vw-2.5rem))]"
               >
                 <div className="surface-muted rounded-[1.15rem] px-4 py-3">
                   <p className="text-sm font-semibold text-romano-ink">{userLabel}</p>

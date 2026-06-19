@@ -120,8 +120,8 @@ export function LandingPage() {
       >
         <div className="relative overflow-hidden rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,rgba(18,24,33,0.72),rgba(8,12,17,0.84))] shadow-[0_30px_90px_-48px_rgba(0,0,0,0.98),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl before:absolute before:inset-px before:rounded-[29px] before:bg-[linear-gradient(180deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01))] before:content-['']">
           <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(62,242,207,0.44),rgba(255,212,90,0.18),transparent)] sm:inset-x-10" />
-          <div className="relative z-10 flex items-center justify-between gap-3 px-3.5 py-3.5 sm:gap-4 sm:px-6 sm:py-4">
-            <Link href="/" aria-label="FlowLo home">
+          <div className="relative z-10 flex min-w-0 items-center justify-between gap-3 px-3.5 py-3.5 sm:gap-4 sm:px-6 sm:py-4">
+            <Link href="/" aria-label="FlowLo home" className="min-w-0 shrink">
               <BrandWordmark size="sm" compact priority />
             </Link>
 
@@ -130,16 +130,16 @@ export function LandingPage() {
               Launching Soon
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex shrink-0 items-center gap-1.5 sm:gap-3">
               <Link
                 href="/login"
-                className="rounded-full px-2 py-2 text-[13px] font-medium text-romano-slate transition duration-300 hover:text-romano-ink hover:drop-shadow-[0_0_10px_rgba(62,242,207,0.35)] sm:px-3 sm:text-sm"
+                className="inline-flex min-h-[2.5rem] items-center rounded-full px-2 py-2 text-[13px] font-medium text-romano-slate transition duration-300 hover:text-romano-ink hover:drop-shadow-[0_0_10px_rgba(62,242,207,0.35)] sm:px-3 sm:text-sm"
               >
                 Login
               </Link>
               <Link
                 href="/register"
-                className="primary-button min-h-[2.75rem] whitespace-nowrap px-3.5 py-2.5 text-[13px] sm:min-h-[3rem] sm:px-5 sm:text-sm"
+                className="primary-button hidden min-h-[2.75rem] whitespace-nowrap px-3.5 py-2.5 text-[13px] sm:inline-flex sm:min-h-[3rem] sm:px-5 sm:text-sm"
               >
                 Request Access
               </Link>
