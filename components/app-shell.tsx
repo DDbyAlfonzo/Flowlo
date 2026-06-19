@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { BrandWordmark } from "@/components/brand-wordmark";
 import { usePathname, useRouter } from "next/navigation";
@@ -25,6 +25,52 @@ type AppShellProps = {
   shellSubtitle?: string;
 };
 
+function BellIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-[1.1rem] w-[1.1rem]"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M15 17h5l-1.4-1.4a2 2 0 0 1-.6-1.4V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5" />
+      <path d="M10 20a2 2 0 0 0 4 0" />
+    </svg>
+  );
+}
+
+function ChevronDownIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-4 w-4"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
+function getInitials(name?: string | null, email?: string | null) {
+  const source = name?.trim() || email?.trim() || "FlowLo";
+  const parts = source.split(/\s+/).filter(Boolean);
+
+  if (parts.length === 1) {
+    return parts[0].slice(0, 2).toUpperCase();
+  }
+
+  return `${parts[0]?.[0] ?? ""}${parts[1]?.[0] ?? ""}`.toUpperCase();
+}
+
 export function AppShell({
   children,
   showNav = true,
@@ -35,7 +81,11 @@ export function AppShell({
   const router = useRouter();
   const { business, isAdmin, user } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const reduceMotion = useReducedMotion();
+  const notificationsRef = useRef<HTMLDivElement | null>(null);
+  const profileMenuRef = useRef<HTMLDivElement | null>(null);
   useOverflowDebug("app-shell");
 
   const handleLogout = async () => {
@@ -48,6 +98,39 @@ export function AppShell({
       setSigningOut(false);
     }
   };
+
+  useEffect(() => {
+    const handlePointerDown = (event: MouseEvent) => {
+      const target = event.target as Node;
+
+      if (notificationsRef.current && !notificationsRef.current.contains(target)) {
+        setNotificationsOpen(false);
+      }
+
+      if (profileMenuRef.current && !profileMenuRef.current.contains(target)) {
+        setProfileMenuOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setNotificationsOpen(false);
+        setProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, []);
+
+  const userLabel = business?.businessName ?? user?.displayName ?? "Your account";
+  const userSubLabel = user?.email ?? "Manage your FlowLo workspace";
+  const avatarLabel = getInitials(business?.businessName, user?.email);
 
   return (
     <div className="page-wrap mobile-safe">
@@ -69,21 +152,121 @@ export function AppShell({
           </p>
         </div>
 
-        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
-          {isAdmin ? (
-            <Link href="/admin/access-requests" className="secondary-button w-full sm:w-auto">
-              Access Requests
-            </Link>
-          ) : null}
+        <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
+          <div ref={notificationsRef} className="relative">
+            <button
+              type="button"
+              aria-label="Open notifications"
+              aria-expanded={notificationsOpen}
+              onClick={() => {
+                setNotificationsOpen((current) => !current);
+                setProfileMenuOpen(false);
+              }}
+              className="surface-muted flex h-12 w-12 items-center justify-center rounded-2xl border border-white/10 text-romano-ink transition hover:-translate-y-0.5 hover:border-romano-primary/25 hover:text-romano-primary focus:outline-none focus:ring-2 focus:ring-romano-primary/40"
+            >
+              <BellIcon />
+            </button>
 
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="secondary-button w-full sm:w-auto"
-            disabled={signingOut}
-          >
-            {signingOut ? "Signing out..." : "Sign out"}
-          </button>
+            {notificationsOpen ? (
+              <motion.div
+                initial={reduceMotion ? false : { opacity: 0, y: 10, scale: 0.98 }}
+                animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute right-0 top-[calc(100%+0.7rem)] z-30 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(17,24,32,0.96),rgba(10,14,19,0.96))] p-4 shadow-[0_24px_70px_-28px_rgba(0,0,0,0.78)] backdrop-blur-2xl"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="eyebrow-label">Notifications</p>
+                    <p className="mt-2 text-sm font-medium text-romano-ink">
+                      Nothing new right now
+                    </p>
+                  </div>
+                  <span className="glass-pill px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-romano-slate">
+                    Empty
+                  </span>
+                </div>
+
+                <div className="surface-muted mt-4 rounded-[1.2rem] p-4">
+                  <p className="text-sm leading-6 text-romano-slate">
+                    You&apos;re all caught up. New order, delivery, and stock alerts will appear here.
+                  </p>
+                </div>
+              </motion.div>
+            ) : null}
+          </div>
+
+          <div ref={profileMenuRef} className="relative">
+            <button
+              type="button"
+              aria-label="Open profile menu"
+              aria-expanded={profileMenuOpen}
+              onClick={() => {
+                setProfileMenuOpen((current) => !current);
+                setNotificationsOpen(false);
+              }}
+              className="surface-muted flex h-12 items-center gap-3 rounded-2xl border border-white/10 px-3 pr-2 text-left text-romano-ink transition hover:-translate-y-0.5 hover:border-romano-primary/25 focus:outline-none focus:ring-2 focus:ring-romano-primary/40"
+            >
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,rgba(62,242,207,0.18),rgba(255,212,90,0.24))] text-xs font-semibold uppercase tracking-[0.14em] text-romano-ink">
+                {avatarLabel}
+              </span>
+              <span className="hidden min-w-0 sm:block">
+                <span className="block truncate text-sm font-semibold text-romano-ink">
+                  {userLabel}
+                </span>
+                <span className="block truncate text-xs text-romano-slate">
+                  {userSubLabel}
+                </span>
+              </span>
+              <span className="text-romano-slate">
+                <ChevronDownIcon />
+              </span>
+            </button>
+
+            {profileMenuOpen ? (
+              <motion.div
+                initial={reduceMotion ? false : { opacity: 0, y: 10, scale: 0.98 }}
+                animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
+                transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+                className="absolute right-0 top-[calc(100%+0.7rem)] z-30 w-[min(21rem,calc(100vw-2rem))] overflow-hidden rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(17,24,32,0.96),rgba(10,14,19,0.96))] p-3 shadow-[0_24px_70px_-28px_rgba(0,0,0,0.78)] backdrop-blur-2xl"
+              >
+                <div className="surface-muted rounded-[1.15rem] px-4 py-3">
+                  <p className="text-sm font-semibold text-romano-ink">{userLabel}</p>
+                  <p className="mt-1 text-xs text-romano-slate [overflow-wrap:anywhere]">
+                    {userSubLabel}
+                  </p>
+                </div>
+
+                <div className="mt-3 grid gap-2">
+                  <Link
+                    href="/settings/business"
+                    className="surface-muted rounded-[1.05rem] px-4 py-3 text-sm font-medium text-romano-ink transition hover:border-white/15 hover:text-romano-primary"
+                    onClick={() => setProfileMenuOpen(false)}
+                  >
+                    Business settings
+                  </Link>
+
+                  {isAdmin ? (
+                    <Link
+                      href="/admin/access-requests"
+                      className="surface-muted rounded-[1.05rem] px-4 py-3 text-sm font-medium text-romano-ink transition hover:border-white/15 hover:text-romano-primary"
+                      onClick={() => setProfileMenuOpen(false)}
+                    >
+                      Access requests
+                    </Link>
+                  ) : null}
+
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="surface-muted rounded-[1.05rem] px-4 py-3 text-left text-sm font-medium text-romano-ink transition hover:border-white/15 hover:text-romano-primary disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={signingOut}
+                  >
+                    {signingOut ? "Signing out..." : "Sign out"}
+                  </button>
+                </div>
+              </motion.div>
+            ) : null}
+          </div>
         </div>
       </motion.header>
 

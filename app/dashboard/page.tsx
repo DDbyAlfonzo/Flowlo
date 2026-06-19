@@ -14,6 +14,11 @@ import { getDashboardAnalytics } from "@/lib/analytics";
 import { formatCurrency, formatDate } from "@/lib/format";
 import { DashboardSummary } from "@/types";
 
+type AttentionItemKey =
+  | "low-stock"
+  | "pending-orders"
+  | "pending-deliveries";
+
 function getGreeting() {
   const hour = new Date().getHours();
 
@@ -116,7 +121,7 @@ export default function DashboardPage() {
             }
           : null,
       ].filter(Boolean) as Array<{
-        key: string;
+        key: AttentionItemKey;
         label: string;
         count: number;
         helper: string;
@@ -133,91 +138,165 @@ export default function DashboardPage() {
       ? `${ordersTodayBreakdown.completed} completed today · ${summary?.unitsSoldToday ?? 0} units sold`
       : "No paid or completed sales have been captured today yet.";
 
+  const attentionMeta = {
+    "low-stock": {
+      badge: "Stock",
+      accentClass: "bg-amber-300",
+    },
+    "pending-orders": {
+      badge: "Orders",
+      accentClass: "bg-cyan-300",
+    },
+    "pending-deliveries": {
+      badge: "Deliveries",
+      accentClass: "bg-yellow-300",
+    },
+  } satisfies Record<
+    string,
+    {
+      badge: string;
+      accentClass: string;
+    }
+  >;
+
   return (
     <ProtectedPage>
       <AppShell
         shellTitle={getGreeting()}
         shellSubtitle={`${business?.businessName ?? "Your business"} · ${formatDate(new Date())}`}
       >
-        <Reveal>
-          <section className="mobile-safe">
-            <div className="mb-4">
-              <p className="eyebrow-label">Dashboard</p>
-              <p className="mt-2 text-sm text-romano-slate">
-                A calm view of today&apos;s business flow.
-              </p>
-            </div>
-
-            <div className="card-surface relative overflow-hidden p-5 sm:p-7 lg:p-8">
-              <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-[radial-gradient(circle_at_top_left,rgba(62,242,207,0.12),transparent_45%),radial-gradient(circle_at_top_right,rgba(255,212,90,0.08),transparent_28%)]" />
-
-              <div className="grid gap-5 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.72fr)] lg:items-end">
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-romano-slate">
-                    Today&apos;s revenue
-                  </p>
-                  <p className="mt-3 text-[2.9rem] font-bold tracking-[-0.08em] text-romano-ink sm:text-[3.7rem]">
-                    {loading ? "..." : formatCurrency(summary?.todaysRevenue ?? 0)}
-                  </p>
-                  <p className="mt-3 max-w-xl text-sm leading-7 text-romano-slate [overflow-wrap:anywhere]">
-                    {todayRevenueHelper}
-                  </p>
-                </div>
-
-                <div className="surface-muted p-4 sm:p-5">
-                  <p className="field-label">Orders today</p>
-                  <p className="mt-3 text-[2.3rem] font-semibold tracking-[-0.06em] text-romano-ink sm:text-[2.8rem]">
-                    {loading ? "..." : summary?.ordersToday ?? 0}
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-romano-slate">
-                    {loading
-                      ? "Loading order flow."
-                      : `${ordersTodayBreakdown.pending} pending · ${ordersTodayBreakdown.completed} completed`}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-        </Reveal>
-
-        <Reveal delay={0.04}>
-          <section className="mt-8">
-            <div className="mb-4">
-              <h3 className="text-lg font-semibold text-romano-ink">
-                Quick actions
-              </h3>
-              <p className="mt-1 text-sm text-romano-slate">
-                The fastest next steps for today.
-              </p>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-3">
-              <Link href="/products/new" className="primary-button min-h-[3.5rem]">
-                Add product
-              </Link>
-              <Link href="/orders/new" className="secondary-button min-h-[3.5rem]">
-                Create order
-              </Link>
-              <Link href="/deliveries" className="secondary-button min-h-[3.5rem]">
-                View deliveries
-              </Link>
-            </div>
-          </section>
-        </Reveal>
-
         {showOnboardingState ? <DashboardOnboarding /> : null}
 
         {!showOnboardingState ? (
           <>
-            <Reveal delay={0.08}>
-              <section className="mt-8">
-                <div className="mb-4">
-                  <h3 className="text-lg font-semibold text-romano-ink">
-                    Needs attention
-                  </h3>
-                  <p className="mt-1 text-sm text-romano-slate">
-                    The few things worth checking next.
+            <Reveal>
+              <section className="mobile-safe">
+                <div className="flex flex-col gap-3">
+                  <p className="eyebrow-label">Dashboard</p>
+                  <h2 className="text-[1.65rem] font-semibold tracking-[-0.045em] text-romano-ink sm:text-[2rem]">
+                    Operational overview
+                  </h2>
+                  <p className="text-sm leading-6 text-romano-slate">
+                    {business?.businessName ?? "Your business"} · {getGreeting()} ·{" "}
+                    {formatDate(new Date())}
                   </p>
+                </div>
+              </section>
+            </Reveal>
+
+            <Reveal delay={0.04}>
+              <section className="mt-6">
+                <div className="card-surface relative overflow-hidden p-5 sm:p-6">
+                  <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-[radial-gradient(circle_at_top_left,rgba(62,242,207,0.1),transparent_44%),radial-gradient(circle_at_top_right,rgba(255,212,90,0.06),transparent_28%)]" />
+
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                    <div className="min-w-0 max-w-2xl">
+                      <p className="eyebrow-label text-romano-mintText">
+                        Today&apos;s performance
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-romano-slate">
+                        {todayRevenueHelper}
+                      </p>
+                    </div>
+
+                    <Link href="/orders" className="secondary-button w-full sm:w-auto">
+                      View orders
+                    </Link>
+                  </div>
+
+                  <div className="mt-5 grid gap-3 xl:grid-cols-[1.2fr,0.8fr]">
+                    <div className="surface-muted p-4 sm:p-5">
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div className="min-w-0">
+                          <p className="field-label">Revenue today</p>
+                          <p className="mt-3 text-[2rem] font-semibold tracking-[-0.06em] text-romano-ink sm:text-[2.25rem]">
+                            {loading ? "..." : formatCurrency(summary?.todaysRevenue ?? 0)}
+                          </p>
+                        </div>
+
+                        <div className="min-w-0">
+                          <p className="field-label">Orders today</p>
+                          <p className="mt-3 text-[2rem] font-semibold tracking-[-0.06em] text-romano-ink sm:text-[2.25rem]">
+                            {loading ? "..." : summary?.ordersToday ?? 0}
+                          </p>
+                          <p className="mt-2 text-sm leading-6 text-romano-slate [overflow-wrap:anywhere]">
+                            {loading
+                              ? "Loading order flow."
+                              : `${ordersTodayBreakdown.pending} pending · ${ordersTodayBreakdown.completed} completed · ${ordersTodayBreakdown.cancelled} cancelled`}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-1">
+                      <div className="surface-muted p-4 sm:p-5">
+                        <p className="field-label">Pending deliveries</p>
+                        <p className="mt-3 text-[1.8rem] font-semibold tracking-[-0.055em] text-romano-ink sm:text-[2rem]">
+                          {loading
+                            ? "..."
+                            : deliveryStatusSummary.pending +
+                              deliveryStatusSummary.outForDelivery}
+                        </p>
+                        <p className="mt-2 text-sm leading-6 text-romano-slate">
+                          {loading
+                            ? "Loading delivery flow."
+                            : `${deliveryStatusSummary.outForDelivery} out now · ${deliveryStatusSummary.delivered} delivered`}
+                        </p>
+                      </div>
+
+                      <div className="surface-muted p-4 sm:p-5">
+                        <p className="field-label">Units sold today</p>
+                        <p className="mt-3 text-[1.8rem] font-semibold tracking-[-0.055em] text-romano-ink sm:text-[2rem]">
+                          {loading ? "..." : summary?.unitsSoldToday ?? 0}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </Reveal>
+
+            <Reveal delay={0.08}>
+              <section className="mt-6">
+                <div className="mb-3">
+                  <h3 className="text-lg font-semibold text-romano-ink">
+                    Quick actions
+                  </h3>
+                </div>
+
+                <div className="grid gap-3 md:grid-cols-3">
+                  <Link href="/products/new" className="primary-button min-h-[3.5rem]">
+                    Add product
+                  </Link>
+                  <Link href="/orders/new" className="secondary-button min-h-[3.5rem]">
+                    Create order
+                  </Link>
+                  <Link href="/deliveries" className="secondary-button min-h-[3.5rem]">
+                    View deliveries
+                  </Link>
+                </div>
+              </section>
+            </Reveal>
+
+            <Reveal delay={0.12}>
+              <section className="mt-8">
+                <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="eyebrow-label text-romano-amberText">
+                      Needs attention
+                    </p>
+                    <h3 className="mt-2 text-xl font-semibold tracking-[-0.03em] text-romano-ink">
+                      Action centre
+                    </h3>
+                  </div>
+
+                  {!loading ? (
+                    <div className="surface-muted rounded-2xl px-4 py-3 text-sm font-medium text-romano-slate">
+                      {attentionItems.length
+                        ? `${attentionItems.length} active item${attentionItems.length === 1 ? "" : "s"}`
+                        : "All clear"}
+                    </div>
+                  ) : null}
                 </div>
 
                 <div className="card-surface p-4 sm:p-6">
@@ -229,30 +308,52 @@ export default function DashboardPage() {
                     </div>
                   ) : attentionItems.length ? (
                     <div className="grid gap-3">
-                      {attentionItems.map((item) => (
-                        <div
-                          key={item.key}
-                          className="surface-muted flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5"
-                        >
-                          <div className="min-w-0">
-                            <p className="text-base font-semibold text-romano-ink">
-                              {item.label}
-                            </p>
-                            <p className="mt-1 text-sm leading-6 text-romano-slate [overflow-wrap:anywhere]">
-                              {item.helper}
-                            </p>
-                          </div>
+                      {attentionItems.map((item) => {
+                        const meta = attentionMeta[item.key] ?? {
+                          badge: "Attention",
+                          accentClass: "bg-cyan-300",
+                        };
 
-                          <div className="flex items-center justify-between gap-4 sm:justify-end">
-                            <p className="text-[2rem] font-semibold tracking-[-0.05em] text-romano-ink">
-                              {loading ? "..." : item.count}
-                            </p>
-                            <Link href={item.href} className="secondary-button w-auto shrink-0">
-                              {item.cta}
-                            </Link>
+                        return (
+                          <div
+                            key={item.key}
+                            className="surface-muted relative overflow-hidden p-5 sm:p-6"
+                          >
+                            <div
+                              className={`absolute inset-y-4 left-0 w-1 rounded-full ${meta.accentClass}`}
+                            />
+
+                            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                              <div className="min-w-0 pl-1">
+                                <div className="flex flex-wrap items-center gap-3">
+                                  <span className="glass-pill px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-romano-slate">
+                                    {meta.badge}
+                                  </span>
+                                  <p className="text-base font-semibold text-romano-ink">
+                                    {item.label}
+                                  </p>
+                                </div>
+
+                                <p className="mt-2 text-sm leading-6 text-romano-slate [overflow-wrap:anywhere]">
+                                  {item.helper}
+                                </p>
+                              </div>
+
+                              <div className="flex items-center justify-between gap-4 sm:justify-end">
+                                <p className="text-[2.1rem] font-semibold tracking-[-0.05em] text-romano-ink">
+                                  {item.count}
+                                </p>
+                                <Link
+                                  href={item.href}
+                                  className="secondary-button w-auto shrink-0"
+                                >
+                                  {item.cta}
+                                </Link>
+                              </div>
+                            </div>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   ) : (
                     <div className="surface-muted p-5 text-center sm:p-6">
@@ -268,17 +369,13 @@ export default function DashboardPage() {
               </section>
             </Reveal>
 
-            <Reveal delay={0.12}>
+            <Reveal delay={0.16}>
               <section className="mt-8">
-                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                  <div>
-                    <h3 className="text-lg font-semibold text-romano-ink">
-                      Recent activity
-                    </h3>
-                    <p className="mt-1 text-sm text-romano-slate">
-                      The latest customer orders in one quick scan.
-                    </p>
-                  </div>
+                <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <h3 className="text-lg font-semibold text-romano-ink">
+                    Recent activity
+                  </h3>
+
                   <Link href="/orders" className="secondary-button w-full sm:w-auto">
                     View all orders
                   </Link>
@@ -301,14 +398,14 @@ export default function DashboardPage() {
               </section>
             </Reveal>
 
-            <Reveal delay={0.16}>
+            <Reveal delay={0.2}>
               <section className="mt-10 space-y-4">
                 <div>
                   <h3 className="text-lg font-semibold text-romano-ink">
-                    Secondary insights
+                    Business insights
                   </h3>
                   <p className="mt-1 text-sm text-romano-slate">
-                    A lighter view of the longer-term signals.
+                    Longer-view revenue, stock health, and product performance.
                   </p>
                 </div>
 
@@ -340,6 +437,7 @@ export default function DashboardPage() {
                           The products that need attention first.
                         </p>
                       </div>
+
                       <Link href="/products" className="secondary-button w-full sm:w-auto">
                         View stock
                       </Link>
@@ -361,9 +459,11 @@ export default function DashboardPage() {
                                 {product.name}
                               </p>
                               <p className="mt-1 text-sm text-romano-slate">
-                                Stock left: {product.quantity} · Threshold: {product.lowStockThreshold}
+                                Stock left: {product.quantity} · Threshold:{" "}
+                                {product.lowStockThreshold}
                               </p>
                             </div>
+
                             <p className="text-sm font-semibold text-romano-amberText">
                               Low
                             </p>
@@ -402,7 +502,8 @@ export default function DashboardPage() {
                                 {product.productName}
                               </p>
                               <p className="mt-1 text-sm text-romano-slate">
-                                {product.quantitySold} sold · {formatCurrency(product.revenue)}
+                                {product.quantitySold} sold ·{" "}
+                                {formatCurrency(product.revenue)}
                               </p>
                             </div>
                           </div>
