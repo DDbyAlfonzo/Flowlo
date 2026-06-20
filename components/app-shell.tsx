@@ -174,10 +174,10 @@ export function AppShell({
                 initial={reduceMotion ? false : { opacity: 0, y: 10, scale: 0.98 }}
                 animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute right-0 top-full z-50 mt-3 w-[calc(100vw-2rem)] max-w-80 overflow-hidden rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(17,24,32,0.96),rgba(10,14,19,0.96))] p-4 shadow-[0_24px_70px_-28px_rgba(0,0,0,0.78)] backdrop-blur-2xl sm:w-80 sm:max-w-none"
+                className="absolute right-0 top-full z-50 mt-3 w-[min(20rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] overflow-hidden rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(17,24,32,0.96),rgba(10,14,19,0.96))] p-4 shadow-[0_24px_70px_-28px_rgba(0,0,0,0.78)] backdrop-blur-2xl sm:w-80 sm:max-w-none"
               >
                 <div className="flex items-center justify-between gap-3">
-                  <div>
+                  <div className="min-w-0">
                     <p className="eyebrow-label">Notifications</p>
                     <p className="mt-2 text-sm font-medium text-romano-ink">
                       No notifications
@@ -229,7 +229,7 @@ export function AppShell({
                 initial={reduceMotion ? false : { opacity: 0, y: 10, scale: 0.98 }}
                 animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute right-0 top-full z-50 mt-4 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(17,24,32,0.96),rgba(10,14,19,0.96))] p-4 shadow-[0_24px_70px_-28px_rgba(0,0,0,0.78)] backdrop-blur-2xl sm:w-80 sm:max-w-none"
+                className="absolute right-0 top-full z-50 mt-3 w-[min(20rem,calc(100vw-2rem))] max-w-[calc(100vw-2rem)] overflow-hidden rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(17,24,32,0.96),rgba(10,14,19,0.96))] p-4 shadow-[0_24px_70px_-28px_rgba(0,0,0,0.78)] backdrop-blur-2xl sm:w-80 sm:max-w-none"
               >
                 <div className="flex items-start gap-3 border-b border-white/10 pb-4">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,rgba(62,242,207,0.18),rgba(255,212,90,0.24))] text-xs font-semibold uppercase tracking-[0.14em] text-romano-ink">
