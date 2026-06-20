@@ -1,9 +1,12 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createProduct, updateProduct } from "@/lib/firestore";
-import { uploadProductImage } from "@/lib/storage";
+import {
+  uploadProductImage,
+  validateProductImageFile,
+} from "@/lib/storage";
 import { Product } from "@/types";
 
 type ProductFormProps = {
@@ -38,18 +41,65 @@ export function ProductForm({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [fileError, setFileError] = useState("");
+  const [submitMessage, setSubmitMessage] = useState("");
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null;
+
+    setUploadProgress(null);
+
+    if (!file) {
+      setSelectedFile(null);
+      setFileError("");
+      return;
+    }
+
+    const validationError = validateProductImageFile(file);
+
+    if (validationError) {
+      event.target.value = "";
+      setSelectedFile(null);
+      setFileError(validationError);
+      return;
+    }
+
+    setSelectedFile(file);
+    setFileError("");
+    setError("");
+  };
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (fileError) {
+      setError(fileError);
+      return;
+    }
+
     setSubmitting(true);
     setError("");
+    setUploadProgress(null);
+    setSubmitMessage(selectedFile ? "Uploading image..." : "Saving product...");
 
     try {
       let imageUrl = initialProduct?.imageUrl ?? null;
 
       if (selectedFile) {
-        imageUrl = await uploadProductImage(ownerId, selectedFile);
+        imageUrl = await uploadProductImage(ownerId, selectedFile, (progress) => {
+          setUploadProgress(progress);
+          setSubmitMessage(
+            progress <= 0
+              ? "Uploading image..."
+              : progress < 100
+              ? `Uploading image ${progress}%...`
+              : "Saving product...",
+          );
+        });
       }
+
+      setSubmitMessage("Saving product...");
 
       const payload = {
         name: name.trim(),
@@ -80,6 +130,8 @@ export function ProductForm({
       );
     } finally {
       setSubmitting(false);
+      setSubmitMessage("");
+      setUploadProgress(null);
     }
   };
 
@@ -177,10 +229,13 @@ export function ProductForm({
           <span className="field-label">Product Image</span>
           <input
             type="file"
-            accept="image/*"
+            accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
             className="input-shell p-3"
-            onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)}
+            onChange={handleFileChange}
           />
+          <p className="text-xs leading-6 text-romano-slate">
+            JPG, PNG, or WebP up to 5MB.
+          </p>
           {initialProduct?.imageUrl ? (
             <img
               src={initialProduct.imageUrl}
@@ -191,16 +246,30 @@ export function ProductForm({
         </label>
       </div>
 
-      {error ? (
+      {fileError || error ? (
         <div className="mt-5 rounded-2xl bg-romano-rose px-4 py-3 text-sm text-romano-roseText">
-          {error}
+          {fileError || error}
+        </div>
+      ) : null}
+
+      {submitting ? (
+        <div className="mt-5 grid gap-3">
+          <p className="text-sm leading-6 text-romano-slate">{submitMessage}</p>
+          {uploadProgress !== null ? (
+            <div className="surface-muted h-2 overflow-hidden rounded-full">
+              <div
+                className="h-full rounded-full bg-romano-primary transition-[width] duration-300"
+                style={{ width: `${Math.max(uploadProgress, 8)}%` }}
+              />
+            </div>
+          ) : null}
         </div>
       ) : null}
 
       <div className="mt-8 grid gap-3 sm:flex sm:flex-wrap">
         <button type="submit" className="primary-button w-full sm:w-auto" disabled={submitting}>
           {submitting
-            ? "Saving..."
+            ? submitMessage || "Saving..."
             : mode === "create"
               ? "Add Product"
               : "Save Changes"}
@@ -209,6 +278,7 @@ export function ProductForm({
           type="button"
           className="secondary-button w-full sm:w-auto"
           onClick={() => router.back()}
+          disabled={submitting}
         >
           Cancel
         </button>
