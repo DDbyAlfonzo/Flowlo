@@ -229,19 +229,26 @@ export function AppShell({
                 initial={reduceMotion ? false : { opacity: 0, y: 10, scale: 0.98 }}
                 animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
                 transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                className="absolute right-0 top-full z-50 mt-3 w-[min(18rem,calc(100vw-2rem))] overflow-hidden rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(17,24,32,0.96),rgba(10,14,19,0.96))] p-3 shadow-[0_24px_70px_-28px_rgba(0,0,0,0.78)] backdrop-blur-2xl sm:w-[min(21rem,calc(100vw-2.5rem))]"
+                className="absolute right-0 top-full z-50 mt-4 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-[1.4rem] border border-white/12 bg-[linear-gradient(180deg,rgba(17,24,32,0.96),rgba(10,14,19,0.96))] p-4 shadow-[0_24px_70px_-28px_rgba(0,0,0,0.78)] backdrop-blur-2xl sm:w-80 sm:max-w-none"
               >
-                <div className="surface-muted rounded-[1.15rem] px-4 py-3">
-                  <p className="text-sm font-semibold text-romano-ink">{userLabel}</p>
-                  <p className="mt-1 text-xs text-romano-slate [overflow-wrap:anywhere]">
-                    {userSubLabel}
-                  </p>
+                <div className="flex items-start gap-3 border-b border-white/10 pb-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[linear-gradient(135deg,rgba(62,242,207,0.18),rgba(255,212,90,0.24))] text-xs font-semibold uppercase tracking-[0.14em] text-romano-ink">
+                    {avatarLabel}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-romano-ink">
+                      {userLabel}
+                    </p>
+                    <p className="mt-1 break-all text-xs text-romano-slate">
+                      {userSubLabel}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="mt-3 grid gap-2">
+                <div className="mt-3 grid gap-1.5">
                   <Link
                     href="/settings/business"
-                    className="surface-muted rounded-[1.05rem] px-4 py-3 text-sm font-medium text-romano-ink transition hover:border-white/15 hover:text-romano-primary"
+                    className="flex w-full items-center justify-start rounded-[1rem] px-3 py-3 text-sm font-medium text-romano-ink transition hover:bg-white/[0.04] hover:text-romano-primary"
                     onClick={() => setProfileMenuOpen(false)}
                   >
                     Business settings
@@ -250,7 +257,7 @@ export function AppShell({
                   {isAdmin ? (
                     <Link
                       href="/admin/access-requests"
-                      className="surface-muted rounded-[1.05rem] px-4 py-3 text-sm font-medium text-romano-ink transition hover:border-white/15 hover:text-romano-primary"
+                      className="flex w-full items-center justify-start rounded-[1rem] px-3 py-3 text-sm font-medium text-romano-ink transition hover:bg-white/[0.04] hover:text-romano-primary"
                       onClick={() => setProfileMenuOpen(false)}
                     >
                       Access requests
@@ -260,7 +267,7 @@ export function AppShell({
                   <button
                     type="button"
                     onClick={handleLogout}
-                    className="surface-muted rounded-[1.05rem] px-4 py-3 text-left text-sm font-medium text-romano-ink transition hover:border-white/15 hover:text-romano-primary disabled:cursor-not-allowed disabled:opacity-60"
+                    className="flex w-full items-center justify-start rounded-[1rem] px-3 py-3 text-left text-sm font-medium text-romano-ink transition hover:bg-white/[0.04] hover:text-romano-primary disabled:cursor-not-allowed disabled:opacity-60"
                     disabled={signingOut}
                   >
                     {signingOut ? "Signing out..." : "Sign out"}
