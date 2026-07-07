@@ -14,19 +14,19 @@ const sizeClasses = {
     width: 135,
     height: 36,
     logo: "w-[126px] sm:w-[135px]",
-    tag: "text-[10px] tracking-[0.3em]",
+    tag: "text-xs",
   },
   md: {
     width: 165,
     height: 44,
     logo: "w-[146px] sm:w-[165px]",
-    tag: "text-[10px] tracking-[0.32em]",
+    tag: "text-xs",
   },
   lg: {
     width: 210,
     height: 56,
     logo: "w-[180px] sm:w-[210px]",
-    tag: "text-[11px] tracking-[0.34em]",
+    tag: "text-sm",
   },
 } as const;
 
@@ -57,7 +57,7 @@ export function BrandWordmark({
       />
 
       {showTagline ? (
-        <p className={`uppercase text-romano-slate ${classes.tag}`}>
+        <p className={`text-romano-slate ${classes.tag}`}>
           {tagline}
         </p>
       ) : null}

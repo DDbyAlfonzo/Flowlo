@@ -5,7 +5,6 @@ import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { LoadingScreen } from "@/components/loading-screen";
 import { OrderForm } from "@/components/order-form";
-import { PageHeader } from "@/components/page-header";
 import { ProtectedPage } from "@/components/protected-page";
 import { useAuth } from "@/hooks/use-auth";
 import { listProducts } from "@/lib/firestore";
@@ -38,11 +37,14 @@ export default function NewOrderPage() {
   return (
     <ProtectedPage>
       <AppShell>
-        <PageHeader
-          eyebrow="Sales"
-          title="Create a new order"
-          description="Add customer details, pick the products, and FlowLo will only deduct stock when the order is paid or completed."
-        />
+        <div className="mb-6 flex w-full max-w-full min-w-0 flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0 flex-1">
+            <h2 className="section-title">Create a new order</h2>
+            <p className="section-copy mt-3 max-w-2xl leading-7 [overflow-wrap:anywhere] sm:leading-8">
+              Add customer details, pick the products, and FlowLo will only deduct stock when the order is paid or completed.
+            </p>
+          </div>
+        </div>
 
         {loading ? <LoadingScreen message="Loading your products..." /> : null}
 

@@ -74,7 +74,7 @@ export default function TrackingPage() {
   }, [supportMessage, supportPhone]);
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#070B0F] text-romano-ink">
+    <div className="relative min-h-screen overflow-hidden bg-[var(--ink)] text-romano-ink">
       <AmbientBackground variant="marketing" />
       <div className="relative mx-auto flex min-h-screen w-full max-w-5xl flex-col px-5 pb-12 pt-6 sm:px-8 lg:px-10">
         <div className="flex items-center justify-between gap-4">
@@ -129,7 +129,7 @@ export default function TrackingPage() {
 
                 <div className="mt-8 grid gap-4 sm:grid-cols-2">
                   <div className="surface-muted p-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-romano-slate">
+                    <p className="text-sm font-semibold text-romano-slate">
                       Current status
                     </p>
                     <p className="mt-2 text-lg font-semibold text-romano-ink">
@@ -137,7 +137,7 @@ export default function TrackingPage() {
                     </p>
                   </div>
                   <div className="surface-muted p-4">
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-romano-slate">
+                    <p className="text-sm font-semibold text-romano-slate">
                       Estimated delivery time
                     </p>
                     <p className="mt-2 text-lg font-semibold text-romano-ink">
@@ -163,7 +163,7 @@ export default function TrackingPage() {
 
                   <div className="mt-6 grid gap-3">
                     <div className="surface-muted p-4">
-                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-romano-slate">
+                      <p className="text-sm font-semibold text-romano-slate">
                         Last updated
                       </p>
                       <p className="mt-2 text-sm text-romano-ink">

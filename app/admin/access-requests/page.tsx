@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
-import { PageHeader } from "@/components/page-header";
 import { ProtectedPage } from "@/components/protected-page";
 import { StatusBadge } from "@/components/status-badge";
 import { useAuth } from "@/hooks/use-auth";
@@ -196,11 +195,15 @@ export default function AdminAccessRequestsPage() {
         shellTitle="Managed access"
         shellSubtitle="Review requests, manage approved users, and control FlowLo access."
       >
-        <PageHeader
-          eyebrow="Admin"
-          title="Access requests and users"
-          description="Review new businesses, manage approved users, and disable or remove app access when needed."
-        />
+        <div className="mb-6 flex w-full max-w-full min-w-0 flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0 flex-1">
+            <p className="eyebrow-label">Admin</p>
+            <h2 className="section-title mt-3">Access requests and users</h2>
+            <p className="section-copy mt-3 max-w-2xl leading-7 [overflow-wrap:anywhere] sm:leading-8">
+              Review new businesses, manage approved users, and disable or remove app access when needed.
+            </p>
+          </div>
+        </div>
 
         {feedback ? (
           <div
@@ -234,12 +237,12 @@ export default function AdminAccessRequestsPage() {
                     key={tab.key}
                     type="button"
                     onClick={() => setActiveTab(tab.key)}
-                    className={`surface-muted flex items-start justify-between gap-4 p-4 text-left transition duration-300 hover:-translate-y-0.5 ${
+                    className={`surface-muted flex items-start justify-between gap-4 p-4 text-left transition duration-300 hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-romano-navy focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ink)] ${
                       active ? "border-romano-navy/35 bg-[linear-gradient(180deg,rgba(62,242,207,0.08),rgba(255,255,255,0.03))]" : ""
                     }`}
                   >
                     <div>
-                      <p className="text-sm font-semibold uppercase tracking-[0.22em] text-romano-amberText">
+                      <p className="text-sm font-semibold text-romano-ink">
                         {tab.label}
                       </p>
                       <p className="mt-2 text-sm leading-7 text-romano-slate">
@@ -357,7 +360,7 @@ export default function AdminAccessRequestsPage() {
                         {request.status === "pending" || request.status === "rejected" || request.status === "disabled" ? (
                           <button
                             type="button"
-                            className="primary-button"
+                            className="secondary-button"
                             disabled={actioningKey.startsWith(`${request.id}:`)}
                             onClick={() => void handleStatusChange(request, "approved")}
                           >
@@ -399,7 +402,7 @@ export default function AdminAccessRequestsPage() {
 
                         <button
                           type="button"
-                          className="inline-flex min-h-[2.9rem] items-center justify-center rounded-2xl border border-romano-roseText/24 bg-romano-rose px-5 py-3 text-sm font-semibold text-romano-roseText transition duration-300 hover:-translate-y-0.5 hover:border-romano-roseText/40"
+                          className="inline-flex min-h-[2.9rem] items-center justify-center rounded-2xl border border-romano-roseText/24 bg-romano-rose px-5 py-3 text-sm font-semibold text-romano-roseText transition duration-300 hover:-translate-y-0.5 hover:border-romano-roseText/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-romano-navy focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ink)]"
                           disabled={actioningKey.startsWith(`${request.id}:`)}
                           onClick={() => void handleDelete(request)}
                         >

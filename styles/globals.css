@@ -4,6 +4,18 @@
 
 :root {
   color-scheme: dark;
+  --ink: rgb(10 17 28);
+  --surface: rgb(17 26 40);
+  --surface-2: rgb(24 35 52);
+  --line: rgba(148, 178, 205, 0.12);
+  --heading: rgb(248 251 254);
+  --text: rgb(234 241 247);
+  --muted: rgb(143 161 179);
+  --label: rgb(183 198 214);
+  --mint: rgb(78 230 193);
+  --sky: rgb(78 195 230);
+  --gold: rgb(242 193 78);
+  --on-grad: rgb(7 19 28);
 }
 
 html {
@@ -11,7 +23,7 @@ html {
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
-  background-color: #070b0f;
+  background-color: var(--ink);
 }
 
 body {
@@ -20,13 +32,13 @@ body {
   max-width: 100vw;
   overflow-x: hidden;
   position: relative;
-  color: #f8fafc;
+  color: var(--heading);
   background:
     radial-gradient(circle at -8% -10%, rgba(62, 242, 207, 0.14), transparent 34%),
     radial-gradient(circle at 112% -12%, rgba(255, 212, 90, 0.07), transparent 28%),
     radial-gradient(circle at 50% 115%, rgba(74, 214, 243, 0.06), transparent 32%),
     linear-gradient(180deg, rgba(12, 18, 24, 0.32) 0%, rgba(7, 11, 15, 0) 34%),
-    linear-gradient(180deg, #070b0f 0%, #091017 38%, #06090d 100%);
+    linear-gradient(180deg, var(--ink) 0%, var(--surface) 38%, var(--ink) 100%);
   font-feature-settings: "ss01" on, "cv02" on, "cv11" on;
 }
 
@@ -69,7 +81,7 @@ textarea {
 }
 
 ::selection {
-  color: #041012;
+  color: var(--on-grad);
   background: rgba(62, 242, 207, 0.45);
 }
 
@@ -126,16 +138,16 @@ textarea {
   }
 
   .primary-button {
-    @apply inline-flex min-h-[2.9rem] items-center justify-center rounded-2xl border border-romano-navy/25 bg-romano-primary px-5 py-3 text-sm font-semibold text-[#051215] shadow-glow transition duration-300 hover:-translate-y-0.5 hover:border-romano-navy/40 hover:shadow-[0_24px_62px_-28px_rgba(62,242,207,0.72)] disabled:cursor-not-allowed disabled:opacity-60;
+    @apply inline-flex min-h-[2.9rem] items-center justify-center rounded-2xl border border-romano-navy/25 bg-romano-primary px-5 py-3 text-sm font-semibold text-[var(--on-grad)] shadow-glow transition duration-300 hover:-translate-y-0.5 hover:border-romano-navy/40 hover:shadow-[0_24px_62px_-28px_rgba(62,242,207,0.72)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-romano-navy focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ink)] disabled:cursor-not-allowed disabled:opacity-60;
     background-size: 140% 140%;
   }
 
   .secondary-button {
-    @apply inline-flex min-h-[2.9rem] items-center justify-center rounded-2xl border border-romano-line bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.025))] px-5 py-3 text-sm font-semibold text-romano-ink transition duration-300 hover:-translate-y-0.5 hover:border-romano-navy/35 hover:bg-[linear-gradient(180deg,rgba(62,242,207,0.08),rgba(255,255,255,0.04))] hover:text-white;
+    @apply inline-flex min-h-[2.9rem] items-center justify-center rounded-2xl border border-romano-line bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.025))] px-5 py-3 text-sm font-semibold text-romano-ink transition duration-300 hover:-translate-y-0.5 hover:border-romano-navy/35 hover:bg-[linear-gradient(180deg,rgba(62,242,207,0.08),rgba(255,255,255,0.04))] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-romano-navy focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ink)];
   }
 
   .input-shell {
-    @apply w-full rounded-2xl border border-romano-line bg-[rgba(10,14,19,0.78)] px-4 py-3 text-sm text-romano-ink outline-none transition duration-300 placeholder:text-romano-slate/70 focus:border-romano-navy/45 focus:bg-[rgba(12,18,24,0.94)] focus:ring-4 focus:ring-romano-navy/10;
+    @apply w-full rounded-2xl border border-romano-line bg-[rgba(10,14,19,0.78)] px-4 py-3 text-sm text-romano-ink outline-none transition duration-300 placeholder:text-romano-slate/70 focus:border-romano-navy/45 focus:bg-[rgba(12,18,24,0.94)] focus:ring-4 focus:ring-romano-navy/10 focus-visible:ring-2 focus-visible:ring-romano-navy;
   }
 
   .auth-input-shell {
@@ -198,7 +210,7 @@ textarea {
   }
 
   .auth-inline-pill {
-    @apply inline-flex items-center rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.24em] text-romano-amberText shadow-[0_16px_36px_-28px_rgba(0,0,0,0.72)] backdrop-blur-xl;
+    @apply inline-flex items-center rounded-full border border-white/10 bg-white/[0.045] px-3 py-1.5 text-xs font-semibold text-romano-slate shadow-[0_16px_36px_-28px_rgba(0,0,0,0.72)] backdrop-blur-xl;
   }
 
   .auth-submit-button {
@@ -224,11 +236,34 @@ textarea {
   }
 
   .field-label {
-    @apply text-[11px] font-semibold uppercase tracking-[0.22em] text-romano-slate;
+    @apply text-sm font-semibold text-romano-slate;
   }
 
   .glass-pill {
     @apply rounded-full border border-romano-line bg-white/[0.045] shadow-soft backdrop-blur-xl;
+  }
+
+}
+
+@media (min-width: 900px) {
+  .primary-button {
+    max-width: 380px;
+  }
+
+  .auth-submit-button,
+  .primary-button.w-full {
+    max-width: 380px;
+  }
+
+  .fixed.inset-0.z-40.items-end {
+    align-items: center;
+    justify-content: center;
+    padding: 32px;
+  }
+
+  .fixed.inset-0.z-40.items-end > * {
+    max-width: 720px;
+    border-radius: 2rem;
   }
 }
 

@@ -27,7 +27,7 @@ export function AuthCard({
   useOverflowDebug("auth-card");
 
   return (
-    <div className="mobile-safe relative min-h-screen overflow-hidden bg-[#06090d]">
+    <div className="mobile-safe relative min-h-screen overflow-hidden bg-[var(--ink)]">
       <AmbientBackground variant="auth" />
       <AuthBackground />
 

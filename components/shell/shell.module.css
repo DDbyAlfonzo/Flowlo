@@ -1,0 +1,181 @@
+/* FlowLo app shell — ported from design-reference/flowlo-redesign.html
+   CSS Module. Compact 56px header + bottom tab bar on mobile;
+   the same nav becomes a left sidebar at >=900px. */
+
+.shell {
+  position: relative;
+  min-height: 100dvh;
+  background: #0A111C;
+  color: #EAF1F7;
+  font-family: var(--font-body), Inter, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+/* ambient depth (kept static in-app: content is the show here) */
+.shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(520px 380px at 88% -6%, rgba(78,230,193,.11), transparent 65%),
+    radial-gradient(560px 420px at -12% 32%, rgba(78,195,230,.09), transparent 65%),
+    radial-gradient(620px 480px at 60% 112%, rgba(78,230,193,.06), transparent 70%);
+}
+
+.frame {
+  position: relative;
+  z-index: 1;
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- Header: 56px, sticky, frosted ---------- */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: rgba(10,17,28,.68);
+  backdrop-filter: blur(24px) saturate(1.4);
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  border-bottom: 1px solid rgba(148,178,205,.12);
+}
+.logo {
+  width: 30px; height: 30px; border-radius: 9px; flex: none;
+  background: linear-gradient(96deg, #4EE6C1 0%, #4EC3E6 100%);
+  display: grid; place-items: center;
+  font-family: var(--font-display), sans-serif;
+  font-weight: 700; color: #07131C; font-size: 16px;
+}
+.biz-name {
+  font-family: var(--font-display), sans-serif;
+  font-weight: 600; font-size: 15px; color: #F8FBFE;
+}
+.biz-sub { font-size: 11.5px; color: #8FA1B3; margin-top: -1px; }
+.spacer { flex: 1; }
+.icon-btn {
+  width: 38px; height: 38px; border-radius: 12px;
+  border: 1px solid rgba(148,178,205,.12);
+  background: rgba(24,35,52,.6);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+  display: grid; place-items: center; color: #8FA1B3;
+  cursor: pointer; transition: transform .12s ease;
+}
+.icon-btn:active { transform: scale(.95); }
+.icon-btn svg { width: 18px; height: 18px; }
+.avatar {
+  width: 38px; height: 38px; border-radius: 12px;
+  background: rgba(24,35,52,.6);
+  border: 1px solid rgba(148,178,205,.12);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05);
+  display: grid; place-items: center;
+  font-size: 12px; font-weight: 600; color: #4EE6C1;
+}
+
+/* ---------- Content ---------- */
+.main {
+  flex: 1;
+  padding: 20px 16px calc(92px + env(safe-area-inset-bottom));
+}
+
+/* ---------- Bottom nav (mobile) ---------- */
+.nav {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  z-index: 30;
+  max-width: 430px;
+  margin: 0 auto;
+  display: flex;
+  background: rgba(12,19,31,.72);
+  backdrop-filter: blur(26px) saturate(1.4);
+  -webkit-backdrop-filter: blur(26px) saturate(1.4);
+  border-top: 1px solid rgba(148,178,205,.12);
+  box-shadow: 0 -12px 30px rgba(2,6,12,.35);
+  padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+}
+.wordmark { display: none; }
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: #8FA1B3;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 6px 0;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: transform .12s ease;
+}
+.nav-item:active { transform: scale(.95); }
+.nav-item svg { width: 21px; height: 21px; }
+.nav-item-active { color: #4EE6C1; }
+
+.icon-btn:focus-visible,
+.nav-item:focus-visible {
+  outline: 2px solid #4EE6C1;
+  outline-offset: 2px;
+}
+
+/* ---------- Desktop (>=900px): sidebar shell ---------- */
+@media (min-width: 900px) {
+  .frame {
+    max-width: 1160px;
+    display: grid;
+    grid-template-columns: 236px minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+    border-left: 1px solid rgba(148,178,205,.12);
+    border-right: 1px solid rgba(148,178,205,.12);
+  }
+  .nav {
+    position: sticky;
+    top: 0;
+    left: auto; right: auto; bottom: auto;
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    height: 100dvh;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 4px;
+    padding: 22px 14px;
+    margin: 0;
+    max-width: none;
+    border-top: none;
+    border-right: 1px solid rgba(148,178,205,.12);
+    box-shadow: none;
+  }
+  .wordmark {
+    display: block;
+    font-family: var(--font-display), sans-serif;
+    font-weight: 700;
+    font-size: 19px;
+    color: #F8FBFE;
+    letter-spacing: -0.01em;
+    padding: 4px 14px 18px;
+  }
+  .nav-item {
+    flex: none;
+    width: 100%;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+    font-size: 14px;
+    padding: 11px 14px;
+  }
+  .nav-item-active { background: rgba(24,35,52,1); }
+  .header { grid-column: 2; padding: 12px 32px; }
+  .main { grid-column: 2; padding: 30px 32px 60px; }
+}
+@media (min-width: 1200px) {
+  .main { padding: 36px 48px 70px; }
+}

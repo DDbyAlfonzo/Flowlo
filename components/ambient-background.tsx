@@ -30,11 +30,11 @@ type Particle = {
 
 const BASE_BACKDROPS: Record<AmbientBackgroundVariant, string> = {
   auth:
-    "absolute inset-0 bg-[linear-gradient(180deg,#06090d_0%,#071018_42%,#05080c_100%)]",
+    "absolute inset-0 bg-[linear-gradient(180deg,var(--ink)_0%,var(--surface)_42%,var(--ink)_100%)]",
   marketing:
-    "absolute inset-0 bg-[linear-gradient(180deg,#05080c_0%,#070d13_36%,#05070b_100%)]",
+    "absolute inset-0 bg-[linear-gradient(180deg,var(--ink)_0%,var(--surface)_36%,var(--ink)_100%)]",
   cinematic:
-    "absolute inset-0 bg-[linear-gradient(180deg,#04070b_0%,#071018_34%,#04070b_100%)]",
+    "absolute inset-0 bg-[linear-gradient(180deg,var(--ink)_0%,var(--surface)_34%,var(--ink)_100%)]",
 };
 
 const MESH_BACKDROPS: Record<AmbientBackgroundVariant, string> = {

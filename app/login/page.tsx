@@ -1,11 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AuthCard } from "@/components/auth-card";
+import SignInScreen from "@/components/auth/SignInScreen";
 import { LoadingScreen } from "@/components/loading-screen";
-import { PasswordField } from "@/components/password-field";
 import { useAuth } from "@/hooks/use-auth";
 import { loginWithEmail, logoutUser, syncAuthCookies } from "@/lib/auth";
 import { isAdminEmail } from "@/lib/constants";
@@ -47,18 +45,13 @@ export default function LoginPage() {
   const {
     user,
     business,
-    accessStatus,
     isAdmin,
     isApproved,
     loading,
     accessLoading,
     businessLoading,
   } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [nextPath, setNextPath] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
 
   useEffect(() => {
     if (loading || accessLoading || !user) {
@@ -102,11 +95,6 @@ export default function LoginPage() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setNextPath(params.get("next") ?? "");
-    const reason = params.get("reason") as keyof typeof ACCESS_REASON_COPY | null;
-
-    if (reason && reason in ACCESS_REASON_COPY) {
-      setError(ACCESS_REASON_COPY[reason]);
-    }
   }, []);
 
   useEffect(() => {
@@ -115,141 +103,63 @@ export default function LoginPage() {
     }
 
     void logoutUser();
-    setError(
+  }, [accessLoading, isAdmin, isApproved, loading, user]);
+
+  const handleSignIn = async (email: string, password: string) => {
+    const credential = await loginWithEmail(email, password);
+    const nextAdmin = isAdminEmail(credential.user.email);
+
+    if (nextAdmin) {
+      syncAuthCookies({
+        user: credential.user,
+        accessStatus: "none",
+        isAdmin: true,
+      });
+      router.replace(
+        resolveLoginDestination({
+          nextPath,
+          isAdmin: true,
+          isApproved: false,
+          hasBusiness: false,
+        }),
+      );
+      return;
+    }
+
+    const accessRequest = await getAccessRequest(credential.user.uid);
+    const accessStatus = accessRequest?.status ?? "none";
+
+    syncAuthCookies({
+      user: credential.user,
+      accessStatus,
+      isAdmin: false,
+    });
+
+    if (accessStatus === "approved") {
+      router.replace(
+        resolveLoginDestination({
+          nextPath,
+          isAdmin: false,
+          isApproved: true,
+          hasBusiness: true,
+        }),
+      );
+      return;
+    }
+
+    await logoutUser();
+    throw new Error(
       ACCESS_REASON_COPY[
         accessStatus === "pending" || accessStatus === "rejected" || accessStatus === "disabled"
           ? accessStatus
           : "no-request"
       ],
     );
-  }, [accessLoading, accessStatus, isAdmin, isApproved, loading, user]);
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setSubmitting(true);
-    setError("");
-
-    try {
-      const credential = await loginWithEmail(email, password);
-      const nextAdmin = isAdminEmail(credential.user.email);
-
-      if (nextAdmin) {
-        syncAuthCookies({
-          user: credential.user,
-          accessStatus: "none",
-          isAdmin: true,
-        });
-        router.replace(
-          resolveLoginDestination({
-            nextPath,
-            isAdmin: true,
-            isApproved: false,
-            hasBusiness: false,
-          }),
-        );
-        return;
-      }
-
-      const accessRequest = await getAccessRequest(credential.user.uid);
-      const accessStatus = accessRequest?.status ?? "none";
-
-      syncAuthCookies({
-        user: credential.user,
-        accessStatus,
-        isAdmin: false,
-      });
-
-      if (accessStatus === "approved") {
-        router.replace(
-          resolveLoginDestination({
-            nextPath,
-            isAdmin: false,
-            isApproved: true,
-            hasBusiness: true,
-          }),
-        );
-        return;
-      }
-
-      await logoutUser();
-      setError(
-        ACCESS_REASON_COPY[
-          accessStatus === "pending" || accessStatus === "rejected" || accessStatus === "disabled"
-            ? accessStatus
-            : "no-request"
-        ],
-      );
-    } catch (submitError) {
-      setError(
-        submitError instanceof Error
-          ? submitError.message
-          : "We could not log you in.",
-      );
-    } finally {
-      setSubmitting(false);
-    }
   };
 
   if (loading || accessLoading || (user && isApproved && businessLoading)) {
     return <LoadingScreen message="Checking your session..." />;
   }
 
-  return (
-    <AuthCard
-      eyebrow="Sign in"
-      title="Welcome back"
-      description="Sign in to manage stock, orders, and customer updates."
-      badgeLabel="Managed access"
-      trustNote="Managed access platform."
-      footer={
-        <>
-          New to FlowLo?{" "}
-          <Link href="/register" className="font-semibold text-romano-mintText">
-            Request access
-          </Link>
-        </>
-      }
-    >
-      <form onSubmit={handleSubmit} className="grid gap-4">
-        <label className="grid gap-2">
-          <span className="field-label">Email Address</span>
-          <input
-            type="email"
-            className="auth-input-shell"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="owner@flowlo.app"
-            autoComplete="email"
-            inputMode="email"
-            aria-invalid={Boolean(error)}
-            required
-          />
-        </label>
-
-        <PasswordField
-          label="Password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          placeholder="Enter your password"
-          autoComplete="current-password"
-          aria-invalid={Boolean(error)}
-          required
-        />
-
-        {error ? (
-          <div className="auth-feedback auth-feedback-error" aria-live="polite">
-            {error}
-          </div>
-        ) : null}
-
-        <button
-          type="submit"
-          className="primary-button auth-submit-button mt-2"
-          disabled={submitting}
-        >
-          {submitting ? "Signing in..." : "Sign in"}
-        </button>
-      </form>
-    </AuthCard>
-  );
+  return <SignInScreen onSignIn={handleSignIn} requestAccessHref="/" />;
 }

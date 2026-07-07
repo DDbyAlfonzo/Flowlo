@@ -108,6 +108,7 @@ export type PublicTrackingRecord = {
 
 export type DashboardSummary = {
   totalProducts: number;
+  totalOrders: number;
   lowStockCount: number;
   totalRevenue: number;
   todaysRevenue: number;
@@ -166,9 +167,9 @@ export type OrderPayload = {
 };
 
 export type WaitlistPayload = {
-  name: string;
   email: string;
-  businessType: string;
+  name?: string;
+  businessType?: string;
   whatsappNumber?: string | null;
   source: "coming-soon";
 };

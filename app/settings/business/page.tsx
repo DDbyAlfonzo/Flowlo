@@ -1,45 +1,51 @@
 "use client";
 
-import { AuthCard } from "@/components/auth-card";
+import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
-import { BusinessSettingsForm } from "@/components/business-settings-form";
+import BusinessSettings from "@/components/business/BusinessSettings";
 import { LoadingScreen } from "@/components/loading-screen";
-import { PageHeader } from "@/components/page-header";
 import { ProtectedPage } from "@/components/protected-page";
 import { useAuth } from "@/hooks/use-auth";
+import { logoutUser } from "@/lib/auth";
+import { BUSINESS_CATEGORIES } from "@/lib/constants";
+import { upsertBusiness } from "@/lib/firestore";
+import { BusinessCategory } from "@/types";
 
 export default function BusinessSettingsPage() {
-  const { business, businessLoading } = useAuth();
+  const router = useRouter();
+  const { user, business, businessLoading, refreshBusiness } = useAuth();
 
   if (businessLoading) {
     return <LoadingScreen message="Loading your setup..." />;
   }
 
-  if (!business) {
-    return (
-      <ProtectedPage requireBusiness={false}>
-        <AuthCard
-          eyebrow="Quick setup"
-          title="Set up your business"
-          description="Add your business name and category so FlowLo can personalise your dashboard from day one."
-          badgeLabel="Business setup"
-          footer="You can edit your business details later from Settings."
-        >
-          <BusinessSettingsForm mode="onboarding" embedded />
-        </AuthCard>
-      </ProtectedPage>
-    );
-  }
-
   return (
     <ProtectedPage requireBusiness={false}>
       <AppShell>
-        <PageHeader
-          eyebrow="Settings"
-          title="Business settings"
-          description="Keep your business name and category up to date so FlowLo stays aligned with how you sell."
+        <BusinessSettings
+          initialName={business?.businessName ?? ""}
+          initialCategory={business?.category ?? BUSINESS_CATEGORIES[0]}
+          categories={[...BUSINESS_CATEGORIES]}
+          accountName={user?.displayName ?? undefined}
+          accountEmail={user?.email ?? "No email available"}
+          onSave={async ({ name, category }) => {
+            if (!user) {
+              throw new Error("You must be signed in to save business details.");
+            }
+
+            await upsertBusiness({
+              ownerId: user.uid,
+              businessName: name,
+              category: category as BusinessCategory,
+            });
+            await refreshBusiness();
+          }}
+          onSignOut={() => {
+            void logoutUser().finally(() => {
+              router.replace("/login");
+            });
+          }}
         />
-        <BusinessSettingsForm mode="settings" />
       </AppShell>
     </ProtectedPage>
   );

@@ -125,12 +125,24 @@ service cloud.firestore {
           'createdAt',
           'source'
         ])
-        && validText(request.resource.data.name, 2, 80)
+        && request.resource.data.keys().hasAll(['email', 'createdAt', 'source'])
+        && (
+          !request.resource.data.keys().hasAny(['name'])
+          || validText(request.resource.data.name, 2, 80)
+        )
         && validText(request.resource.data.email, 5, 120)
         && request.resource.data.email.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$')
-        && validText(request.resource.data.businessType, 2, 80)
-        && request.resource.data.whatsappNumber is string
-        && request.resource.data.whatsappNumber.size() <= 30
+        && (
+          !request.resource.data.keys().hasAny(['businessType'])
+          || validText(request.resource.data.businessType, 2, 80)
+        )
+        && (
+          !request.resource.data.keys().hasAny(['whatsappNumber'])
+          || (
+            request.resource.data.whatsappNumber is string
+            && request.resource.data.whatsappNumber.size() <= 30
+          )
+        )
         && request.resource.data.source == 'coming-soon'
         && request.resource.data.createdAt == request.time;
     }

@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { LoadingScreen } from "@/components/loading-screen";
-import { PageHeader } from "@/components/page-header";
 import { ProtectedPage } from "@/components/protected-page";
 import { StatusBadge } from "@/components/status-badge";
 import { useAuth } from "@/hooks/use-auth";
@@ -138,11 +137,14 @@ export default function OrderDetailPage() {
   return (
     <ProtectedPage>
       <AppShell>
-        <PageHeader
-          eyebrow="Sales"
-          title="Order details"
-          description="Review the order, update payment or completion, and send a WhatsApp confirmation in one tap."
-        />
+        <div className="mb-6 flex w-full max-w-full min-w-0 flex-col gap-4 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+          <div className="min-w-0 flex-1">
+            <h2 className="section-title">Order details</h2>
+            <p className="section-copy mt-3 max-w-2xl leading-7 [overflow-wrap:anywhere] sm:leading-8">
+              Review the order, update payment or completion, and send a WhatsApp confirmation in one tap.
+            </p>
+          </div>
+        </div>
 
         {loading ? <LoadingScreen message="Loading order..." /> : null}
 
@@ -293,7 +295,7 @@ export default function OrderDetailPage() {
                     target={canSendWhatsApp ? "_blank" : undefined}
                     rel={canSendWhatsApp ? "noreferrer" : undefined}
                     aria-disabled={!canSendWhatsApp}
-                    className={`primary-button ${!canSendWhatsApp ? "pointer-events-none opacity-60" : ""}`}
+                    className={`secondary-button ${!canSendWhatsApp ? "pointer-events-none opacity-60" : ""}`}
                   >
                     Send on WhatsApp
                   </a>

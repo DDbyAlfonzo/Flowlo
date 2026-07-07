@@ -20,6 +20,14 @@ function isCountedRevenueOrder(order: Order) {
   );
 }
 
+function isCountedTodaysRevenueOrder(order: Order) {
+  return (
+    order.orderStatus !== "pending" &&
+    order.orderStatus !== "cancelled" &&
+    (order.paymentStatus === "paid" || order.orderStatus === "completed")
+  );
+}
+
 function isCreatedToday(order: Order, todayStart: Date) {
   return Boolean(order.createdAt && order.createdAt >= todayStart);
 }
@@ -125,7 +133,7 @@ export function calculateDashboardAnalytics(input: {
   const deliveries = sortByDateDesc(input.deliveries);
   const revenueOrders = orders.filter(isCountedRevenueOrder);
   const todaysOrders = orders.filter((order) => isCreatedToday(order, todayStart));
-  const todaysRevenueOrders = todaysOrders.filter(isCountedRevenueOrder);
+  const todaysRevenueOrders = todaysOrders.filter(isCountedTodaysRevenueOrder);
 
   const totalRevenue = revenueOrders.reduce(
     (sum, order) => sum + order.orderTotal,
@@ -144,6 +152,7 @@ export function calculateDashboardAnalytics(input: {
 
   return {
     totalProducts: products.length,
+    totalOrders: orders.length,
     lowStockCount: products.filter(
       (product) => product.quantity <= product.lowStockThreshold,
     ).length,

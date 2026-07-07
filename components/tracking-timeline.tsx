@@ -25,7 +25,7 @@ export function TrackingTimeline({
             <div
               className={`flex h-10 w-10 items-center justify-center rounded-full border text-sm font-semibold ${
                 step.current
-                  ? "border-romano-primary/45 bg-romano-primary text-[#041215]"
+                  ? "border-romano-primary/45 bg-romano-primary text-[var(--on-grad)]"
                   : step.complete
                     ? "border-romano-line bg-white/[0.06] text-romano-ink"
                     : "border-white/8 bg-white/[0.02] text-romano-slate"
@@ -55,4 +55,3 @@ export function TrackingTimeline({
     </div>
   );
 }
-

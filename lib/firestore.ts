@@ -816,15 +816,27 @@ export async function cancelOrder(orderId: string) {
 
 export async function createWaitlistEntry(input: WaitlistPayload) {
   const waitlistRef = doc(collection(db, "waitlist"));
-
-  await setDoc(waitlistRef, {
-    name: input.name.trim(),
+  const waitlistData: Record<string, unknown> = {
     email: input.email.trim().toLowerCase(),
-    businessType: input.businessType.trim(),
-    whatsappNumber: (input.whatsappNumber ?? "").trim(),
     createdAt: serverTimestamp(),
     source: input.source,
-  });
+  };
+
+  if (input.name?.trim()) {
+    waitlistData.name = input.name.trim();
+  }
+
+  if (input.businessType?.trim()) {
+    waitlistData.businessType = input.businessType.trim();
+  }
+
+  const whatsappNumber = input.whatsappNumber?.trim();
+
+  if (whatsappNumber) {
+    waitlistData.whatsappNumber = whatsappNumber;
+  }
+
+  await setDoc(waitlistRef, waitlistData);
 
   return waitlistRef.id;
 }

@@ -68,14 +68,14 @@ export function AuthBackground() {
         >
           <defs>
             <linearGradient id="auth-route" x1="242" y1="514" x2="976" y2="396" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stopColor="#3EF2CF" stopOpacity="0.55" />
-              <stop offset="0.62" stopColor="#66E8FF" stopOpacity="0.34" />
-              <stop offset="1" stopColor="#FFD45A" stopOpacity="0.36" />
+              <stop offset="0" stopColor="var(--mint)" stopOpacity="0.55" />
+              <stop offset="0.62" stopColor="var(--sky)" stopOpacity="0.34" />
+              <stop offset="1" stopColor="var(--gold)" stopOpacity="0.36" />
             </linearGradient>
             <linearGradient id="auth-route-soft" x1="202" y1="294" x2="1088" y2="692" gradientUnits="userSpaceOnUse">
-              <stop offset="0" stopColor="#3EF2CF" stopOpacity="0.22" />
-              <stop offset="0.58" stopColor="#66E8FF" stopOpacity="0.16" />
-              <stop offset="1" stopColor="#FFD45A" stopOpacity="0.2" />
+              <stop offset="0" stopColor="var(--mint)" stopOpacity="0.22" />
+              <stop offset="0.58" stopColor="var(--sky)" stopOpacity="0.16" />
+              <stop offset="1" stopColor="var(--gold)" stopOpacity="0.2" />
             </linearGradient>
           </defs>
 
@@ -86,8 +86,8 @@ export function AuthBackground() {
             strokeLinecap="round"
             strokeDasharray="12 16"
           />
-          <circle cx="194" cy="612" r="8" fill="#3EF2CF" fillOpacity="0.72" />
-          <circle cx="1036" cy="336" r="8" fill="#FFD45A" fillOpacity="0.72" />
+          <circle cx="194" cy="612" r="8" fill="var(--mint)" fillOpacity="0.72" />
+          <circle cx="1036" cy="336" r="8" fill="var(--gold)" fillOpacity="0.72" />
           <path
             d="M156 314C242 268 326 246 420 254C506 262 574 302 656 306C748 310 830 270 926 228"
             stroke="url(#auth-route-soft)"

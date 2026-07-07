@@ -1,0 +1,209 @@
+/* FlowLo dashboard — ported from design-reference/flowlo-redesign.html
+   CSS Module, scoped. Renders inside AppShell's <main>. */
+
+.wrap {
+  max-width: 760px;
+  font-family: var(--font-body), Inter, system-ui, sans-serif;
+}
+
+.display { font-family: var(--font-display), sans-serif; }
+
+.greeting {
+  font-family: var(--font-display), sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #F8FBFE;
+  letter-spacing: -0.01em;
+}
+.greeting-sub {
+  color: #8FA1B3;
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+
+.section-label {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  color: #B7C6D6;
+  text-transform: uppercase;
+  margin: 22px 0 10px;
+}
+
+.card {
+  background: rgba(20,30,46,.55);
+  backdrop-filter: blur(18px) saturate(1.35);
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  border: 1px solid rgba(165,195,220,.15);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 10px 28px rgba(2,6,12,.38);
+}
+
+/* ---- Setup flow (first-run hero) ---- */
+.setup {
+  padding: 18px 16px 14px;
+  position: relative;
+  overflow: hidden;
+}
+.setup::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(96deg, #4EE6C1 0%, #4EC3E6 100%);
+  opacity: .9;
+}
+.setup-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.setup-title {
+  font-family: var(--font-display), sans-serif;
+  font-size: 18.5px;
+  font-weight: 700;
+  color: #F8FBFE;
+}
+.setup-count { font-size: 12.5px; color: #4EE6C1; font-weight: 600; }
+.setup-sub { font-size: 13px; color: #8FA1B3; margin-bottom: 14px; }
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-top: 1px solid rgba(148,178,205,.12);
+  text-decoration: none;
+  color: inherit;
+  transition: opacity .12s ease;
+}
+.step:active { opacity: .7; }
+.step-check {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  flex: none;
+  border: 1.5px solid rgba(148,178,205,.25);
+  display: grid;
+  place-items: center;
+  color: #07131C;
+}
+.step-check svg { width: 13px; height: 13px; }
+.step-done .step-check {
+  background: linear-gradient(96deg, #4EE6C1 0%, #4EC3E6 100%);
+  border-color: transparent;
+}
+.step-name { font-size: 14.5px; font-weight: 500; flex: 1; color: #EAF1F7; }
+.step-done .step-name {
+  color: #8FA1B3;
+  text-decoration: line-through;
+  text-decoration-color: rgba(143,161,179,.5);
+}
+.step-go { color: #8FA1B3; }
+.step-go svg { width: 16px; height: 16px; display: block; }
+
+/* ---- Today stats ---- */
+.stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.stat {
+  background: rgba(20,30,46,.55);
+  backdrop-filter: blur(18px) saturate(1.35);
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  border: 1px solid rgba(165,195,220,.15);
+  border-radius: 14px;
+  padding: 13px 14px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 10px 28px rgba(2,6,12,.38);
+}
+.stat-label {
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #8FA1B3;
+  font-weight: 600;
+}
+.stat-value {
+  font-family: var(--font-display), sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #F8FBFE;
+  margin-top: 3px;
+  font-variant-numeric: tabular-nums;
+}
+.stat-hint { font-size: 12px; color: #8FA1B3; margin-top: 2px; }
+
+/* ---- Attention row ---- */
+.attn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+}
+.attn-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #4EE6C1;
+  flex: none;
+}
+.attn-warn .attn-dot { background: #F2C14E; }
+.attn-text { font-size: 13.5px; color: #8FA1B3; }
+.attn-warn .attn-text { color: #EAF1F7; }
+
+/* ---- Activity ---- */
+.activity-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-top: 1px solid rgba(148,178,205,.12);
+}
+.activity-row:first-child { border-top: none; }
+.activity-title { font-size: 14px; font-weight: 500; color: #EAF1F7; }
+.activity-meta { font-size: 12.5px; color: #8FA1B3; }
+.activity-spacer { flex: 1; }
+
+.empty-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  color: #8FA1B3;
+  font-size: 13.5px;
+}
+.empty-row svg { width: 18px; height: 18px; flex: none; opacity: .7; }
+
+/* ---- Primary CTA ---- */
+.cta-wrap { margin-top: 22px; }
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 380px;
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-family: var(--font-body), Inter, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  background: linear-gradient(96deg, #4EE6C1 0%, #4EC3E6 100%);
+  color: #07131C;
+  box-shadow: 0 8px 24px rgba(78,230,193,.28), inset 0 1px 0 rgba(255,255,255,.35);
+  transition: transform .12s ease;
+}
+.btn-primary:active { transform: scale(.97); }
+.btn-primary:focus-visible { outline: 2px solid #4EE6C1; outline-offset: 2px; }
+.btn-primary svg { width: 17px; height: 17px; }
+
+/* ---- Desktop ---- */
+@media (min-width: 900px) {
+  .greeting { font-size: 30px; }
+  .stat-row { grid-template-columns: repeat(2, minmax(0, 280px)); }
+  .stat-value { font-size: 26px; }
+}
