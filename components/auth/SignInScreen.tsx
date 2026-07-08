@@ -52,6 +52,22 @@ export default function SignInScreen({
 
   return (
     <div className={`${styles.root} ${display.variable} ${body.variable}`}>
+      {/* ambient background elements */}
+      <div className={styles["flow-bg"]} aria-hidden="true">
+        <svg viewBox="0 0 900 1600" preserveAspectRatio="xMidYMid slice">
+          <defs>
+            <linearGradient id="flowgrad-signin" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stopColor="#4EE6C1" />
+              <stop offset="1" stopColor="#4EC3E6" />
+            </linearGradient>
+          </defs>
+          <path className={styles["flow-line"]} style={{ stroke: "url(#flowgrad-signin)" }} d="M-50 260 C 250 220, 420 380, 700 320 S 1000 260, 1100 300" />
+          <path className={`${styles["flow-line"]} ${styles["flow-line-2"]}`} style={{ stroke: "url(#flowgrad-signin)" }} d="M-50 900 C 200 860, 480 1000, 720 930 S 1000 880, 1100 920" />
+        </svg>
+      </div>
+      <div className={`${styles.orb} ${styles["orb-ring-a"]}`} aria-hidden="true" />
+      <div className={`${styles.orb} ${styles["orb-ring-b"]}`} aria-hidden="true" />
+      <div className={`${styles.orb} ${styles["orb-glow"]}`} aria-hidden="true" />
       <div className={styles.page}>
         <div className={styles.topbar}>
           <div className={styles.brand}>

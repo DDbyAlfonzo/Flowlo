@@ -13,7 +13,7 @@
    Route names are configurable via the navItems prop — pass your real
    routes; do NOT rename app routes to match the defaults. */
 
-import type { ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Space_Grotesk, Inter } from "next/font/google";
@@ -42,8 +42,12 @@ type AppShellProps = {
   subline?: string;
   /** Avatar initials, e.g. "DD". */
   initials?: string;
+  /** Shown in the avatar menu, optional. */
+  accountEmail?: string;
   navItems?: ShellNavItem[];
   onNotificationsClick?: () => void;
+  /** If provided, the avatar opens a menu with Sign out. */
+  onSignOut?: () => void;
   children: ReactNode;
 };
 
@@ -51,11 +55,31 @@ export default function AppShell({
   businessName,
   subline = "FlowLo",
   initials = "•",
+  accountEmail,
   navItems = DEFAULT_NAV,
   onNotificationsClick,
+  onSignOut,
   children,
 }: AppShellProps) {
   const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function onDocClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) setMenuOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setMenuOpen(false);
+    }
+    document.addEventListener("mousedown", onDocClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [menuOpen]);
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
@@ -78,7 +102,39 @@ export default function AppShell({
           >
             <BellIcon />
           </button>
-          <div className={styles.avatar}>{initials}</div>
+          {onSignOut ? (
+            <div className={styles["avatar-wrap"]} ref={menuRef}>
+              <button
+                type="button"
+                className={styles.avatar}
+                aria-haspopup="menu"
+                aria-expanded={menuOpen}
+                aria-label="Account menu"
+                onClick={() => setMenuOpen((v) => !v)}
+              >
+                {initials}
+              </button>
+              {menuOpen && (
+                <div className={styles.menu} role="menu">
+                  {accountEmail && <div className={styles["menu-email"]}>{accountEmail}</div>}
+                  <button
+                    type="button"
+                    role="menuitem"
+                    className={styles["menu-item"]}
+                    onClick={() => {
+                      setMenuOpen(false);
+                      onSignOut();
+                    }}
+                  >
+                    <SignOutIcon />
+                    Sign out
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className={styles.avatar}>{initials}</div>
+          )}
         </header>
 
         <main className={styles.main}>{children}</main>
@@ -105,6 +161,16 @@ export default function AppShell({
 }
 
 /* ---------- Icons (stroke set from the design reference) ---------- */
+
+function SignOutIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+      <path d="m16 17 5-5-5-5" />
+      <path d="M21 12H9" />
+    </svg>
+  );
+}
 
 function BellIcon() {
   return (

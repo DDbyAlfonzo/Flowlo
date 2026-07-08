@@ -62,6 +62,10 @@ export default function LandingScreen({ onRequestAccess, signInHref = "/login" }
         </svg>
       </div>
 
+      <div className={`${styles.orb} ${styles["orb-ring-a"]}`} aria-hidden="true" />
+      <div className={`${styles.orb} ${styles["orb-ring-b"]}`} aria-hidden="true" />
+      <div className={`${styles.orb} ${styles["orb-glow"]}`} aria-hidden="true" />
+
       <div className={styles.page}>
         <div className={styles.topbar}>
           <div className={styles.brand}>
