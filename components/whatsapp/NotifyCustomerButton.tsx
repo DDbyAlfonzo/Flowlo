@@ -85,15 +85,15 @@ export function buildStageMessage({
   const name = firstName(customerName);
   switch (stage) {
     case "pending":
-      return `Hi ${name}! Thanks for your order ${reference} with ${businessName}. We're on it and will confirm shortly. 🙌`;
+      return `Hi ${name}! Thanks for your order ${reference} with ${businessName}. We're on it and will confirm shortly. \u{1F64C}`;
     case "confirmed":
-      return `Hi ${name}! Your order ${reference} is confirmed. We'll let you know as soon as it's packed. ✅`;
+      return `Hi ${name}! Your order ${reference} is confirmed. We'll let you know as soon as it's packed. \u{2705}`;
     case "packed":
-      return `Hi ${name}! Order ${reference} is packed and ready to go. 📦`;
+      return `Hi ${name}! Order ${reference} is packed and ready to go. \u{1F4E6}`;
     case "out_for_delivery":
-      return `Hi ${name}! Your order ${reference} is out for delivery — keep an eye out. 🚚`;
+      return `Hi ${name}! Your order ${reference} is out for delivery — keep an eye out. \u{1F69A}`;
     case "delivered":
-      return `Hi ${name}! Order ${reference} has been delivered. Thanks for supporting ${businessName}! 💚`;
+      return `Hi ${name}! Order ${reference} has been delivered. Thanks for supporting ${businessName}! \u{1F49A}`;
   }
 }
 
