@@ -1,21 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
 import { LoadingScreen } from "@/components/loading-screen";
 import { ProtectedPage } from "@/components/protected-page";
 import { StatusBadge } from "@/components/status-badge";
+import NotifyCustomerButton, { type NotifyStage } from "@/components/whatsapp/NotifyCustomerButton";
 import { useAuth } from "@/hooks/use-auth";
 import { cancelOrder, completeOrder, getOrder, markOrderAsPaid } from "@/lib/firestore";
 import { buildOrderSummary, formatCurrency, formatDateTime } from "@/lib/format";
-import {
-  buildOrderWhatsAppMessage,
-  buildWhatsAppUrl,
-  formatWhatsAppPhone,
-} from "@/lib/whatsapp";
 import { Order } from "@/types";
 
 function orderTone(status: Order["orderStatus"]) {
@@ -42,6 +38,23 @@ function paymentTone(status: Order["paymentStatus"]) {
   return "danger";
 }
 
+function getNotifyStage(order: Order): NotifyStage {
+  if (
+    order.deliveryStatus === "confirmed" ||
+    order.deliveryStatus === "packed" ||
+    order.deliveryStatus === "out_for_delivery" ||
+    order.deliveryStatus === "delivered"
+  ) {
+    return order.deliveryStatus;
+  }
+
+  if (order.orderStatus === "completed") {
+    return "delivered";
+  }
+
+  return "pending";
+}
+
 export default function OrderDetailPage() {
   const params = useParams<{ id: string }>();
   const { business } = useAuth();
@@ -49,7 +62,6 @@ export default function OrderDetailPage() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<"paid" | "complete" | "cancel" | null>(null);
   const [actionError, setActionError] = useState("");
-  const [copyFeedback, setCopyFeedback] = useState("");
 
   const loadOrder = async (showLoader = true) => {
     if (!params.id) {
@@ -94,43 +106,6 @@ export default function OrderDetailPage() {
       );
     } finally {
       setActionLoading(null);
-    }
-  };
-
-  const formattedPhone = useMemo(() => {
-    return order ? formatWhatsAppPhone(order.customerPhone) : "";
-  }, [order]);
-
-  const whatsappMessage = useMemo(() => {
-    return order ? buildOrderWhatsAppMessage(order, business) : "";
-  }, [business, order]);
-
-  const whatsappUrl = useMemo(() => {
-    if (!formattedPhone || !whatsappMessage) {
-      return "#";
-    }
-
-    return buildWhatsAppUrl(formattedPhone, whatsappMessage);
-  }, [formattedPhone, whatsappMessage]);
-
-  const canSendWhatsApp = Boolean(formattedPhone && whatsappMessage);
-
-  const handleCopyMessage = async () => {
-    if (!whatsappMessage) {
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(whatsappMessage);
-      setCopyFeedback("Message copied");
-      window.setTimeout(() => {
-        setCopyFeedback("");
-      }, 2000);
-    } catch {
-      setCopyFeedback("We could not copy the message.");
-      window.setTimeout(() => {
-        setCopyFeedback("");
-      }, 2000);
     }
   };
 
@@ -274,44 +249,21 @@ export default function OrderDetailPage() {
 
               <div className="surface-muted mt-7 p-5">
                 <h4 className="text-base font-semibold text-romano-ink">
-                  WhatsApp message preview
+                  WhatsApp customer update
                 </h4>
-                <div className="surface-elevated mt-4 p-4">
-                  <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-7 text-romano-ink">
-                    {whatsappMessage}
-                  </pre>
+                <p className="mt-2 text-sm leading-6 text-romano-slate">
+                  Opens WhatsApp with a prefilled message for the current delivery stage.
+                </p>
+                <div className="mt-4">
+                  <NotifyCustomerButton
+                    phone={order.customerPhone}
+                    customerName={order.customerName}
+                    reference={order.orderNumber ?? order.id}
+                    stage={getNotifyStage(order)}
+                    businessName={business?.businessName?.trim() || "your business"}
+                    block
+                  />
                 </div>
-
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <button
-                    type="button"
-                    className="secondary-button"
-                    onClick={() => void handleCopyMessage()}
-                  >
-                    Copy Message
-                  </button>
-                  <a
-                    href={canSendWhatsApp ? whatsappUrl : "#"}
-                    target={canSendWhatsApp ? "_blank" : undefined}
-                    rel={canSendWhatsApp ? "noreferrer" : undefined}
-                    aria-disabled={!canSendWhatsApp}
-                    className={`secondary-button ${!canSendWhatsApp ? "pointer-events-none opacity-60" : ""}`}
-                  >
-                    Send on WhatsApp
-                  </a>
-                </div>
-
-                {copyFeedback ? (
-                  <p className="mt-3 text-sm font-medium text-romano-mintText">
-                    {copyFeedback}
-                  </p>
-                ) : null}
-
-                {!canSendWhatsApp ? (
-                  <p className="mt-3 text-sm text-romano-amberText">
-                    Add a valid customer phone number to send via WhatsApp.
-                  </p>
-                ) : null}
               </div>
             </aside>
           </div>

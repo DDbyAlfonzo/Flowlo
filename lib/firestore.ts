@@ -639,10 +639,11 @@ export async function createOrder(input: OrderPayload) {
     const trackingId = buildTrackingId(orderRef.id);
     const orderNumber = buildOrderNumber(orderRef.id);
     const deliveryStatus = deriveDeliveryStatus(input.orderStatus);
+    const customerPhone = input.customerPhone?.trim() ?? "";
 
     transaction.set(orderRef, {
       customerName: input.customerName.trim(),
-      customerPhone: input.customerPhone.trim(),
+      customerPhone,
       items: finalItems,
       orderTotal,
       paymentStatus: input.paymentStatus,
@@ -663,7 +664,7 @@ export async function createOrder(input: OrderPayload) {
       orderNumber,
       trackingId,
       customerName: input.customerName.trim(),
-      customerPhone: input.customerPhone.trim(),
+      customerPhone,
       deliveryAddress: "",
       deliveryNotes: "",
       assignedCourier: "",

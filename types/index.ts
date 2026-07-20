@@ -134,6 +134,9 @@ export type DashboardSummary = {
     revenue: number;
   }>;
   recentOrders: Order[];
+  products: Product[];
+  orders: Order[];
+  deliveries: Delivery[];
   hasSales: boolean;
 };
 
@@ -157,7 +160,7 @@ export type OrderItemInput = {
 
 export type OrderPayload = {
   customerName: string;
-  customerPhone: string;
+  customerPhone?: string | null;
   items: OrderItemInput[];
   paymentStatus: PaymentStatus;
   orderStatus: OrderStatus;

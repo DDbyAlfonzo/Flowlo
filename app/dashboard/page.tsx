@@ -6,8 +6,11 @@ import DashboardHome, { type ActivityItem } from "@/components/dashboard/Dashboa
 import { ProtectedPage } from "@/components/protected-page";
 import { useAuth } from "@/hooks/use-auth";
 import { getDashboardAnalytics } from "@/lib/analytics";
+import { computeAttentionItems } from "@/lib/flowlo/attention";
 import { formatCurrency, formatDateTime } from "@/lib/format";
 import { DashboardSummary } from "@/types";
+
+const LOW_STOCK_THRESHOLD = 3;
 
 function getFirstName(displayName?: string | null) {
   return displayName?.trim().split(/\s+/)[0] || undefined;
@@ -36,6 +39,32 @@ function getActivity(summary: DashboardSummary | null): ActivityItem[] {
       }`,
     })) ?? []
   );
+}
+
+function getAttentionItems(summary: DashboardSummary | null) {
+  if (!summary) {
+    return [];
+  }
+
+  return computeAttentionItems({
+    products: summary.products.map((product) => ({
+      name: product.name,
+      stock: product.quantity,
+    })),
+    orders: summary.orders
+      .filter((order) => order.createdAt)
+      .map((order) => ({
+        reference: order.orderNumber ?? order.id,
+        status: order.orderStatus,
+        createdAt: order.createdAt as Date,
+      })),
+    deliveries: summary.deliveries.map((delivery) => ({
+      reference: delivery.orderNumber,
+      stage: delivery.deliveryStatus,
+      updatedAt: delivery.updatedAt ?? undefined,
+    })),
+    lowStockThreshold: LOW_STOCK_THRESHOLD,
+  });
 }
 
 export default function DashboardPage() {
@@ -73,7 +102,7 @@ export default function DashboardPage() {
           ordersToday={summary?.ordersToday ?? 0}
           ordersPending={ordersTodayBreakdown.pending}
           ordersCompleted={ordersTodayBreakdown.completed}
-          attentionItems={[]}
+          attentionItems={getAttentionItems(summary)}
           activity={getActivity(summary)}
           createOrderHref="/orders/new"
           addProductHref="/products/new"

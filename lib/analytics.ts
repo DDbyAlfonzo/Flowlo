@@ -170,6 +170,9 @@ export function calculateDashboardAnalytics(input: {
     lowStockProducts: getLowStockProducts(products),
     bestSellingProducts: getBestSellingProducts(orders),
     recentOrders: orders.slice(0, 5),
+    products,
+    orders,
+    deliveries,
     hasSales: revenueOrders.length > 0,
   };
 }

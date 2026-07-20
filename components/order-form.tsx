@@ -113,13 +113,13 @@ export function OrderForm({
           </label>
 
           <label className="grid gap-2">
-            <span className="field-label">Customer Phone</span>
+            <span className="field-label">Customer WhatsApp number (optional)</span>
             <input
+              type="tel"
               className="input-shell"
               value={customerPhone}
               onChange={(event) => setCustomerPhone(event.target.value)}
-              placeholder="+27 72 000 0000"
-              required
+              placeholder="072 123 4567"
             />
           </label>
 
