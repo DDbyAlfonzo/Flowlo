@@ -174,3 +174,97 @@
 }
 .hint-dot { width: 8px; height: 8px; border-radius: 50%; background: #4EE6C1; flex: none; }
 .hint-text { font-size: 13.5px; color: #8FA1B3; }
+
+/* Phase 3 authenticated-app refresh: token-backed surfaces and controls,
+   keeping the order list markup, filters, and workflow unchanged. */
+.list-title,
+.o-title,
+.o-total,
+.empty-title {
+  color: var(--flowlo-text);
+}
+
+.list-count,
+.filter,
+.filter-count,
+.o-meta,
+.chip,
+.empty-sub,
+.hint-text {
+  color: var(--flowlo-text-muted);
+}
+
+.btn-primary {
+  background: var(--flowlo-brand-gradient);
+  color: var(--flowlo-on-accent);
+  box-shadow: 0 18px 50px -26px rgba(0, 196, 154, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+.btn-primary:focus-visible,
+.filter:focus-visible,
+.order:focus-visible {
+  outline-color: var(--flowlo-mint);
+}
+
+.filter {
+  border-color: var(--flowlo-border-subtle);
+  background: var(--flowlo-surface-muted);
+}
+
+.filter:hover {
+  border-color: var(--flowlo-border);
+  background: var(--flowlo-surface-hover);
+  color: var(--flowlo-text);
+}
+
+.filter-active {
+  border-color: var(--flowlo-border-strong);
+  background: linear-gradient(180deg, rgba(127, 240, 209, 0.12), rgba(255, 255, 255, 0.045));
+  color: var(--flowlo-text);
+}
+
+.order,
+.empty,
+.hint {
+  border-color: var(--flowlo-border);
+  background: var(--flowlo-surface-gradient);
+  box-shadow: var(--flowlo-shadow-card);
+}
+
+.order:hover {
+  border-color: var(--flowlo-border-subtle);
+  background: var(--flowlo-surface-raised-gradient);
+}
+
+.chip {
+  border-color: var(--flowlo-border-subtle);
+  background: var(--flowlo-surface-muted);
+}
+
+.chip-pending {
+  border-color: var(--flowlo-warning-border);
+  background: var(--flowlo-warning-bg);
+  color: var(--flowlo-warning);
+}
+
+.chip-completed {
+  border-color: var(--flowlo-success-border);
+  background: var(--flowlo-success-bg);
+  color: var(--flowlo-success);
+}
+
+.chip-cancelled {
+  border-color: var(--flowlo-danger-border);
+  background: var(--flowlo-danger-bg);
+  color: var(--flowlo-danger);
+}
+
+.empty-badge {
+  border: 1px solid var(--flowlo-border-subtle);
+  background: var(--flowlo-bg-elevated);
+  color: var(--flowlo-mint);
+}
+
+.hint-dot {
+  background: var(--flowlo-mint);
+}

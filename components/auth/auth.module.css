@@ -230,3 +230,838 @@
   .h1-signin { font-size: clamp(36px, 3.4vw, 42px); }
   .lede { font-size: 16.5px; max-width: 400px; }
 }
+
+.loginRoot {
+  --flowlo-bg: #0b121c;
+  --flowlo-panel: rgba(21, 30, 43, 0.91);
+  --flowlo-panel-deep: rgba(11, 18, 28, 0.94);
+  --flowlo-line: rgba(0, 211, 176, 0.34);
+  --flowlo-mint: #1fe0be;
+  --flowlo-mint-strong: #10d9b3;
+  --flowlo-yellow: #ffc83d;
+  --flowlo-text: #f5f8fc;
+  --flowlo-muted: #b5bfcb;
+  --flowlo-dim: #7d8a99;
+  --flowlo-border: rgba(180, 195, 212, 0.18);
+  --flowlo-input: rgba(45, 55, 69, 0.66);
+  position: relative;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(58, 79, 96, 0.34), transparent 33%),
+    radial-gradient(circle at 86% 22%, rgba(0, 211, 176, 0.14), transparent 24%),
+    linear-gradient(130deg, #111b28 0%, #0b121c 46%, #08111a 100%);
+  color: var(--flowlo-text);
+  font-family: var(--font-body), Inter, system-ui, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.loginRoot *,
+.loginRoot *::before,
+.loginRoot *::after {
+  box-sizing: border-box;
+}
+
+.loginBackdrop {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.loginContours {
+  position: absolute;
+  stroke: var(--flowlo-line);
+  stroke-width: 1.15;
+  opacity: 0.72;
+}
+
+.loginContours path {
+  vector-effect: non-scaling-stroke;
+}
+
+.loginContoursTop {
+  top: -160px;
+  right: -110px;
+  width: min(84vw, 1020px);
+  height: 68vh;
+}
+
+.loginContoursBottom {
+  left: -170px;
+  bottom: 70px;
+  width: min(92vw, 1060px);
+  height: 58vh;
+  opacity: 0.58;
+}
+
+.loginStage {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 1040px);
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: clamp(36px, 7vh, 92px) clamp(18px, 4vw, 48px) calc(44px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(34px, 5vh, 58px);
+}
+
+.loginCard {
+  width: min(100%, 680px);
+  padding: clamp(34px, 5.1vw, 70px);
+  border: 1px solid var(--flowlo-border);
+  border-radius: clamp(26px, 3vw, 34px);
+  background:
+    radial-gradient(circle at 50% 49%, rgba(118, 133, 151, 0.19), transparent 28%),
+    linear-gradient(142deg, var(--flowlo-panel) 0%, var(--flowlo-panel-deep) 100%);
+  box-shadow:
+    0 34px 90px rgba(0, 0, 0, 0.46),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px) saturate(1.08);
+  -webkit-backdrop-filter: blur(20px) saturate(1.08);
+}
+
+.loginLogo {
+  display: block;
+  width: min(100%, 328px);
+  height: auto;
+  margin: 0 auto clamp(34px, 5.2vw, 56px);
+}
+
+.authCardWide {
+  width: min(100%, 820px);
+}
+
+.authLandingCard {
+  width: min(100%, 980px);
+}
+
+.loginIntro {
+  margin-bottom: 36px;
+}
+
+.loginTitle {
+  margin: 0 0 6px;
+  font-family: var(--font-display), Space Grotesk, Inter, sans-serif;
+  font-size: clamp(33px, 3.4vw, 43px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: 0;
+  color: var(--flowlo-text);
+}
+
+.loginSubtitle {
+  margin: 0;
+  color: var(--flowlo-muted);
+  font-size: clamp(17px, 1.45vw, 21px);
+  font-weight: 500;
+}
+
+.loginForm {
+  display: grid;
+  gap: 22px;
+}
+
+.loginField {
+  display: grid;
+  gap: 10px;
+}
+
+.loginLabel {
+  color: #dfe7f0;
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.loginInput {
+  width: 100%;
+  min-height: 68px;
+  padding: 18px 24px;
+  border: 1px solid rgba(177, 191, 208, 0.19);
+  border-radius: 12px;
+  background: var(--flowlo-input);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 16px 38px rgba(1, 5, 12, 0.16);
+  color: var(--flowlo-text);
+  font: 500 20px/1.2 var(--font-body), Inter, sans-serif;
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.loginInput::placeholder {
+  color: #a3adb9;
+}
+
+.loginInput:focus {
+  border-color: rgba(31, 224, 190, 0.74);
+  background: rgba(52, 62, 76, 0.76);
+  box-shadow:
+    0 0 0 4px rgba(31, 224, 190, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.loginPasswordControl {
+  position: relative;
+}
+
+.loginPasswordInput {
+  padding-right: 70px;
+}
+
+.loginEyeButton {
+  position: absolute;
+  top: 50%;
+  right: 17px;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #edf3f9;
+  cursor: pointer;
+}
+
+.loginEyeButton svg {
+  width: 25px;
+  height: 25px;
+}
+
+.loginOptions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin: -2px 0 4px;
+  color: var(--flowlo-muted);
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.loginRemember {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  min-width: 0;
+}
+
+.loginCheckbox {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  margin: 0;
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 6px;
+  background: rgba(31, 224, 190, 0.22);
+  cursor: pointer;
+}
+
+.loginCheckbox:checked {
+  border-color: transparent;
+  background: linear-gradient(135deg, #3bf0d0 0%, #11d4b0 100%);
+}
+
+.loginCheckbox:checked::after {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 3px;
+  width: 7px;
+  height: 13px;
+  border: solid #ffffff;
+  border-width: 0 3px 3px 0;
+  transform: rotate(42deg);
+}
+
+.loginLink {
+  color: var(--flowlo-mint);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.loginLink:hover {
+  color: #67f4dc;
+}
+
+.loginSubmit {
+  width: 100%;
+  min-height: 70px;
+  border: 0;
+  border-radius: 11px;
+  background: linear-gradient(110deg, #29dfc0 0%, #10d8b0 100%);
+  color: #03120f;
+  font: 700 20px/1 var(--font-body), Inter, sans-serif;
+  cursor: pointer;
+  box-shadow:
+    0 20px 42px rgba(0, 213, 176, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.48);
+  transition: transform 140ms ease, opacity 140ms ease, filter 140ms ease;
+}
+
+.loginSubmit:hover {
+  filter: brightness(1.04);
+}
+
+.loginSubmit:active {
+  transform: translateY(1px);
+}
+
+.loginSubmit:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.loginSignup {
+  margin: 50px 0 0;
+  text-align: center;
+  color: var(--flowlo-muted);
+  font-size: 18px;
+}
+
+.authTrustNote {
+  margin: 12px 0 0;
+  text-align: center;
+  color: var(--flowlo-dim);
+  font-size: 14px;
+}
+
+.loginError {
+  margin: -14px 0 24px;
+  padding: 13px 16px;
+  border: 1px solid rgba(240, 122, 122, 0.36);
+  border-radius: 13px;
+  background: rgba(240, 122, 122, 0.11);
+  color: #ffc5c5;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.authEyebrow {
+  margin: 0 0 10px;
+  color: var(--flowlo-yellow);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.authRegisterForm {
+  display: grid;
+  gap: 18px;
+}
+
+.authFullAction {
+  margin-top: 8px;
+}
+
+.authSecondaryAction {
+  width: 100%;
+  min-height: 70px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(202, 213, 226, 0.28);
+  border-radius: 11px;
+  background: rgba(12, 19, 30, 0.24);
+  color: var(--flowlo-text);
+  font: 700 18px/1 var(--font-body), Inter, sans-serif;
+  text-decoration: none;
+}
+
+.authSuccessState {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  border: 1px solid rgba(127, 240, 209, 0.34);
+  border-radius: 15px;
+  background: rgba(0, 196, 154, 0.12);
+  padding: 16px;
+  color: var(--flowlo-muted);
+  font-size: 15px;
+}
+
+.authSuccessState strong,
+.authSuccessState span {
+  display: block;
+}
+
+.authSuccessState strong {
+  color: var(--flowlo-text);
+  font-weight: 800;
+}
+
+.authSuccessIcon {
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--flowlo-mint);
+  color: #03120f;
+}
+
+.authSuccessIcon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.authSuccessTitle {
+  margin: 0;
+  color: var(--flowlo-text);
+  font-family: var(--font-display), Space Grotesk, Inter, sans-serif;
+  font-size: clamp(25px, 3vw, 32px);
+  line-height: 1.08;
+}
+
+.authSupportingCopy {
+  margin: 0;
+  color: var(--flowlo-muted);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.authLandingStage {
+  gap: 28px;
+}
+
+.authLandingNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 38px;
+}
+
+.authInlinePill {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 34px;
+  border: 1px solid rgba(127, 240, 209, 0.18);
+  border-radius: 999px;
+  background: rgba(127, 240, 209, 0.08);
+  color: var(--flowlo-mint);
+  padding: 6px 13px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.authSecondaryLink {
+  color: var(--flowlo-muted);
+  font-size: 15px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.authSecondaryLink:hover {
+  color: var(--flowlo-text);
+}
+
+.authLandingHero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(250px, 0.75fr);
+  gap: clamp(28px, 4vw, 54px);
+  align-items: center;
+}
+
+.authLandingTitle {
+  margin: 0;
+  color: var(--flowlo-text);
+  font-family: var(--font-display), Space Grotesk, Inter, sans-serif;
+  font-size: clamp(44px, 6vw, 74px);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.authLandingTitle span {
+  color: var(--flowlo-mint);
+}
+
+.authLandingCopy {
+  max-width: 560px;
+  margin: 24px 0 0;
+  color: var(--flowlo-muted);
+  font-size: clamp(17px, 1.7vw, 21px);
+  line-height: 1.55;
+}
+
+.authProductFrame {
+  min-height: 280px;
+  border: 1px solid rgba(202, 213, 226, 0.17);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(127, 240, 209, 0.16), transparent 36%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.025));
+  padding: 18px;
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.authProductTopbar {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 28px;
+}
+
+.authProductTopbar span {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.authProductTopbar span:first-child {
+  background: var(--flowlo-yellow);
+}
+
+.authProductMetric {
+  border: 1px solid rgba(127, 240, 209, 0.17);
+  border-radius: 20px;
+  background: rgba(8, 13, 20, 0.42);
+  padding: 20px;
+}
+
+.authProductMetric strong {
+  display: block;
+  color: var(--flowlo-text);
+  font-size: 24px;
+  line-height: 1;
+}
+
+.authProductMetric span {
+  display: block;
+  margin-top: 9px;
+  color: var(--flowlo-muted);
+  font-size: 14px;
+}
+
+.authProductRows {
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.authProductRows span {
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.authLandingCapture {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  margin-top: 34px;
+}
+
+.authLandingCapture .loginSubmit {
+  width: auto;
+  min-width: 190px;
+}
+
+.authCaptureHint {
+  grid-column: 1 / -1;
+  color: var(--flowlo-dim);
+  font-size: 13px;
+}
+
+.authMiniRail {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 32px 0 2px;
+}
+
+.authMiniCaption {
+  color: var(--flowlo-muted);
+  font-size: 13px;
+}
+
+.authLandingFooter {
+  width: min(100%, 980px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  color: var(--flowlo-muted);
+  font-size: 13px;
+}
+
+.authLandingFooter div {
+  display: flex;
+  gap: 18px;
+}
+
+.authLandingFooter a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.authLandingFooter a:hover {
+  color: var(--flowlo-text);
+}
+
+.authVisuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.loginFeatures {
+  width: min(100%, 720px);
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(24px, 4.8vw, 72px);
+}
+
+.loginFeature {
+  min-width: 0;
+  color: var(--flowlo-muted);
+}
+
+.loginFeature svg {
+  display: block;
+  width: 74px;
+  height: 52px;
+  margin-bottom: 18px;
+  overflow: visible;
+}
+
+.loginFeature svg path {
+  fill: none;
+  stroke: var(--flowlo-mint-strong);
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.loginFeature svg circle {
+  fill: var(--flowlo-yellow);
+}
+
+.loginFeature .loginFeatureWhite {
+  stroke: #dfe7f0;
+}
+
+.loginFeature strong,
+.loginFeature span {
+  display: block;
+}
+
+.loginFeature strong {
+  color: var(--flowlo-text);
+  font-size: 19px;
+  line-height: 1.1;
+  margin-bottom: 2px;
+}
+
+.loginFeature span {
+  font-size: 17px;
+  line-height: 1.25;
+}
+
+.loginEyeButton:focus-visible,
+.loginCheckbox:focus-visible,
+.loginLink:focus-visible,
+.loginSubmit:focus-visible {
+  outline: 2px solid var(--flowlo-mint);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loginInput,
+  .loginSubmit {
+    transition: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .loginStage {
+    justify-content: flex-start;
+    padding-top: clamp(28px, 8vh, 60px);
+  }
+
+  .loginCard {
+    padding: clamp(28px, 7vw, 42px);
+  }
+
+  .loginLogo {
+    width: min(100%, 260px);
+  }
+
+  .loginInput,
+  .loginSubmit {
+    min-height: 60px;
+    font-size: 17px;
+  }
+
+  .loginOptions {
+    align-items: flex-start;
+    font-size: 16px;
+  }
+
+  .loginFeatures {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 42px;
+    width: min(100%, 430px);
+  }
+
+  .authLandingNav,
+  .authLandingHero,
+  .authLandingFooter {
+    grid-template-columns: 1fr;
+  }
+
+  .authLandingNav,
+  .authLandingFooter {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .authLandingHero {
+    display: grid;
+  }
+
+  .authProductFrame {
+    min-height: 220px;
+  }
+
+  .authLandingCapture {
+    grid-template-columns: 1fr;
+  }
+
+  .authLandingCapture .loginSubmit {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 430px) {
+  .loginStage {
+    padding-left: 14px;
+    padding-right: 14px;
+    gap: 28px;
+  }
+
+  .loginCard {
+    border-radius: 26px;
+    padding: 26px 20px 28px;
+  }
+
+  .loginLogo {
+    width: min(100%, 226px);
+    margin-bottom: 28px;
+  }
+
+  .loginIntro {
+    margin-bottom: 28px;
+  }
+
+  .loginTitle {
+    font-size: 31px;
+  }
+
+  .loginSubtitle,
+  .loginLabel,
+  .loginSignup,
+  .loginFeature span {
+    font-size: 15px;
+  }
+
+  .loginForm {
+    gap: 18px;
+  }
+
+  .loginInput {
+    padding: 15px 16px;
+  }
+
+  .loginPasswordInput {
+    padding-right: 58px;
+  }
+
+  .loginEyeButton {
+    right: 9px;
+  }
+
+  .loginOptions {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .loginSignup {
+    margin-top: 34px;
+  }
+
+  .loginFeatures {
+    gap: 24px 30px;
+  }
+
+  .loginFeature svg {
+    width: 60px;
+    height: 42px;
+    margin-bottom: 12px;
+  }
+
+  .loginFeature strong {
+    font-size: 16px;
+  }
+
+  .authCardWide,
+  .authLandingCard {
+    width: 100%;
+  }
+
+  .authLandingNav {
+    margin-bottom: 28px;
+  }
+
+  .authInlinePill {
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+  }
+
+  .authLandingTitle {
+    font-size: 39px;
+  }
+
+  .authLandingCopy {
+    margin-top: 18px;
+    font-size: 15.5px;
+  }
+
+  .authProductFrame {
+    display: none;
+  }
+
+  .authMiniRail {
+    margin-top: 26px;
+  }
+
+  .authLandingFooter {
+    font-size: 12px;
+  }
+}

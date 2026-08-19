@@ -1,25 +1,22 @@
 "use client";
 
-/* FlowLo — Sign in screen (ported 1:1 from design-reference/flowlo-auth.html)
-   Works in both App Router and Pages Router.
-   Wire your Firebase call via the onSignIn prop — see README-integration.md. */
-
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
-import { Space_Grotesk, Inter } from "next/font/google";
+import { AuthShell } from "./AuthShell";
 import styles from "./auth.module.css";
 
-const display = Space_Grotesk({ subsets: ["latin"], weight: ["400", "500", "600", "700"], variable: "--font-display" });
-const body = Inter({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-body" });
-
 type SignInScreenProps = {
-  /** Your existing Firebase sign-in. Throw / reject on failure with a message. */
   onSignIn: (email: string, password: string) => Promise<void>;
-  /** Route to your request-access / landing page. */
   requestAccessHref?: string;
-  /** Route (or handler) for password reset. */
   forgotPasswordHref?: string;
 };
+
+const featureItems = [
+  { label: "Stock", detail: "in sync", icon: "stock" },
+  { label: "Orders", detail: "in flow", icon: "orders" },
+  { label: "Customers", detail: "in the loop", icon: "customers" },
+  { label: "Delivery", detail: "on track", icon: "delivery" },
+] as const;
 
 export default function SignInScreen({
   onSignIn,
@@ -28,22 +25,27 @@ export default function SignInScreen({
 }: SignInScreenProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPass, setShowPass] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (loading) return;
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (loading) {
+      return;
+    }
+
     setError(null);
     setLoading(true);
+
     try {
       await onSignIn(email, password);
     } catch (err) {
       setError(
         err instanceof Error && err.message
           ? friendlyAuthError(err.message)
-          : "Sign in didn't work. Check your details and try again."
+          : "Sign in didn't work. Check your details and try again.",
       );
     } finally {
       setLoading(false);
@@ -51,137 +53,176 @@ export default function SignInScreen({
   }
 
   return (
-    <div className={`${styles.root} ${display.variable} ${body.variable}`}>
-      {/* ambient background elements */}
-      <div className={styles["flow-bg"]} aria-hidden="true">
-        <svg viewBox="0 0 900 1600" preserveAspectRatio="xMidYMid slice">
-          <defs>
-            <linearGradient id="flowgrad-signin" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stopColor="#4EE6C1" />
-              <stop offset="1" stopColor="#4EC3E6" />
-            </linearGradient>
-          </defs>
-          <path className={styles["flow-line"]} style={{ stroke: "url(#flowgrad-signin)" }} d="M-50 260 C 250 220, 420 380, 700 320 S 1000 260, 1100 300" />
-          <path className={`${styles["flow-line"]} ${styles["flow-line-2"]}`} style={{ stroke: "url(#flowgrad-signin)" }} d="M-50 900 C 200 860, 480 1000, 720 930 S 1000 880, 1100 920" />
-        </svg>
-      </div>
-      <div className={`${styles.orb} ${styles["orb-ring-a"]}`} aria-hidden="true" />
-      <div className={`${styles.orb} ${styles["orb-ring-b"]}`} aria-hidden="true" />
-      <div className={`${styles.orb} ${styles["orb-glow"]}`} aria-hidden="true" />
-      <div className={styles.page}>
-        <div className={styles.topbar}>
-          <div className={styles.brand}>
-            <div className={styles.logo}>F</div>
-            <div className={styles["brand-name"]}>
-              Flow<em>Lo</em>
+    <AuthShell
+      ariaLabel="Flowlo sign in"
+      footer={
+        <div className={styles.loginFeatures} aria-label="Flowlo features">
+          {featureItems.map((item) => (
+            <div className={styles.loginFeature} key={item.label}>
+              <FeatureIcon type={item.icon} />
+              <strong>{item.label}</strong>
+              <span>{item.detail}</span>
             </div>
-          </div>
+          ))}
         </div>
-
-        <div className={styles.center}>
-          <h1 className={`${styles.h1} ${styles["h1-signin"]}`}>Welcome back</h1>
-          <p className={styles.lede}>Sign in to pick up your flow.</p>
+      }
+    >
+          <div className={styles.loginIntro}>
+            <h1 className={styles.loginTitle}>Welcome back</h1>
+            <p className={styles.loginSubtitle}>Sign in to your flowlo account</p>
+          </div>
 
           {error && (
-            <div className={styles.error} role="alert">
+            <div className={styles.loginError} role="alert">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit}>
-            <div className={styles.field}>
-              <label className={styles["field-label"]} htmlFor="email">
+          <form className={styles.loginForm} onSubmit={handleSubmit}>
+            <div className={styles.loginField}>
+              <label className={styles.loginLabel} htmlFor="email">
                 Email address
               </label>
-              <div className={styles.control}>
-                <input
-                  className={styles.input}
-                  type="email"
-                  id="email"
-                  placeholder="you@business.co.za"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
+              <input
+                className={styles.loginInput}
+                id="email"
+                type="email"
+                placeholder="you@business.co.za"
+                autoComplete="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+              />
             </div>
 
-            <div className={styles.field}>
-              <label className={styles["field-label"]} htmlFor="password">
+            <div className={styles.loginField}>
+              <label className={styles.loginLabel} htmlFor="password">
                 Password
               </label>
-              <div className={styles.control}>
+              <div className={styles.loginPasswordControl}>
                 <input
-                  className={styles.input}
-                  type={showPass ? "text" : "password"}
+                  className={`${styles.loginInput} ${styles.loginPasswordInput}`}
                   id="password"
-                  placeholder="Your password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Password"
                   autoComplete="current-password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(event) => setPassword(event.target.value)}
                   required
                 />
                 <button
+                  className={styles.loginEyeButton}
                   type="button"
-                  className={styles.trail}
-                  onClick={() => setShowPass((s) => !s)}
-                  aria-label={showPass ? "Hide password" : "Show password"}
+                  onClick={() => setShowPassword((current) => !current)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.9"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    style={{ opacity: showPass ? 0.45 : 1 }}
-                  >
-                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </svg>
+                  <EyeIcon muted={showPassword} />
                 </button>
               </div>
             </div>
 
-            <div className={styles["row-between"]}>
-              <span />
-              <Link className={styles["text-link"]} href={forgotPasswordHref}>
+            <div className={styles.loginOptions}>
+              <label className={styles.loginRemember}>
+                <input
+                  className={styles.loginCheckbox}
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(event) => setRememberMe(event.target.checked)}
+                />
+                <span>Remember me</span>
+              </label>
+
+              <Link className={styles.loginLink} href={forgotPasswordHref}>
                 Forgot password?
               </Link>
             </div>
 
-            <button className={`${styles.btn} ${styles["btn-primary"]}`} type="submit" disabled={loading}>
-              {loading ? "Signing in…" : "Sign in"}
+            <button className={styles.loginSubmit} type="submit" disabled={loading}>
+              {loading ? "Signing in..." : "Sign in"}
             </button>
           </form>
 
-          <div className={styles["divider-note"]}>
-            New to FlowLo?{" "}
-            <Link className={styles["text-link"]} href={requestAccessHref}>
-              Request access
+          <p className={styles.loginSignup}>
+            <span>New to flowlo?</span>{" "}
+            <Link className={styles.loginLink} href={requestAccessHref}>
+              Create account
             </Link>
-          </div>
-        </div>
-
-        <footer className={styles.footer}>
-          <span>Invite-only platform</span>
-          <div className={styles["foot-links"]}>
-            <a href="/privacy">Privacy</a>
-            <a href="/terms">Terms</a>
-          </div>
-        </footer>
-      </div>
-    </div>
+          </p>
+    </AuthShell>
   );
 }
 
-/** Map raw Firebase error strings to human copy. Extend as needed. */
+function EyeIcon({ muted }: { muted: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      style={{ opacity: muted ? 0.45 : 1 }}
+    >
+      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+  );
+}
+
+function FeatureIcon({ type }: { type: (typeof featureItems)[number]["icon"] }) {
+  if (type === "stock") {
+    return (
+      <svg viewBox="0 0 86 58" aria-hidden="true">
+        <path d="M10 14H42" />
+        <path d="M10 30H62" />
+        <path d="M10 46H42" />
+        <path className={styles.loginFeatureWhite} d="M45 46H68" />
+        <circle cx="73" cy="46" r="7" />
+      </svg>
+    );
+  }
+
+  if (type === "orders") {
+    return (
+      <svg viewBox="0 0 86 58" aria-hidden="true">
+        <path d="M48 10a18 18 0 1 0 12 31" />
+        <path d="M37 38c7 7 18 7 25 0" />
+        <circle className={styles.loginFeatureWhite} cx="51" cy="11" r="8" />
+        <circle cx="70" cy="43" r="7" />
+      </svg>
+    );
+  }
+
+  if (type === "customers") {
+    return (
+      <svg viewBox="0 0 86 58" aria-hidden="true">
+        <path d="M57 12H37a18 18 0 0 0 0 36h20" />
+        <circle cx="65" cy="43" r="7" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 86 58" aria-hidden="true">
+      <path d="M18 43c19 0 16-30 46-30" />
+      <circle cx="70" cy="12" r="7" />
+    </svg>
+  );
+}
+
 function friendlyAuthError(raw: string): string {
-  if (raw.includes("invalid-credential") || raw.includes("wrong-password") || raw.includes("user-not-found"))
+  if (raw.includes("invalid-credential") || raw.includes("wrong-password") || raw.includes("user-not-found")) {
     return "That email and password don't match. Try again or reset your password.";
-  if (raw.includes("too-many-requests"))
+  }
+
+  if (raw.includes("too-many-requests")) {
     return "Too many attempts. Wait a minute, then try again.";
-  if (raw.includes("network")) return "Can't reach FlowLo. Check your connection and try again.";
+  }
+
+  if (raw.includes("network")) {
+    return "Can't reach FlowLo. Check your connection and try again.";
+  }
+
   return "Sign in didn't work. Check your details and try again.";
 }

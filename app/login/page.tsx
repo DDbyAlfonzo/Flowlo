@@ -161,5 +161,5 @@ export default function LoginPage() {
     return <LoadingScreen message="Checking your session..." />;
   }
 
-  return <SignInScreen onSignIn={handleSignIn} requestAccessHref="/" />;
+  return <SignInScreen onSignIn={handleSignIn} requestAccessHref="/register" />;
 }

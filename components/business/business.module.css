@@ -144,3 +144,87 @@
 }
 .signout:hover { color: #F5B5B5; border-color: rgba(240,122,122,.35); }
 .signout:focus-visible { outline: 2px solid #4EE6C1; outline-offset: 2px; }
+
+/* Phase 3 authenticated-app refresh: keep the settings form behavior intact
+   while matching the shared Flowlo surface, control, and status tokens. */
+.page-title,
+.field label,
+.acct-name {
+  color: var(--flowlo-text);
+}
+
+.page-sub,
+.acct-mail,
+.select-wrap svg,
+.signout {
+  color: var(--flowlo-text-muted);
+}
+
+.section-label {
+  color: var(--flowlo-label);
+  letter-spacing: 0.16em;
+}
+
+.card {
+  border-color: var(--flowlo-border);
+  background: var(--flowlo-surface-gradient);
+  box-shadow: var(--flowlo-shadow-card);
+}
+
+.input,
+.select {
+  border-color: var(--flowlo-border);
+  background: rgba(12, 18, 26, 0.82);
+  color: var(--flowlo-text);
+}
+
+.input:hover,
+.select:hover {
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.input:focus,
+.select:focus {
+  border-color: var(--flowlo-border-strong);
+  box-shadow: var(--flowlo-shadow-focus);
+}
+
+.input::placeholder {
+  color: var(--flowlo-text-subtle);
+}
+
+.btn-primary {
+  background: var(--flowlo-brand-gradient);
+  color: var(--flowlo-on-accent);
+  box-shadow: 0 18px 50px -26px rgba(0, 196, 154, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+.btn-primary:focus-visible,
+.signout:focus-visible {
+  outline-color: var(--flowlo-mint);
+}
+
+.saved-note {
+  color: var(--flowlo-success);
+}
+
+.error-note {
+  color: var(--flowlo-danger);
+}
+
+.avatar {
+  border-color: var(--flowlo-border-subtle);
+  background: var(--flowlo-bg-elevated);
+  color: var(--flowlo-mint);
+}
+
+.signout {
+  border-color: var(--flowlo-border);
+  background: transparent;
+}
+
+.signout:hover {
+  border-color: var(--flowlo-danger-border);
+  background: var(--flowlo-danger-bg);
+  color: var(--flowlo-danger);
+}

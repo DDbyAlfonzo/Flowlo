@@ -263,3 +263,97 @@
   .page-title { font-size: 32px; }
   .rail-track { min-width: 0; }
 }
+
+/* Phase 3 authenticated-app refresh: align the delivery board with shared
+   Flowlo tokens while leaving the rail, stages, and links untouched. */
+.page-title,
+.d-title,
+.cancel-link strong,
+.empty-title {
+  color: var(--flowlo-text);
+}
+
+.page-sub,
+.rail-name,
+.rail-node,
+.d-meta,
+.d-go,
+.empty-row,
+.cancel-link,
+.empty-sub {
+  color: var(--flowlo-text-muted);
+}
+
+.rail-card,
+.delivery,
+.empty-row,
+.cancel-link,
+.empty {
+  border-color: var(--flowlo-border);
+  background: var(--flowlo-surface-gradient);
+  box-shadow: var(--flowlo-shadow-card);
+}
+
+.delivery:hover,
+.cancel-link:hover {
+  border-color: var(--flowlo-border-subtle);
+  background: var(--flowlo-surface-raised-gradient);
+}
+
+.rail-stage:focus-visible,
+.delivery:focus-visible,
+.cancel-link:focus-visible,
+.btn-primary:focus-visible {
+  outline-color: var(--flowlo-mint);
+}
+
+.rail-stage::before {
+  background: var(--flowlo-border-subtle);
+}
+
+.rail-node,
+.d-icon,
+.empty-badge {
+  border: 1px solid var(--flowlo-border-subtle);
+  background: var(--flowlo-bg-elevated);
+}
+
+.d-icon {
+  color: var(--flowlo-sky);
+}
+
+.stage-attn .rail-node {
+  border-color: var(--flowlo-warning-border);
+  background: var(--flowlo-warning-bg);
+  color: var(--flowlo-warning);
+}
+
+.stage-done .rail-node {
+  border-color: var(--flowlo-success-border);
+  background: var(--flowlo-success-bg);
+  color: var(--flowlo-success);
+}
+
+.stage-active .rail-node {
+  background: var(--flowlo-brand-gradient);
+  color: var(--flowlo-on-accent);
+  box-shadow: var(--flowlo-shadow-focus);
+}
+
+.stage-active .rail-name {
+  color: var(--flowlo-text);
+}
+
+.cancel-open {
+  border-color: var(--flowlo-danger-border);
+}
+
+.empty-badge {
+  color: var(--flowlo-mint);
+}
+
+.btn-primary {
+  background: var(--flowlo-brand-gradient);
+  color: var(--flowlo-on-accent);
+  box-shadow: 0 18px 50px -26px rgba(0, 196, 154, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}

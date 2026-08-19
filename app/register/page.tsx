@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AuthCard } from "@/components/auth-card";
+import { AuthShell } from "@/components/auth/AuthShell";
+import styles from "@/components/auth/auth.module.css";
 import { LoadingScreen } from "@/components/loading-screen";
 import { PasswordField } from "@/components/password-field";
 import { logoutUser, registerWithEmail } from "@/lib/auth";
@@ -110,50 +111,44 @@ export default function RegisterPage() {
   }
 
   return (
-    <AuthCard
-      eyebrow="Managed access"
-      title="Request access"
-      description="Tell us about your business. We'll review your request and let you know once approved."
-      badgeLabel="Managed access"
-      footer={
-        <>
-          Already approved?{" "}
-          <Link href="/login" className="font-semibold text-romano-mintText">
-            Sign in
-          </Link>
-        </>
-      }
-      trustNote="Managed access platform."
-    >
+    <AuthShell ariaLabel="Flowlo create account" wide>
+      <div className={styles.loginIntro}>
+        <p className={styles.authEyebrow}>Managed access</p>
+        <h1 className={styles.loginTitle}>Request access</h1>
+        <p className={styles.loginSubtitle}>
+          Tell us about your business. We&apos;ll review your request and let you know once approved.
+        </p>
+      </div>
+
       {success ? (
         <div className="grid gap-5">
           <div className="grid gap-3 text-center">
-            <p className="eyebrow-label text-romano-mintText">Request received</p>
-            <h3 className="text-2xl font-semibold tracking-[-0.05em] text-romano-ink">
+            <p className={styles.authEyebrow}>Request received</p>
+            <h3 className={styles.authSuccessTitle}>
               You&apos;re on the list.
             </h3>
-            <p className="text-sm leading-7 text-romano-slate">
+            <p className={styles.authSupportingCopy}>
               Your access request has been received. We&apos;ll review it and let you
               know once your account is approved.
             </p>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Link href="/login" className="primary-button auth-submit-button">
+            <Link href="/login" className={styles.loginSubmit}>
               Back to login
             </Link>
-            <Link href="/" className="secondary-button auth-submit-button">
+            <Link href="/" className={styles.authSecondaryAction}>
               Return home
             </Link>
           </div>
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="grid gap-4">
+        <form onSubmit={handleSubmit} className={styles.authRegisterForm}>
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="grid gap-2">
-              <span className="field-label">Full Name</span>
+              <span className={styles.loginLabel}>Full Name</span>
               <input
-                className="auth-input-shell"
+                className={styles.loginInput}
                 value={form.fullName}
                 onChange={(event) =>
                   setForm((current) => ({ ...current, fullName: event.target.value }))
@@ -165,10 +160,10 @@ export default function RegisterPage() {
             </label>
 
             <label className="grid gap-2">
-              <span className="field-label">Email Address</span>
+              <span className={styles.loginLabel}>Email Address</span>
               <input
                 type="email"
-                className="auth-input-shell"
+                className={styles.loginInput}
                 value={form.email}
                 onChange={(event) =>
                   setForm((current) => ({ ...current, email: event.target.value }))
@@ -183,9 +178,9 @@ export default function RegisterPage() {
 
           <div className="grid gap-4 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,0.9fr)]">
             <label className="grid gap-2">
-              <span className="field-label">Business Name</span>
+              <span className={styles.loginLabel}>Business Name</span>
               <input
-                className="auth-input-shell"
+                className={styles.loginInput}
                 value={form.businessName}
                 onChange={(event) =>
                   setForm((current) => ({ ...current, businessName: event.target.value }))
@@ -197,9 +192,9 @@ export default function RegisterPage() {
             </label>
 
             <label className="grid gap-2">
-              <span className="field-label">Business Type</span>
+              <span className={styles.loginLabel}>Business Type</span>
               <select
-                className="auth-input-shell"
+                className={styles.loginInput}
                 value={form.businessType}
                 onChange={(event) =>
                   setForm((current) => ({
@@ -218,9 +213,9 @@ export default function RegisterPage() {
           </div>
 
           <label className="grid gap-2">
-            <span className="field-label">WhatsApp Number</span>
+            <span className={styles.loginLabel}>WhatsApp Number</span>
             <input
-              className="auth-input-shell"
+              className={styles.loginInput}
               value={form.whatsappNumber}
               onChange={(event) =>
                 setForm((current) => ({
@@ -265,20 +260,28 @@ export default function RegisterPage() {
           </div>
 
           {error ? (
-            <div className="auth-feedback auth-feedback-error" aria-live="polite">
+            <div className={styles.loginError} aria-live="polite">
               {error}
             </div>
           ) : null}
 
           <button
             type="submit"
-            className="primary-button auth-submit-button mt-2"
+            className={`${styles.loginSubmit} ${styles.authFullAction}`}
             disabled={submitting}
           >
             {submitting ? "Sending request..." : "Request access"}
           </button>
         </form>
       )}
-    </AuthCard>
+
+      <p className={styles.loginSignup}>
+        <span>Already approved?</span>{" "}
+        <Link href="/login" className={styles.loginLink}>
+          Sign in
+        </Link>
+      </p>
+      <p className={styles.authTrustNote}>Managed access platform.</p>
+    </AuthShell>
   );
 }

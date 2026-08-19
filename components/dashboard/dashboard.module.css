@@ -207,3 +207,87 @@
   .stat-row { grid-template-columns: repeat(2, minmax(0, 280px)); }
   .stat-value { font-size: 26px; }
 }
+
+/* Phase 3 token refresh: presentation only, dashboard data/structure unchanged. */
+.greeting,
+.setup-title,
+.stat-value,
+.activity-title {
+  color: var(--flowlo-text);
+}
+
+.greeting-sub,
+.setup-sub,
+.step-go,
+.stat-label,
+.stat-hint,
+.attn-text,
+.activity-meta,
+.empty-row {
+  color: var(--flowlo-text-muted);
+}
+
+.section-label {
+  color: var(--flowlo-label);
+  letter-spacing: 0.11em;
+}
+
+.card,
+.stat {
+  border-color: var(--flowlo-border);
+  background: var(--flowlo-surface-gradient);
+  box-shadow: var(--flowlo-shadow-card);
+}
+
+.setup::before,
+.step-done .step-check,
+.btn-primary {
+  background: var(--flowlo-brand-gradient);
+}
+
+.setup-count,
+.attn-dot {
+  color: var(--flowlo-mint);
+}
+
+.step {
+  border-top-color: var(--flowlo-border-subtle);
+}
+
+.step-check {
+  border-color: var(--flowlo-border);
+  color: var(--flowlo-on-accent);
+}
+
+.step-name {
+  color: var(--flowlo-text);
+}
+
+.step-done .step-name {
+  color: var(--flowlo-text-subtle);
+}
+
+.attn-dot {
+  background: var(--flowlo-mint);
+}
+
+.attn-warn .attn-dot {
+  background: var(--flowlo-warning);
+}
+
+.attn-warn .attn-text {
+  color: var(--flowlo-text);
+}
+
+.activity-row {
+  border-top-color: var(--flowlo-border-subtle);
+}
+
+.btn-primary {
+  color: var(--flowlo-on-accent);
+  box-shadow: 0 18px 50px -26px rgba(0, 196, 154, 0.55), inset 0 1px 0 rgba(255,255,255,.42);
+}
+
+.btn-primary:focus-visible {
+  outline-color: var(--flowlo-mint);
+}

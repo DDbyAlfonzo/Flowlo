@@ -4,18 +4,95 @@
 
 :root {
   color-scheme: dark;
-  --ink: rgb(10 17 28);
-  --surface: rgb(17 26 40);
-  --surface-2: rgb(24 35 52);
-  --line: rgba(148, 178, 205, 0.12);
-  --heading: rgb(248 251 254);
-  --text: rgb(234 241 247);
-  --muted: rgb(143 161 179);
-  --label: rgb(183 198 214);
-  --mint: rgb(78 230 193);
-  --sky: rgb(78 195 230);
-  --gold: rgb(242 193 78);
-  --on-grad: rgb(7 19 28);
+
+  /* Flowlo design tokens: shared visual foundation for the app refresh. */
+  --flowlo-bg: #0d1117;
+  --flowlo-bg-subtle: #101924;
+  --flowlo-bg-elevated: #151f2c;
+  --flowlo-surface: rgba(20, 30, 46, 0.72);
+  --flowlo-surface-raised: rgba(25, 36, 52, 0.9);
+  --flowlo-surface-overlay: rgba(15, 23, 34, 0.94);
+  --flowlo-surface-hover: rgba(36, 49, 67, 0.72);
+  --flowlo-surface-muted: rgba(255, 255, 255, 0.045);
+  --flowlo-surface-gradient: linear-gradient(180deg, rgba(23, 33, 48, 0.9), rgba(11, 17, 25, 0.92));
+  --flowlo-surface-raised-gradient: linear-gradient(180deg, rgba(32, 45, 63, 0.92), rgba(16, 24, 36, 0.96));
+
+  --flowlo-border: rgba(255, 255, 255, 0.08);
+  --flowlo-border-subtle: rgba(148, 178, 205, 0.12);
+  --flowlo-border-strong: rgba(127, 240, 209, 0.46);
+
+  --flowlo-teal: #00c49a;
+  --flowlo-teal-strong: #10d9b3;
+  --flowlo-mint: #7ff0d1;
+  --flowlo-sky: #4ec3e6;
+  --flowlo-yellow: #ffc83d;
+  --flowlo-brand-gradient: linear-gradient(96deg, var(--flowlo-mint) 0%, var(--flowlo-teal-strong) 100%);
+
+  --flowlo-text: #f5f8fc;
+  --flowlo-text-muted: #aebccc;
+  --flowlo-text-subtle: #7d8a99;
+  --flowlo-label: #d8e3ef;
+  --flowlo-on-accent: #03120f;
+
+  --flowlo-success: #7ff0d1;
+  --flowlo-success-bg: rgba(0, 196, 154, 0.14);
+  --flowlo-success-border: rgba(127, 240, 209, 0.34);
+  --flowlo-warning: #ffd166;
+  --flowlo-warning-bg: rgba(255, 200, 61, 0.14);
+  --flowlo-warning-border: rgba(255, 200, 61, 0.34);
+  --flowlo-danger: #ff9b9b;
+  --flowlo-danger-bg: rgba(255, 107, 107, 0.14);
+  --flowlo-danger-border: rgba(255, 155, 155, 0.34);
+  --flowlo-info: #8cdff5;
+  --flowlo-info-bg: rgba(76, 195, 230, 0.13);
+  --flowlo-info-border: rgba(140, 223, 245, 0.32);
+
+  --flowlo-radius-xs: 0.5rem;
+  --flowlo-radius-sm: 0.75rem;
+  --flowlo-radius-md: 0.95rem;
+  --flowlo-radius-lg: 1.25rem;
+  --flowlo-radius-xl: 1.75rem;
+  --flowlo-radius-2xl: 2rem;
+  --flowlo-radius-pill: 999px;
+
+  --flowlo-shadow-card:
+    0 30px 80px -42px rgba(0, 0, 0, 0.96),
+    0 10px 30px -18px rgba(0, 0, 0, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --flowlo-shadow-overlay:
+    0 28px 80px -36px rgba(0, 0, 0, 0.96),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --flowlo-shadow-focus: 0 0 0 4px rgba(127, 240, 209, 0.14);
+
+  --flowlo-transition-fast: 140ms ease;
+  --flowlo-transition-base: 220ms ease;
+  --flowlo-control-height-sm: 2.5rem;
+  --flowlo-control-height-md: 2.9rem;
+  --flowlo-control-height-lg: 3.55rem;
+
+  --flowlo-page-title: clamp(1.75rem, 1.35rem + 1.6vw, 2.5rem);
+  --flowlo-section-title: clamp(1.25rem, 1.08rem + 0.7vw, 1.75rem);
+  --flowlo-card-title: 1.05rem;
+  --flowlo-body: 0.95rem;
+  --flowlo-supporting: 0.875rem;
+  --flowlo-label-size: 0.875rem;
+  --flowlo-caption: 0.75rem;
+  --flowlo-table-text: 0.875rem;
+  --flowlo-button-text: 0.875rem;
+
+  /* Compatibility aliases used by the existing app and Tailwind theme. */
+  --ink: var(--flowlo-bg);
+  --surface: var(--flowlo-bg-subtle);
+  --surface-2: var(--flowlo-bg-elevated);
+  --line: var(--flowlo-border-subtle);
+  --heading: var(--flowlo-text);
+  --text: #eaf1f7;
+  --muted: var(--flowlo-text-subtle);
+  --label: var(--flowlo-label);
+  --mint: var(--flowlo-mint);
+  --sky: var(--flowlo-sky);
+  --gold: var(--flowlo-yellow);
+  --on-grad: var(--flowlo-on-accent);
 }
 
 html {
@@ -34,9 +111,9 @@ body {
   position: relative;
   color: var(--heading);
   background:
-    radial-gradient(circle at -8% -10%, rgba(62, 242, 207, 0.14), transparent 34%),
-    radial-gradient(circle at 112% -12%, rgba(255, 212, 90, 0.07), transparent 28%),
-    radial-gradient(circle at 50% 115%, rgba(74, 214, 243, 0.06), transparent 32%),
+    radial-gradient(circle at -8% -10%, rgba(127, 240, 209, 0.12), transparent 34%),
+    radial-gradient(circle at 112% -12%, rgba(255, 200, 61, 0.07), transparent 28%),
+    radial-gradient(circle at 50% 115%, rgba(78, 195, 230, 0.06), transparent 32%),
     linear-gradient(180deg, rgba(12, 18, 24, 0.32) 0%, rgba(7, 11, 15, 0) 34%),
     linear-gradient(180deg, var(--ink) 0%, var(--surface) 38%, var(--ink) 100%);
   font-feature-settings: "ss01" on, "cv02" on, "cv11" on;
@@ -79,6 +156,23 @@ textarea {
   font: inherit;
 }
 
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--flowlo-mint);
+  outline-offset: 2px;
+}
+
 ::selection {
   color: var(--on-grad);
   background: rgba(62, 242, 207, 0.45);
@@ -94,19 +188,24 @@ textarea {
 
 @layer components {
   .card-surface {
-    @apply relative w-full min-w-0 max-w-full rounded-4xl border border-romano-line bg-[linear-gradient(180deg,rgba(22,30,40,0.88),rgba(12,16,22,0.9))] shadow-soft backdrop-blur-2xl transition duration-300;
-    box-shadow:
-      0 30px 80px -42px rgba(0, 0, 0, 0.96),
-      0 10px 30px -18px rgba(0, 0, 0, 0.58),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08),
-      inset 0 0 28px rgba(62, 242, 207, 0.018);
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    border: 1px solid var(--flowlo-border);
+    border-radius: var(--flowlo-radius-2xl);
+    background: var(--flowlo-surface-gradient);
+    box-shadow: var(--flowlo-shadow-card);
+    backdrop-filter: blur(24px) saturate(1.16);
+    -webkit-backdrop-filter: blur(24px) saturate(1.16);
+    transition: border-color var(--flowlo-transition-base), background var(--flowlo-transition-base), transform var(--flowlo-transition-fast);
   }
 
   .card-surface::before {
     content: "";
     position: absolute;
     inset: 1px;
-    border-radius: calc(2rem - 1px);
+    border-radius: calc(var(--flowlo-radius-2xl) - 1px);
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
     opacity: 0.7;
     pointer-events: none;
@@ -129,28 +228,131 @@ textarea {
   }
 
   .section-title {
-    @apply text-3xl font-bold tracking-[-0.06em] text-romano-ink sm:text-4xl;
+    color: var(--flowlo-text);
+    font-size: var(--flowlo-page-title);
+    font-weight: 700;
+    line-height: 1.08;
+    letter-spacing: 0;
   }
 
   .section-copy {
-    @apply text-sm leading-8 text-romano-slate sm:text-base;
+    color: var(--flowlo-text-muted);
+    font-size: var(--flowlo-supporting);
+    line-height: 1.75;
   }
 
   .primary-button {
-    @apply inline-flex min-h-[2.9rem] items-center justify-center rounded-2xl border border-romano-navy/25 bg-romano-primary px-5 py-3 text-sm font-semibold text-[var(--on-grad)] shadow-glow transition duration-300 hover:-translate-y-0.5 hover:border-romano-navy/40 hover:shadow-[0_24px_62px_-28px_rgba(62,242,207,0.72)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-romano-navy focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ink)] disabled:cursor-not-allowed disabled:opacity-60;
+    display: inline-flex;
+    min-height: var(--flowlo-control-height-md);
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid rgba(3, 18, 15, 0.18);
+    border-radius: var(--flowlo-radius-md);
+    background: var(--flowlo-brand-gradient);
     background-size: 140% 140%;
+    padding: 0.75rem 1.25rem;
+    color: var(--flowlo-on-accent);
+    font-size: var(--flowlo-button-text);
+    font-weight: 700;
+    line-height: 1.1;
+    text-decoration: none;
+    box-shadow: 0 18px 50px -26px rgba(0, 196, 154, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    cursor: pointer;
+    transition: transform var(--flowlo-transition-fast), border-color var(--flowlo-transition-fast), box-shadow var(--flowlo-transition-base), filter var(--flowlo-transition-fast);
+  }
+
+  .primary-button:hover {
+    border-color: rgba(3, 18, 15, 0.36);
+    filter: brightness(1.04);
+    transform: translateY(-1px);
+  }
+
+  .primary-button:active {
+    transform: translateY(0);
+  }
+
+  .primary-button:disabled,
+  .primary-button[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 
   .secondary-button {
-    @apply inline-flex min-h-[2.9rem] items-center justify-center rounded-2xl border border-romano-line bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.025))] px-5 py-3 text-sm font-semibold text-romano-ink transition duration-300 hover:-translate-y-0.5 hover:border-romano-navy/35 hover:bg-[linear-gradient(180deg,rgba(62,242,207,0.08),rgba(255,255,255,0.04))] hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-romano-navy focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--ink)];
+    display: inline-flex;
+    min-height: var(--flowlo-control-height-md);
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid var(--flowlo-border);
+    border-radius: var(--flowlo-radius-md);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.026));
+    padding: 0.75rem 1.25rem;
+    color: var(--flowlo-text);
+    font-size: var(--flowlo-button-text);
+    font-weight: 700;
+    line-height: 1.1;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform var(--flowlo-transition-fast), border-color var(--flowlo-transition-fast), background var(--flowlo-transition-fast), color var(--flowlo-transition-fast);
+  }
+
+  .secondary-button:hover {
+    border-color: var(--flowlo-border-strong);
+    background: linear-gradient(180deg, rgba(127, 240, 209, 0.1), rgba(255, 255, 255, 0.04));
+    color: #ffffff;
+    transform: translateY(-1px);
+  }
+
+  .secondary-button:active {
+    transform: translateY(0);
+  }
+
+  .secondary-button:disabled,
+  .secondary-button[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.58;
   }
 
   .input-shell {
-    @apply w-full rounded-2xl border border-romano-line bg-[rgba(10,14,19,0.78)] px-4 py-3 text-sm text-romano-ink outline-none transition duration-300 placeholder:text-romano-slate/70 focus:border-romano-navy/45 focus:bg-[rgba(12,18,24,0.94)] focus:ring-4 focus:ring-romano-navy/10 focus-visible:ring-2 focus-visible:ring-romano-navy;
+    width: 100%;
+    min-height: var(--flowlo-control-height-md);
+    border: 1px solid var(--flowlo-border);
+    border-radius: var(--flowlo-radius-md);
+    background: rgba(12, 18, 26, 0.82);
+    padding: 0.75rem 1rem;
+    color: var(--flowlo-text);
+    font-size: var(--flowlo-supporting);
+    outline: none;
+    transition: border-color var(--flowlo-transition-fast), background var(--flowlo-transition-fast), box-shadow var(--flowlo-transition-fast);
+  }
+
+  .input-shell:hover {
+    border-color: rgba(255, 255, 255, 0.14);
+  }
+
+  .input-shell::placeholder {
+    color: color-mix(in srgb, var(--flowlo-text-subtle) 76%, transparent);
+  }
+
+  .input-shell:focus,
+  .input-shell:focus-visible {
+    border-color: var(--flowlo-border-strong);
+    background: rgba(14, 22, 32, 0.96);
+    box-shadow: var(--flowlo-shadow-focus);
   }
 
   .auth-input-shell {
-    @apply w-full min-w-0 rounded-[1.4rem] border border-white/10 bg-[linear-gradient(180deg,rgba(15,21,29,0.84),rgba(8,12,18,0.92))] px-4 py-3.5 text-[15px] text-romano-ink outline-none transition duration-300 focus:bg-[linear-gradient(180deg,rgba(18,25,34,0.92),rgba(10,14,20,0.98))] focus:ring-4 focus:ring-romano-navy/10 sm:px-5 sm:py-4;
+    width: 100%;
+    min-width: 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.4rem;
+    background: linear-gradient(180deg, rgba(15, 21, 29, 0.84), rgba(8, 12, 18, 0.92));
+    padding: 0.875rem 1rem;
+    color: var(--flowlo-text);
+    font-size: 15px;
+    outline: none;
+    transition: border-color var(--flowlo-transition-base), background var(--flowlo-transition-base), box-shadow var(--flowlo-transition-base);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.035),
       inset 0 0 0 1px rgba(255, 255, 255, 0.01),
@@ -163,10 +365,21 @@ textarea {
 
   .auth-input-shell:focus {
     border-color: rgba(31, 74, 96, 0.42);
+    background: linear-gradient(180deg, rgba(18, 25, 34, 0.92), rgba(10, 14, 20, 0.98));
+    box-shadow:
+      var(--flowlo-shadow-focus),
+      inset 0 1px 0 rgba(255, 255, 255, 0.04),
+      0 22px 46px -34px rgba(0, 0, 0, 0.82);
   }
 
   .auth-input-shell::placeholder {
     color: rgba(168, 179, 194, 0.72);
+  }
+
+  @media (min-width: 640px) {
+    .auth-input-shell {
+      padding: 1rem 1.25rem;
+    }
   }
 
   .auth-feedback {
@@ -174,9 +387,9 @@ textarea {
   }
 
   .auth-feedback-error {
-    @apply text-romano-roseText;
-    border-color: rgba(255, 107, 107, 0.35);
-    background: rgba(255, 107, 107, 0.12);
+    color: var(--flowlo-danger);
+    border-color: var(--flowlo-danger-border);
+    background: var(--flowlo-danger-bg);
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.03),
       0 18px 42px -32px rgba(255, 107, 107, 0.32);
@@ -217,29 +430,200 @@ textarea {
   }
 
   .surface-elevated {
-    @apply w-full min-w-0 max-w-full rounded-3xl border border-romano-line bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.045))] shadow-soft backdrop-blur-xl;
-    box-shadow:
-      0 20px 50px -36px rgba(0, 0, 0, 0.9),
-      inset 0 1px 0 rgba(255, 255, 255, 0.07);
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    border: 1px solid var(--flowlo-border);
+    border-radius: var(--flowlo-radius-xl);
+    background: var(--flowlo-surface-raised-gradient);
+    box-shadow: var(--flowlo-shadow-card);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
   }
 
   .surface-muted {
-    @apply w-full min-w-0 max-w-full rounded-3xl border border-romano-line bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.022))] backdrop-blur-lg;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    border: 1px solid var(--flowlo-border);
+    border-radius: var(--flowlo-radius-lg);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.024));
     box-shadow:
       inset 0 1px 0 rgba(255, 255, 255, 0.05),
       0 14px 34px -26px rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
   }
 
   .eyebrow-label {
-    @apply text-xs font-semibold uppercase tracking-[0.3em] text-romano-amberText;
+    color: var(--flowlo-yellow);
+    font-size: var(--flowlo-caption);
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
   }
 
   .field-label {
-    @apply text-sm font-semibold text-romano-slate;
+    color: var(--flowlo-label);
+    font-size: var(--flowlo-label-size);
+    font-weight: 700;
   }
 
   .glass-pill {
-    @apply rounded-full border border-romano-line bg-white/[0.045] shadow-soft backdrop-blur-xl;
+    border: 1px solid var(--flowlo-border);
+    border-radius: var(--flowlo-radius-pill);
+    background: var(--flowlo-surface-muted);
+    box-shadow: var(--flowlo-shadow-card);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+
+  .tertiary-button,
+  .ghost-button {
+    display: inline-flex;
+    min-height: var(--flowlo-control-height-sm);
+    align-items: center;
+    justify-content: center;
+    gap: 0.45rem;
+    border: 1px solid transparent;
+    border-radius: var(--flowlo-radius-sm);
+    background: transparent;
+    padding: 0.625rem 0.875rem;
+    color: var(--flowlo-text-muted);
+    font-size: var(--flowlo-button-text);
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background var(--flowlo-transition-fast), border-color var(--flowlo-transition-fast), color var(--flowlo-transition-fast);
+  }
+
+  .tertiary-button:hover,
+  .ghost-button:hover {
+    border-color: var(--flowlo-border);
+    background: var(--flowlo-surface-muted);
+    color: var(--flowlo-text);
+  }
+
+  .danger-button {
+    display: inline-flex;
+    min-height: var(--flowlo-control-height-md);
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid var(--flowlo-danger-border);
+    border-radius: var(--flowlo-radius-md);
+    background: var(--flowlo-danger-bg);
+    padding: 0.75rem 1.25rem;
+    color: var(--flowlo-danger);
+    font-size: var(--flowlo-button-text);
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background var(--flowlo-transition-fast), border-color var(--flowlo-transition-fast), transform var(--flowlo-transition-fast);
+  }
+
+  .danger-button:hover {
+    border-color: color-mix(in srgb, var(--flowlo-danger) 54%, transparent);
+    background: rgba(255, 107, 107, 0.2);
+    transform: translateY(-1px);
+  }
+
+  .flowlo-background {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .flowlo-background::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(620px 420px at 88% -8%, rgba(127, 240, 209, 0.1), transparent 66%),
+      radial-gradient(560px 420px at -12% 30%, rgba(78, 195, 230, 0.08), transparent 66%);
+  }
+
+  .flowlo-contours {
+    position: absolute;
+    inset: auto -12% -10% -12%;
+    height: 42%;
+    opacity: 0.26;
+    pointer-events: none;
+  }
+
+  .table-surface {
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--flowlo-border);
+    border-radius: var(--flowlo-radius-xl);
+    background: var(--flowlo-surface);
+    box-shadow: var(--flowlo-shadow-card);
+  }
+
+  .table-header-row {
+    background: rgba(255, 255, 255, 0.045);
+    color: var(--flowlo-text-muted);
+    font-size: var(--flowlo-caption);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .table-row {
+    border-top: 1px solid var(--flowlo-border);
+    color: var(--flowlo-text);
+    font-size: var(--flowlo-table-text);
+    transition: background var(--flowlo-transition-fast);
+  }
+
+  .table-row:hover {
+    background: var(--flowlo-surface-hover);
+  }
+
+  .state-panel {
+    border: 1px solid var(--flowlo-border);
+    border-radius: var(--flowlo-radius-xl);
+    background: var(--flowlo-surface-gradient);
+    padding: clamp(1.25rem, 3vw, 2rem);
+    color: var(--flowlo-text-muted);
+    text-align: center;
+    box-shadow: var(--flowlo-shadow-card);
+  }
+
+  .feedback-error,
+  .feedback-danger {
+    border: 1px solid var(--flowlo-danger-border);
+    border-radius: var(--flowlo-radius-md);
+    background: var(--flowlo-danger-bg);
+    color: var(--flowlo-danger);
+  }
+
+  .feedback-success {
+    border: 1px solid var(--flowlo-success-border);
+    border-radius: var(--flowlo-radius-md);
+    background: var(--flowlo-success-bg);
+    color: var(--flowlo-success);
+  }
+
+  .feedback-warning {
+    border: 1px solid var(--flowlo-warning-border);
+    border-radius: var(--flowlo-radius-md);
+    background: var(--flowlo-warning-bg);
+    color: var(--flowlo-warning);
+  }
+
+  .overlay-backdrop {
+    background: rgba(4, 8, 14, 0.68);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .overlay-surface {
+    border: 1px solid var(--flowlo-border);
+    border-radius: var(--flowlo-radius-xl);
+    background: var(--flowlo-surface-overlay);
+    box-shadow: var(--flowlo-shadow-overlay);
   }
 
 }

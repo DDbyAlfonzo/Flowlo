@@ -305,3 +305,134 @@
   }
   .sheet-grab { display: none; }
 }
+
+/* Phase 3 authenticated-app refresh: preserve the product list behavior while
+   moving the older dark-glass literals onto the shared Flowlo token system. */
+.list-title,
+.p-name,
+.p-price,
+.empty-title,
+.confirm-title {
+  color: var(--flowlo-text);
+}
+
+.list-count,
+.search,
+.p-meta,
+.chip,
+.more-btn,
+.hint-text,
+.empty-sub,
+.sheet-product,
+.sheet-item svg,
+.confirm-sub {
+  color: var(--flowlo-text-muted);
+}
+
+.btn-primary {
+  background: var(--flowlo-brand-gradient);
+  color: var(--flowlo-on-accent);
+  box-shadow: 0 18px 50px -26px rgba(0, 196, 154, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.42);
+}
+
+.btn-primary:focus-visible,
+.more-btn:focus-visible,
+.sheet-item:focus-visible,
+.btn-quiet:focus-visible,
+.btn-danger:focus-visible {
+  outline-color: var(--flowlo-mint);
+}
+
+.search,
+.product,
+.hint,
+.empty,
+.sheet {
+  border-color: var(--flowlo-border);
+  background: var(--flowlo-surface-gradient);
+  box-shadow: var(--flowlo-shadow-card);
+}
+
+.search input,
+.sheet-item,
+.btn-quiet {
+  color: var(--flowlo-text);
+}
+
+.search input::placeholder {
+  color: var(--flowlo-text-subtle);
+}
+
+.thumb,
+.empty-badge {
+  border: 1px solid var(--flowlo-border-subtle);
+  background: var(--flowlo-bg-elevated);
+  color: var(--flowlo-sky);
+}
+
+.empty-badge {
+  color: var(--flowlo-mint);
+}
+
+.chip {
+  border-color: var(--flowlo-border-subtle);
+  background: var(--flowlo-surface-muted);
+}
+
+.chip-ok {
+  border-color: var(--flowlo-success-border);
+  background: var(--flowlo-success-bg);
+  color: var(--flowlo-success);
+}
+
+.chip-warn {
+  border-color: var(--flowlo-warning-border);
+  background: var(--flowlo-warning-bg);
+  color: var(--flowlo-warning);
+}
+
+.more-btn:hover,
+.sheet-item:hover {
+  background: var(--flowlo-surface-hover);
+  color: var(--flowlo-text);
+}
+
+.hint-dot {
+  background: var(--flowlo-mint);
+}
+
+.sheet-backdrop {
+  background: rgba(4, 8, 14, 0.68);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.sheet-grab {
+  background: var(--flowlo-border-strong);
+}
+
+.sheet-item {
+  border-top-color: var(--flowlo-border-subtle);
+}
+
+.sheet-danger,
+.sheet-danger svg {
+  color: var(--flowlo-danger);
+}
+
+.btn-quiet {
+  border-color: var(--flowlo-border);
+  background: transparent;
+}
+
+.btn-danger {
+  border-color: var(--flowlo-danger-border);
+  background: var(--flowlo-danger-bg);
+  color: var(--flowlo-danger);
+}
+
+@media (min-width: 900px) {
+  .sheet {
+    border-bottom-color: var(--flowlo-border);
+  }
+}

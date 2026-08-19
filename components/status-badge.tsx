@@ -5,13 +5,13 @@ type StatusBadgeProps = {
 
 const toneClasses: Record<StatusBadgeProps["tone"], string> = {
   success:
-    "border border-romano-mintText/20 bg-romano-mint text-romano-mintText shadow-[0_0_24px_-18px_rgba(62,242,207,0.8)]",
+    "border border-[color:var(--flowlo-success-border)] bg-[var(--flowlo-success-bg)] text-[var(--flowlo-success)] shadow-[0_0_24px_-18px_rgba(127,240,209,0.72)]",
   warning:
-    "border border-romano-amberText/20 bg-romano-amber text-romano-amberText shadow-[0_0_24px_-18px_rgba(255,212,90,0.8)]",
+    "border border-[color:var(--flowlo-warning-border)] bg-[var(--flowlo-warning-bg)] text-[var(--flowlo-warning)] shadow-[0_0_24px_-18px_rgba(255,200,61,0.7)]",
   danger:
-    "border border-romano-roseText/20 bg-romano-rose text-romano-roseText shadow-[0_0_24px_-18px_rgba(255,107,107,0.75)]",
+    "border border-[color:var(--flowlo-danger-border)] bg-[var(--flowlo-danger-bg)] text-[var(--flowlo-danger)] shadow-[0_0_24px_-18px_rgba(255,155,155,0.68)]",
   neutral:
-    "border border-romano-line bg-[linear-gradient(180deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02))] text-romano-slate",
+    "border border-[color:var(--flowlo-border)] bg-[var(--flowlo-surface-muted)] text-[var(--flowlo-text-muted)]",
 };
 
 export function StatusBadge({ tone, label }: StatusBadgeProps) {
