@@ -8,6 +8,7 @@
    Data in: onRequestAccess(email) — the page decides where it goes. */
 
 import { useRef, useState, type FormEvent } from "react";
+import HowItWorksDialog from "./HowItWorksDialog";
 import Link from "next/link";
 import { fontVars } from "./fonts";
 import { Icon, LOGO_SRC, type IconName } from "./icons";
@@ -16,6 +17,8 @@ import styles from "./landing.module.css";
 type LandingScreenV3Props = {
   onRequestAccess?: (email: string) => Promise<void>;
   signInHref?: string;
+  /** When someone is already signed in, the nav offers the dashboard instead. */
+  dashboardHref?: string | null;
 };
 
 const FEATURES: Array<{ label: string; short: string; icon: IconName; tone: string }> = [
@@ -86,7 +89,11 @@ const PEOPLE: Array<{
 export default function LandingScreenV3({
   onRequestAccess,
   signInHref = "/login",
+  dashboardHref = null,
 }: LandingScreenV3Props) {
+  const [howOpen, setHowOpen] = useState(false);
+  const accountHref = dashboardHref ?? signInHref;
+  const accountLabel = dashboardHref ? "Open dashboard" : "Sign in";
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
@@ -136,11 +143,16 @@ export default function LandingScreenV3({
           <Link href="/" className={styles.navLogo} aria-label="FlowLo home">
             <img src={LOGO_SRC} alt="FlowLo" width={82} height={24} />
           </Link>
-          <a className={`${styles.navLink} ${styles.desk}`} href="#how">
+          <button
+            className={`${styles.navLink} ${styles.desk}`}
+            type="button"
+            aria-haspopup="dialog"
+            onClick={() => setHowOpen(true)}
+          >
             How it works
-          </a>
-          <Link className={styles.navLink} href={signInHref}>
-            Sign in
+          </button>
+          <Link className={styles.navLink} href={accountHref}>
+            {accountLabel}
           </Link>
           <button className={`${styles.navCta} ${styles.desk}`} type="button" onClick={focusInvite}>
             Request access
@@ -267,10 +279,15 @@ export default function LandingScreenV3({
           <h2 className={styles.h2} id="people-title">
             Made for the way<span>you already work.</span>
           </h2>
+          <div className={styles.peopleAside}>
           <p>
             From the kitchen counter to the café till, FlowLo keeps every order moving, from the
             shelf to the doorstep.
           </p>
+          <button className={styles.howBtn} type="button" aria-haspopup="dialog" onClick={() => setHowOpen(true)}>
+            See how it works
+          </button>
+          </div>
         </div>
         <div className={styles.band}>
           {PEOPLE.map((p) => (
@@ -294,10 +311,24 @@ export default function LandingScreenV3({
         </div>
       </section>
 
+      <HowItWorksDialog
+        open={howOpen}
+        onClose={() => setHowOpen(false)}
+        onRequestAccess={() => {
+          setHowOpen(false);
+          window.setTimeout(focusInvite, 60);
+        }}
+        accountHref={accountHref}
+        accountLabel={accountLabel}
+      />
+
       <footer className={styles.foot}>
         <img src={LOGO_SRC} alt="FlowLo" width={68} height={20} />
         <nav aria-label="Footer">
-          <Link href={signInHref}>Sign in</Link>
+          <button type="button" className={styles.footBtn} onClick={() => setHowOpen(true)}>
+            How it works
+          </button>
+          <Link href={accountHref}>{accountLabel}</Link>
           <Link href="/privacy">Privacy</Link>
           <Link href="/terms">Terms</Link>
         </nav>

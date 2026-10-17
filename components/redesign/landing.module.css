@@ -874,3 +874,66 @@
   from { opacity: 0; transform: translateY(40px) scale(0.96); }
   to { opacity: 1; transform: none; }
 }
+
+/* ---------- how-it-works triggers ---------- */
+button.navLink {
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.peopleAside {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 16px;
+}
+.howBtn {
+  height: 44px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 22px;
+  background: #0a111c;
+  color: #f6f9fb;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s, transform 0.12s;
+}
+.howBtn:hover {
+  background: #22324a;
+}
+.howBtn:active {
+  transform: scale(0.97);
+}
+.footBtn {
+  border: 0;
+  background: none;
+  padding: 10px 0;
+  font: inherit;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.footBtn:hover {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (max-width: 1100px) {
+  .peopleAside {
+    align-items: flex-start;
+  }
+}
+@media (max-width: 760px) {
+  .peopleAside {
+    gap: 12px;
+  }
+  .howBtn {
+    height: 40px;
+    font-size: 14px;
+    padding: 0 16px;
+  }
+}
