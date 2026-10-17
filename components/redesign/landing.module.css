@@ -124,6 +124,9 @@
   color: var(--ink);
 }
 .navCta {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
   height: 44px;
   padding: 0 18px;
   border: 0;
@@ -137,6 +140,7 @@
   transition: background-color 0.15s;
 }
 .navCta:hover {
+  color: #f6f9fb;
   background: #22324a;
 }
 

@@ -10,6 +10,7 @@
 import { useRef, useState, type FormEvent } from "react";
 import HowItWorksDialog from "./HowItWorksDialog";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { fontVars } from "./fonts";
 import { Icon, LOGO_SRC, type IconName } from "./icons";
 import styles from "./landing.module.css";
@@ -17,6 +18,8 @@ import styles from "./landing.module.css";
 type LandingScreenV3Props = {
   onRequestAccess?: (email: string) => Promise<void>;
   signInHref?: string;
+  /** The full request-access form. */
+  requestAccessHref?: string;
   /** When someone is already signed in, the nav offers the dashboard instead. */
   dashboardHref?: string | null;
 };
@@ -89,14 +92,15 @@ const PEOPLE: Array<{
 export default function LandingScreenV3({
   onRequestAccess,
   signInHref = "/login",
+  requestAccessHref = "/register",
   dashboardHref = null,
 }: LandingScreenV3Props) {
+  const router = useRouter();
   const [howOpen, setHowOpen] = useState(false);
   const accountHref = dashboardHref ?? signInHref;
   const accountLabel = dashboardHref ? "Open dashboard" : "Sign in";
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -114,17 +118,16 @@ export default function LandingScreenV3({
     setError(null);
     setLoading(true);
     try {
-      await onRequestAccess?.(value);
-      setDone(true);
+      // Keep the waitlist record, then carry the email into the full form.
+      // Never hold someone up on a slow network: give it a few seconds at most.
+      await Promise.race([
+        onRequestAccess?.(value),
+        new Promise((resolve) => setTimeout(resolve, 3500)),
+      ]);
     } catch {
-      setError("That didn't go through. Try again in a moment.");
-    } finally {
-      setLoading(false);
+      // The request-access form is the real sign-up, so carry on regardless.
     }
-  }
-
-  function focusInvite() {
-    inputRef.current?.focus({ preventScroll: false });
+    router.push(`${requestAccessHref}?email=${encodeURIComponent(value)}`);
   }
 
   return (
@@ -154,9 +157,9 @@ export default function LandingScreenV3({
           <Link className={styles.navLink} href={accountHref}>
             {accountLabel}
           </Link>
-          <button className={`${styles.navCta} ${styles.desk}`} type="button" onClick={focusInvite}>
+          <Link className={`${styles.navCta} ${styles.desk}`} href={requestAccessHref}>
             Request access
-          </button>
+          </Link>
         </nav>
 
         <div className={styles.tag1} aria-hidden="true">
@@ -220,17 +223,6 @@ export default function LandingScreenV3({
             ))}
           </ul>
 
-          {done ? (
-            <div className={styles.done} role="status">
-              <span className={styles.doneIcon}>
-                <Icon name="check" strokeWidth={2.2} />
-              </span>
-              <span>
-                <strong>You&apos;re on the list.</strong>
-                <span>We&apos;ll email your invite when your spot opens.</span>
-              </span>
-            </div>
-          ) : (
             <form className={styles.form} onSubmit={handleSubmit} noValidate>
               <label className={styles.sr} htmlFor="invite-email">
                 Work email
@@ -251,7 +243,7 @@ export default function LandingScreenV3({
                 aria-describedby={error ? "invite-error" : "invite-note"}
               />
               <button type="submit" disabled={loading}>
-                {loading ? "Sending…" : (
+                {loading ? "One moment…" : (
                   <>
                     <span className={styles.desk}>Request access</span>
                     <span className={styles.phone}>Get invite</span>
@@ -259,17 +251,14 @@ export default function LandingScreenV3({
                 )}
               </button>
             </form>
-          )}
           {error ? (
             <p className={styles.err} id="invite-error" role="alert">
               {error}
             </p>
           ) : (
-            !done && (
-              <p className={styles.note} id="invite-note">
-                Invite only for now · South African businesses
-              </p>
-            )
+            <p className={styles.note} id="invite-note">
+              Invite only for now · South African businesses
+            </p>
           )}
         </div>
       </section>
@@ -316,7 +305,7 @@ export default function LandingScreenV3({
         onClose={() => setHowOpen(false)}
         onRequestAccess={() => {
           setHowOpen(false);
-          window.setTimeout(focusInvite, 60);
+          router.push(requestAccessHref);
         }}
         accountHref={accountHref}
         accountLabel={accountLabel}
