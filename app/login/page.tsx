@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import SignInScreen from "@/components/auth/SignInScreen";
+import SignInScreenV3 from "@/components/redesign/SignInScreenV3";
 import { LoadingScreen } from "@/components/loading-screen";
 import { useAuth } from "@/hooks/use-auth";
 import { loginWithEmail, logoutUser, syncAuthCookies } from "@/lib/auth";
@@ -161,5 +161,5 @@ export default function LoginPage() {
     return <LoadingScreen message="Checking your session..." />;
   }
 
-  return <SignInScreen onSignIn={handleSignIn} requestAccessHref="/register" />;
+  return <SignInScreenV3 onSignIn={handleSignIn} requestAccessHref="/register" />;
 }

@@ -1,11 +1,11 @@
 "use client";
 
-import LandingScreen from "@/components/auth/LandingScreen";
+import LandingScreenV3 from "@/components/redesign/LandingScreenV3";
 import { createWaitlistEntry } from "@/lib/firestore";
 
 export function LandingClient() {
   return (
-    <LandingScreen
+    <LandingScreenV3
       onRequestAccess={async (email) => {
         await createWaitlistEntry({
           email,
