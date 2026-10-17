@@ -1,4 +1,4 @@
-const VERSION = "flowlo-pwa-v1";
+const VERSION = "flowlo-pwa-v2";
 const APP_SHELL_CACHE = `${VERSION}-app-shell`;
 const STATIC_CACHE = `${VERSION}-static`;
 const API_CACHE = `${VERSION}-api`;
@@ -108,6 +108,12 @@ self.addEventListener("fetch", (event) => {
 
   if (isStaticAsset(request, url)) {
     event.respondWith(cacheFirst(request));
+    return;
+  }
+
+  // Next.js client navigations fetch RSC payloads; never serve those stale.
+  if (url.searchParams.has("_rsc") || request.headers.get("RSC") === "1") {
+    event.respondWith(networkFirst(request, APP_SHELL_CACHE));
     return;
   }
 
