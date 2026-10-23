@@ -6,9 +6,12 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    // Admins are listed in /admins/{uid}, created by hand in the Firebase
+    // Console only (clients cannot write there). Not tied to an email address,
+    // so an unverified or re-registered email can never grant admin.
     function isAdmin() {
       return signedIn()
-        && request.auth.token.email == 'ddbyalfonzo@gmail.com';
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
 
     function accessRequestPath(userId) {
@@ -34,6 +37,11 @@ service cloud.firestore {
       return value is string
         && value.size() >= minLength
         && value.size() <= maxLength;
+    }
+
+    match /admins/{uid} {
+      allow get: if signedIn() && request.auth.uid == uid;
+      allow list, write: if false;
     }
 
     match /betaAccessRequests/{requestId} {
