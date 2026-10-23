@@ -1,0 +1,164 @@
+/* FlowLo — light theme bridge for legacy screens.
+   Scoped to `.flowlo-light` (set by LightAppShell). Remaps the legacy
+   --flowlo-* tokens to the v3 light palette so Tailwind `romano-*` colours,
+   .card-surface, buttons and inputs all follow without per-screen rewrites.
+   Unlayered on purpose: it must win over @layer components. */
+
+.flowlo-light {
+  color-scheme: light;
+
+  --flowlo-bg: #ffffff;
+  --flowlo-bg-subtle: #f4f7fa;
+  --flowlo-bg-elevated: #eef3f7;
+  --flowlo-surface: #ffffff;
+  --flowlo-surface-raised: #ffffff;
+  --flowlo-surface-overlay: #ffffff;
+  --flowlo-surface-hover: #f4f7fa;
+  --flowlo-surface-muted: rgba(10, 17, 28, 0.04);
+  --flowlo-surface-gradient: #ffffff;
+  --flowlo-surface-raised-gradient: #ffffff;
+
+  --flowlo-border: rgba(10, 17, 28, 0.1);
+  --flowlo-border-subtle: rgba(10, 17, 28, 0.07);
+  --flowlo-border-strong: rgba(0, 149, 122, 0.6);
+
+  --flowlo-teal: #00957a;
+  --flowlo-teal-strong: #00836c;
+  --flowlo-mint: #00957a;
+  --flowlo-sky: #1b7fa3;
+  --flowlo-yellow: #946b00;
+
+  --flowlo-text: #0a111c;
+  --flowlo-text-muted: #3a4a5e;
+  --flowlo-text-subtle: #5b6b7e;
+  --flowlo-label: #26364a;
+  --flowlo-on-accent: #ffffff;
+
+  --flowlo-success: #00755f;
+  --flowlo-success-bg: rgba(0, 149, 122, 0.12);
+  --flowlo-success-border: rgba(0, 149, 122, 0.3);
+  --flowlo-warning: #6b4a06;
+  --flowlo-warning-bg: #fbefd3;
+  --flowlo-warning-border: rgba(227, 179, 78, 0.55);
+  --flowlo-danger: #a4231c;
+  --flowlo-danger-bg: #fde8e7;
+  --flowlo-danger-border: rgba(164, 35, 28, 0.25);
+  --flowlo-info: #14607f;
+  --flowlo-info-bg: rgba(27, 127, 163, 0.12);
+  --flowlo-info-border: rgba(27, 127, 163, 0.3);
+
+  --flowlo-shadow-card:
+    0 1px 2px rgba(10, 17, 28, 0.05),
+    0 10px 28px -16px rgba(10, 17, 28, 0.16);
+  --flowlo-shadow-overlay: 0 24px 60px -28px rgba(10, 17, 28, 0.35);
+  --flowlo-shadow-focus: 0 0 0 3px rgba(0, 149, 122, 0.2);
+
+  --ink: #0a111c;
+  --surface: #f4f7fa;
+  --surface-2: #eef3f7;
+  --line: rgba(10, 17, 28, 0.08);
+  --heading: #0a111c;
+  --text: #26364a;
+  --muted: #5b6b7e;
+  --label: #26364a;
+
+  color: var(--flowlo-text);
+  position: relative;
+}
+
+.flowlo-light .card-surface,
+.flowlo-light .surface-elevated {
+  background: #ffffff;
+  border-color: var(--flowlo-border);
+  box-shadow: var(--flowlo-shadow-card);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+.flowlo-light .card-surface::before {
+  display: none;
+}
+.flowlo-light .surface-muted {
+  background: #f4f7fa;
+  border-color: var(--flowlo-border-subtle);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.flowlo-light .primary-button {
+  background: #0a111c;
+  border-color: #0a111c;
+  color: #ffffff;
+  box-shadow: none;
+}
+.flowlo-light .primary-button:hover {
+  background: #22324a;
+  border-color: #22324a;
+  filter: none;
+}
+
+.flowlo-light .secondary-button {
+  background: #ffffff;
+  border-color: rgba(10, 17, 28, 0.16);
+  color: #0a111c;
+}
+.flowlo-light .secondary-button:hover {
+  background: #eef3f7;
+  border-color: rgba(10, 17, 28, 0.3);
+  color: #0a111c;
+}
+
+.flowlo-light .input-shell {
+  background: #ffffff;
+  border-color: rgba(10, 17, 28, 0.16);
+  color: #0a111c;
+}
+.flowlo-light .input-shell:hover {
+  border-color: rgba(10, 17, 28, 0.3);
+}
+.flowlo-light .input-shell::placeholder {
+  color: #7b8a9b;
+}
+.flowlo-light .input-shell:focus,
+.flowlo-light .input-shell:focus-visible {
+  background: #ffffff;
+  border-color: #00957a;
+  box-shadow: var(--flowlo-shadow-focus);
+}
+
+.flowlo-light .eyebrow-label {
+  color: #946b00;
+}
+
+/* Tailwind white-alpha utilities were written for a dark surface. */
+.flowlo-light [class*="border-white"] {
+  border-color: var(--flowlo-border);
+}
+.flowlo-light [class*="bg-white/"] {
+  background-color: var(--flowlo-surface-muted);
+}
+.flowlo-light [class*="text-white"] {
+  color: var(--flowlo-text);
+}
+
+/* Tokens consumed by the ported module CSS (orders, delivery, business,
+   stock). Their defaults in each module are the old dark palette. */
+.flowlo-light {
+  --fl-ink-hi: #0a111c;
+  --fl-ink: #26364a;
+  --fl-ink-2: #3a4a5e;
+  --fl-ink-mute: #5b6b7e;
+  --fl-ink-faint: #7b8a9b;
+  --fl-mint: #00957a;
+  --fl-sky: #1b7fa3;
+  --fl-gold: #946b00;
+  --fl-red: #a4231c;
+  --fl-chip: #eef3f7;
+  --fl-on-btn: #ffffff;
+  --fl-btn-bg: #0a111c;
+  --fl-card: #ffffff;
+  --fl-line: #0a111c;
+  --fl-wash: #0a111c;
+  --fl-shade: #0a111c;
+  --fl-hi: transparent;
+}

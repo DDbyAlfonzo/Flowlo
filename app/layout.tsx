@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { AuthProvider } from "@/hooks/use-auth";
 import { PWARegister } from "@/components/pwa-register";
 import "@/styles/globals.css";
+import "@/styles/light-theme.css";
 
 export const metadata: Metadata = {
   title: {
