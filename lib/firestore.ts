@@ -10,6 +10,7 @@ import {
   setDoc,
   Timestamp,
   updateDoc,
+  writeBatch,
   where,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -32,7 +33,7 @@ import {
   buildTrackingId,
   deriveDeliveryFromOrder,
   deriveDeliveryStatus,
-  parseOrderIdFromTrackingId,
+  normalizeDeliveryStatus,
 } from "@/lib/order-workflow";
 
 type FirestoreRecord = Record<string, unknown>;
@@ -357,6 +358,21 @@ async function getOrderForUpdate(transaction: FirestoreTransaction, orderId: str
   };
 }
 
+// Public, logged-out tracking page reads ONLY this collection. It must never
+// hold phone numbers, addresses or notes. Doc ID is the trackingId.
+function buildPublicTrackingData(delivery: Delivery) {
+  return {
+    trackingId: delivery.trackingId,
+    orderNumber: delivery.orderNumber,
+    customerName: delivery.customerName,
+    deliveryStatus: delivery.deliveryStatus,
+    estimatedDeliveryTime: delivery.estimatedDeliveryTime ?? "",
+    supportPhone: delivery.supportPhone ?? "",
+    ownerId: delivery.ownerId,
+    updatedAt: serverTimestamp(),
+  };
+}
+
 async function syncDeliveryFromOrder(
   transaction: FirestoreTransaction,
   order: Order,
@@ -385,19 +401,15 @@ async function syncDeliveryFromOrder(
     },
     { merge: true },
   );
-}
 
-function toPublicTrackingRecord(delivery: Delivery): PublicTrackingRecord {
-  return {
-    trackingId: delivery.trackingId,
-    orderNumber: delivery.orderNumber,
-    customerName: delivery.customerName,
-    deliveryStatus: delivery.deliveryStatus,
-    estimatedDeliveryTime: delivery.estimatedDeliveryTime,
-    supportPhone: delivery.supportPhone,
-    createdAt: delivery.createdAt,
-    updatedAt: delivery.updatedAt,
-  };
+  transaction.set(
+    doc(db, "publicTracking", delivery.trackingId),
+    {
+      ...buildPublicTrackingData(delivery),
+      createdAt: order.createdAt ?? serverTimestamp(),
+    },
+    { merge: true },
+  );
 }
 
 export async function getBusiness(ownerId: string) {
@@ -565,7 +577,35 @@ export async function listDeliveries(ownerId: string) {
     }
   }
 
-  return sortByUpdatedDesc(Array.from(deliveryMap.values()));
+  const result = sortByUpdatedDesc(Array.from(deliveryMap.values()));
+
+  // One-time, best-effort backfill so existing tracking links keep working.
+  void backfillPublicTracking(ownerId, result);
+
+  return result;
+}
+
+async function backfillPublicTracking(ownerId: string, deliveries: Delivery[]) {
+  try {
+    const existing = await getDocs(
+      query(collection(db, "publicTracking"), where("ownerId", "==", ownerId)),
+    );
+    const have = new Set(existing.docs.map((snapshot) => snapshot.id));
+    const missing = deliveries.filter((d) => !have.has(d.trackingId));
+
+    for (let i = 0; i < missing.length; i += 400) {
+      const batch = writeBatch(db);
+      for (const delivery of missing.slice(i, i + 400)) {
+        batch.set(doc(db, "publicTracking", delivery.trackingId), {
+          ...buildPublicTrackingData(delivery),
+          createdAt: delivery.createdAt ?? serverTimestamp(),
+        });
+      }
+      await batch.commit();
+    }
+  } catch (error) {
+    console.warn("publicTracking backfill skipped.", error);
+  }
 }
 
 export async function getDeliveryByOrderId(orderId: string) {
@@ -581,28 +621,26 @@ export async function getDeliveryByOrderId(orderId: string) {
 }
 
 export async function getPublicTrackingRecord(trackingId: string) {
-  const normalizedTrackingId = trackingId.trim();
-  const deliveryRef = doc(db, "deliveries", normalizedTrackingId);
-  const deliverySnapshot = await getDoc(deliveryRef);
-  const delivery = mapDelivery(deliverySnapshot);
+  const snapshot = await getDoc(
+    doc(db, "publicTracking", trackingId.trim()),
+  );
 
-  if (delivery) {
-    return toPublicTrackingRecord(delivery);
-  }
-
-  const orderId = parseOrderIdFromTrackingId(normalizedTrackingId);
-
-  if (!orderId) {
+  if (!snapshot.exists()) {
     return null;
   }
 
-  const order = await getOrder(orderId);
+  const data = snapshot.data();
 
-  if (!order) {
-    return null;
-  }
-
-  return toPublicTrackingRecord(deriveDeliveryFromOrder(order));
+  return {
+    trackingId: String(data.trackingId ?? snapshot.id),
+    orderNumber: String(data.orderNumber ?? ""),
+    customerName: String(data.customerName ?? ""),
+    deliveryStatus: normalizeDeliveryStatus(data.deliveryStatus),
+    estimatedDeliveryTime: data.estimatedDeliveryTime ?? null,
+    supportPhone: data.supportPhone ?? null,
+    createdAt: data.createdAt?.toDate?.() ?? null,
+    updatedAt: data.updatedAt?.toDate?.() ?? null,
+  } satisfies PublicTrackingRecord;
 }
 
 export async function createOrder(input: OrderPayload) {
@@ -673,6 +711,18 @@ export async function createOrder(input: OrderPayload) {
       supportPhone: "",
       ownerId: input.ownerId,
       businessId: input.businessId,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+
+    transaction.set(doc(db, "publicTracking", trackingId), {
+      trackingId,
+      orderNumber,
+      customerName: input.customerName.trim(),
+      deliveryStatus,
+      estimatedDeliveryTime: "",
+      supportPhone: "",
+      ownerId: input.ownerId,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
