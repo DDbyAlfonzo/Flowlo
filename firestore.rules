@@ -115,6 +115,16 @@ service cloud.firestore {
         && request.resource.data.ownerId == request.auth.uid;
     }
 
+    // Owner-only. Public tracking is intentionally NOT allowed here: it needs a
+    // separate publicTracking collection (see firestore.rules.suggestions.md).
+    match /deliveries/{trackingId} {
+      allow read, delete: if ownsApproved(resource.data);
+      allow create: if isApprovedUser(request.auth.uid)
+        && request.resource.data.ownerId == request.auth.uid;
+      allow update: if ownsApproved(resource.data)
+        && request.resource.data.ownerId == request.auth.uid;
+    }
+
     match /waitlist/{entryId} {
       allow read, update, delete: if false;
       allow create: if request.resource.data.keys().hasOnly([
