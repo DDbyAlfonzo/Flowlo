@@ -130,6 +130,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return;
       }
 
+      // Start the business read alongside the access check instead of after it
+      // (saves one network round trip). Rules reject it for unapproved users;
+      // that is caught below and the result is discarded.
+      setBusinessLoading(true);
+      const businessRequest = getBusiness(nextUser.uid).catch(() => null);
       const nextAccessRequest = await refreshAccessRequest(nextUser);
 
       if (!mounted) {
@@ -137,7 +142,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       if (nextAccessRequest?.status === "approved") {
-        await refreshBusiness(nextUser.uid);
+        setBusiness(await businessRequest);
+        setBusinessLoading(false);
       } else {
         setBusiness(null);
         setBusinessLoading(false);
