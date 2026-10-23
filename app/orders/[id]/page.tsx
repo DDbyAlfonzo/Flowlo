@@ -12,6 +12,7 @@ import NotifyCustomerButton, { type NotifyStage } from "@/components/whatsapp/No
 import { useAuth } from "@/hooks/use-auth";
 import { cancelOrder, completeOrder, getOrder, markOrderAsPaid } from "@/lib/firestore";
 import { buildOrderSummary, formatCurrency, formatDateTime } from "@/lib/format";
+import { buildTrackingId } from "@/lib/order-workflow";
 import { Order } from "@/types";
 
 function orderTone(status: Order["orderStatus"]) {
@@ -53,6 +54,34 @@ function getNotifyStage(order: Order): NotifyStage {
   }
 
   return "pending";
+}
+
+function CopyTrackingLinkButton({ trackingId }: { trackingId: string }) {
+  const [copied, setCopied] = useState(false);
+
+  async function copyLink() {
+    const url = `${window.location.origin}/track/${trackingId}`;
+
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {
+      window.prompt("Tracking link", url);
+    }
+
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={copyLink}
+      className="secondary-button mt-3 w-full"
+      aria-live="polite"
+    >
+      {copied ? "Link copied" : "Copy tracking link"}
+    </button>
+  );
 }
 
 export default function OrderDetailPage() {
@@ -262,6 +291,9 @@ export default function OrderDetailPage() {
                     stage={getNotifyStage(order)}
                     businessName={business?.businessName?.trim() || "your business"}
                     block
+                  />
+                  <CopyTrackingLinkButton
+                    trackingId={order.trackingId ?? buildTrackingId(order.id)}
                   />
                 </div>
               </div>
