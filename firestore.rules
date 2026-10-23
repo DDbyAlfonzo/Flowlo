@@ -125,6 +125,28 @@ service cloud.firestore {
         && request.resource.data.ownerId == request.auth.uid;
     }
 
+    // Logged-out tracking page reads a single doc by its trackingId.
+    // Safe fields only: no phone, address or notes. Listing is owner-only.
+    match /publicTracking/{trackingId} {
+      allow get: if true;
+      allow list: if ownsApproved(resource.data);
+      allow create: if isApprovedUser(request.auth.uid)
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          'trackingId', 'orderNumber', 'customerName', 'deliveryStatus',
+          'estimatedDeliveryTime', 'supportPhone', 'ownerId',
+          'createdAt', 'updatedAt'
+        ]);
+      allow update: if ownsApproved(resource.data)
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.keys().hasOnly([
+          'trackingId', 'orderNumber', 'customerName', 'deliveryStatus',
+          'estimatedDeliveryTime', 'supportPhone', 'ownerId',
+          'createdAt', 'updatedAt'
+        ]);
+      allow delete: if ownsApproved(resource.data);
+    }
+
     match /waitlist/{entryId} {
       allow read, update, delete: if false;
       allow create: if request.resource.data.keys().hasOnly([
