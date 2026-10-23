@@ -2,8 +2,25 @@ rules_version = '2';
 
 service firebase.storage {
   match /b/{bucket}/o {
+    function ownerOnly(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
+
+    function approved(userId) {
+      return ownerOnly(userId)
+        && firestore.exists(/databases/(default)/documents/betaAccessRequests/$(userId))
+        && firestore.get(/databases/(default)/documents/betaAccessRequests/$(userId)).data.status == 'approved';
+    }
+
     match /users/{userId}/{allPaths=**} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if approved(userId);
+
+      // Images only, max 5 MB (mirrors the client-side check in lib/storage.ts).
+      allow create, update: if approved(userId)
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/(jpeg|png|webp)');
+
+      allow delete: if approved(userId);
     }
   }
 }

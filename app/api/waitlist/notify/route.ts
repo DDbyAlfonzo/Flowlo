@@ -10,8 +10,60 @@ type WaitlistNotificationBody = {
   source?: string;
 };
 
-function normalizeText(value: unknown) {
-  return typeof value === "string" ? value.trim() : "";
+const MAX_BODY_BYTES = 4_000;
+const LIMITS = {
+  name: 80,
+  email: 120,
+  businessType: 80,
+  whatsappNumber: 30,
+  createdAt: 40,
+  source: 40,
+  entryId: 64,
+} as const;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Best-effort, per-instance limiter. Serverless instances do not share memory,
+// so pair this with Vercel WAF / a shared store (e.g. Upstash) for a hard cap.
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+const RATE_MAX_REQUESTS = 5;
+const hits = new Map<string, number[]>();
+const seenEntries = new Map<string, number>();
+
+function isRateLimited(key: string, now = Date.now()) {
+  const recent = (hits.get(key) ?? []).filter((t) => now - t < RATE_WINDOW_MS);
+  recent.push(now);
+  hits.set(key, recent);
+
+  if (hits.size > 5_000) {
+    for (const [k, times] of hits) {
+      if (times.every((t) => now - t >= RATE_WINDOW_MS)) hits.delete(k);
+    }
+  }
+
+  return recent.length > RATE_MAX_REQUESTS;
+}
+
+function clientKey(request: Request) {
+  return (
+    request.headers.get("x-real-ip") ??
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    "unknown"
+  );
+}
+
+function isSameOrigin(request: Request) {
+  const origin = request.headers.get("origin");
+  if (!origin) return false;
+
+  try {
+    return new URL(origin).host === new URL(request.url).host;
+  } catch {
+    return false;
+  }
+}
+
+function normalizeText(value: unknown, maxLength = 200) {
+  return typeof value === "string" ? value.trim().slice(0, maxLength) : "";
 }
 
 function escapeHtml(value: string) {
@@ -104,20 +156,52 @@ function buildWaitlistEmail(input: {
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as WaitlistNotificationBody;
-    const name = normalizeText(body.name);
-    const email = normalizeText(body.email).toLowerCase();
-    const businessType = normalizeText(body.businessType);
-    const whatsappNumber = normalizeText(body.whatsappNumber);
-    const createdAt = normalizeText(body.createdAt) || new Date().toISOString();
-    const source = normalizeText(body.source) || "coming-soon";
-    const entryId = normalizeText(body.entryId);
+    if (!isSameOrigin(request)) {
+      return NextResponse.json({ message: "Forbidden." }, { status: 403 });
+    }
 
-    if (!name || !email || !businessType) {
+    if (isRateLimited(clientKey(request))) {
+      return NextResponse.json(
+        { message: "Too many requests. Please try again later." },
+        { status: 429, headers: { "Retry-After": "600" } },
+      );
+    }
+
+    const raw = await request.text();
+
+    if (raw.length > MAX_BODY_BYTES) {
+      return NextResponse.json({ message: "Payload too large." }, { status: 413 });
+    }
+
+    const body = JSON.parse(raw) as WaitlistNotificationBody;
+    const name = normalizeText(body.name, LIMITS.name);
+    const email = normalizeText(body.email, LIMITS.email).toLowerCase();
+    const businessType = normalizeText(body.businessType, LIMITS.businessType);
+    const whatsappNumber = normalizeText(body.whatsappNumber, LIMITS.whatsappNumber);
+    const createdAt =
+      normalizeText(body.createdAt, LIMITS.createdAt) || new Date().toISOString();
+    const source = normalizeText(body.source, LIMITS.source) || "coming-soon";
+    const entryId = normalizeText(body.entryId, LIMITS.entryId);
+
+    if (!name || !email || !businessType || !EMAIL_PATTERN.test(email)) {
       return NextResponse.json(
         { message: "Missing waitlist signup details." },
         { status: 400 },
       );
+    }
+
+    // Ignore replays of the same entry so one signup sends one email.
+    if (entryId) {
+      const now = Date.now();
+      if (seenEntries.has(entryId)) {
+        return NextResponse.json({ ok: true });
+      }
+      seenEntries.set(entryId, now);
+      if (seenEntries.size > 2_000) {
+        for (const [id, t] of seenEntries) {
+          if (now - t > RATE_WINDOW_MS) seenEntries.delete(id);
+        }
+      }
     }
 
     const resendApiKey = process.env.RESEND_API_KEY;
@@ -175,8 +259,6 @@ export async function POST(request: Request) {
 
     console.info("FlowLo waitlist notification email sent.", {
       entryId,
-      email,
-      notifyEmail,
       resendId:
         resendPayload && typeof resendPayload.id === "string"
           ? resendPayload.id
