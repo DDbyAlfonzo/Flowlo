@@ -557,12 +557,12 @@ export async function getOrder(orderId: string) {
   return mapOrder(snapshot);
 }
 
-export async function listDeliveries(ownerId: string) {
+export async function listDeliveries(ownerId: string, preloadedOrders?: Order[] | Promise<Order[]>) {
   const [deliverySnapshots, orders] = await Promise.all([
     getDocs(
       query(collection(db, "deliveries"), where("ownerId", "==", ownerId)),
     ),
-    listOrders(ownerId),
+    preloadedOrders ?? listOrders(ownerId),
   ]);
 
   const deliveries = deliverySnapshots.docs
@@ -585,7 +585,15 @@ export async function listDeliveries(ownerId: string) {
   return result;
 }
 
+const backfilledOwners = new Set<string>();
+
 async function backfillPublicTracking(ownerId: string, deliveries: Delivery[]) {
+  // Once per owner per page session; every later write keeps the records in sync.
+  if (backfilledOwners.has(ownerId)) {
+    return;
+  }
+  backfilledOwners.add(ownerId);
+
   try {
     const existing = await getDocs(
       query(collection(db, "publicTracking"), where("ownerId", "==", ownerId)),

@@ -178,10 +178,12 @@ export function calculateDashboardAnalytics(input: {
 }
 
 export async function getDashboardAnalytics(ownerId: string, businessId: string) {
+  // Orders are fetched once and reused for deliveries (was fetched twice).
+  const ordersRequest = listOrders(ownerId);
   const [orders, products, deliveries] = await Promise.all([
-    listOrders(ownerId),
+    ordersRequest,
     listProducts(ownerId),
-    listDeliveries(ownerId),
+    listDeliveries(ownerId, ordersRequest),
   ]);
 
   return calculateDashboardAnalytics({
