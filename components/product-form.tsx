@@ -2,6 +2,7 @@
 
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useActivity, type ActivityStep } from "@/components/loading/loading-context";
 import { createProduct, updateProduct } from "@/lib/firestore";
 import {
   uploadProductImage,
@@ -44,6 +45,7 @@ export function ProductForm({
   const [fileError, setFileError] = useState("");
   const [submitMessage, setSubmitMessage] = useState("");
   const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const runActivity = useActivity();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] ?? null;
@@ -85,43 +87,72 @@ export function ProductForm({
 
     try {
       let imageUrl = initialProduct?.imageUrl ?? null;
+      const steps: ActivityStep[] = [];
 
       if (selectedFile) {
-        imageUrl = await uploadProductImage(ownerId, selectedFile, (progress) => {
-          setUploadProgress(progress);
-          setSubmitMessage(
-            progress <= 0
-              ? "Uploading image..."
-              : progress < 100
-              ? `Uploading image ${progress}%...`
-              : "Saving product...",
-          );
+        steps.push({
+          label: "Uploading image",
+          run: async ({ progress }) => {
+            imageUrl = await uploadProductImage(ownerId, selectedFile, (percent) => {
+              setUploadProgress(percent);
+              progress(percent);
+              setSubmitMessage(
+                percent <= 0
+                  ? "Uploading image..."
+                  : percent < 100
+                  ? `Uploading image ${percent}%...`
+                  : "Saving product...",
+              );
+            });
+          },
         });
       }
 
-      setSubmitMessage("Saving product...");
+      steps.push({
+        label: "Saving product",
+        run: async () => {
+          setSubmitMessage("Saving product...");
 
-      const payload = {
-        name: name.trim(),
-        category: category.trim(),
-        sku: sku.trim() || null,
-        quantity: Number(quantity),
-        lowStockThreshold: Number(lowStockThreshold),
-        costPrice: costPrice ? Number(costPrice) : null,
-        sellingPrice: Number(sellingPrice),
-        imageUrl,
-        ownerId,
-        businessId,
-      };
+          const payload = {
+            name: name.trim(),
+            category: category.trim(),
+            sku: sku.trim() || null,
+            quantity: Number(quantity),
+            lowStockThreshold: Number(lowStockThreshold),
+            costPrice: costPrice ? Number(costPrice) : null,
+            sellingPrice: Number(sellingPrice),
+            imageUrl,
+            ownerId,
+            businessId,
+          };
 
-      if (mode === "create") {
-        await createProduct(payload);
-      } else if (initialProduct) {
-        await updateProduct(initialProduct.id, payload);
+          if (mode === "create") {
+            await createProduct(payload);
+          } else if (initialProduct) {
+            await updateProduct(initialProduct.id, payload);
+          }
+        },
+      });
+
+      steps.push({
+        label: "Opening your stock list",
+        run: async () => {
+          router.replace("/products");
+          router.refresh();
+        },
+      });
+
+      const result = await runActivity({
+        title: mode === "create" ? "Adding product" : "Saving product",
+        successTitle: mode === "create" ? "Product added" : "Product saved",
+        failureTitle: "Product not saved yet",
+        failureHint: "Your changes are still in the form.",
+        steps,
+      });
+
+      if (!result.ok) {
+        throw result.error;
       }
-
-      router.replace("/products");
-      router.refresh();
     } catch (submitError) {
       setError(
         submitError instanceof Error

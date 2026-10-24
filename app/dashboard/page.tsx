@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useActivity, usePageLoading } from "@/components/loading/loading-context";
 import DashboardToday from "@/components/redesign/DashboardToday";
 import LightShell, { type LightNavItem } from "@/components/redesign/LightShell";
 import { ProtectedPage } from "@/components/protected-page";
@@ -31,6 +32,8 @@ export default function DashboardPage() {
   const { user, business } = useAuth();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [needsSignal, setNeedsSignal] = useState(0);
+  const runActivity = useActivity();
+  usePageLoading(!summary);
 
   const loadDashboard = useCallback(async () => {
     if (!user || !business) {
@@ -46,18 +49,42 @@ export default function DashboardPage() {
 
   const handleMarkPaid = useCallback(
     async (orderId: string) => {
-      await markOrderAsPaid(orderId);
-      await loadDashboard();
+      const result = await runActivity({
+        title: "Marking as paid",
+        successTitle: "Order marked as paid",
+        failureTitle: "Order not updated",
+        failureHint: "Nothing was changed.",
+        steps: [
+          { label: "Marking as paid", run: () => markOrderAsPaid(orderId) },
+          { label: "Refreshing today", run: () => loadDashboard() },
+        ],
+      });
+
+      if (!result.ok) {
+        throw result.error;
+      }
     },
-    [loadDashboard],
+    [loadDashboard, runActivity],
   );
 
   const handleMarkDelivered = useCallback(
     async (orderId: string) => {
-      await completeOrder(orderId);
-      await loadDashboard();
+      const result = await runActivity({
+        title: "Marking as delivered",
+        successTitle: "Order delivered",
+        failureTitle: "Order not updated",
+        failureHint: "Nothing was changed.",
+        steps: [
+          { label: "Completing order", run: () => completeOrder(orderId) },
+          { label: "Refreshing today", run: () => loadDashboard() },
+        ],
+      });
+
+      if (!result.ok) {
+        throw result.error;
+      }
     },
-    [loadDashboard],
+    [loadDashboard, runActivity],
   );
 
   const whatsappHref = useCallback(

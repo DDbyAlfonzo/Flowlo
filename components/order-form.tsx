@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ORDER_SOURCES, ORDER_STATUSES, PAYMENT_STATUSES } from "@/lib/constants";
+import { useActivity } from "@/components/loading/loading-context";
 import { createOrder } from "@/lib/firestore";
 import { formatCurrency } from "@/lib/format";
 import { Product, OrderSource, OrderStatus, PaymentStatus } from "@/types";
@@ -38,6 +39,7 @@ export function OrderForm({
   const [source, setSource] = useState<OrderSource>("manual");
   const [items, setItems] = useState<DraftItem[]>([createDraftItem()]);
   const [submitting, setSubmitting] = useState(false);
+  const runActivity = useActivity();
   const [error, setError] = useState("");
 
   const addRow = () => {
@@ -69,22 +71,47 @@ export function OrderForm({
     setError("");
 
     try {
-      const orderId = await createOrder({
-        customerName,
-        customerPhone,
-        items: items.map((item) => ({
-          productId: item.productId,
-          quantity: Number(item.quantity),
-        })),
-        paymentStatus,
-        orderStatus,
-        source,
-        ownerId,
-        businessId,
+      let orderId = "";
+
+      const result = await runActivity({
+        title: "Saving order",
+        successTitle: "Order saved",
+        failureTitle: "Order not saved yet",
+        failureHint: "Nothing was saved and your order is still in the form.",
+        steps: [
+          {
+            // One all-or-nothing write: the order, its delivery record and its
+            // tracking link (plus the stock change when it is paid).
+            label: "Saving order and delivery",
+            run: async () => {
+              orderId = await createOrder({
+                customerName,
+                customerPhone,
+                items: items.map((item) => ({
+                  productId: item.productId,
+                  quantity: Number(item.quantity),
+                })),
+                paymentStatus,
+                orderStatus,
+                source,
+                ownerId,
+                businessId,
+              });
+            },
+          },
+          {
+            label: "Opening your order",
+            run: async () => {
+              router.replace(`/orders/${orderId}`);
+              router.refresh();
+            },
+          },
+        ],
       });
 
-      router.replace(`/orders/${orderId}`);
-      router.refresh();
+      if (!result.ok) {
+        throw result.error;
+      }
     } catch (submitError) {
       setError(
         submitError instanceof Error

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/app-shell";
 import OrderList, { type Order as ListOrder } from "@/components/orders/OrderList";
+import { ListSkeleton } from "@/components/loading/Skeleton";
 import { ProtectedPage } from "@/components/protected-page";
 import { useAuth } from "@/hooks/use-auth";
 import { listOrders } from "@/lib/firestore";
@@ -80,11 +81,15 @@ export default function OrdersPage() {
   return (
     <ProtectedPage>
       <AppShell>
-        <OrderList
-          orders={loading ? [] : listOrdersData}
-          createOrderHref="/orders/new"
-          orderHref={(order) => `/orders/${order.id}`}
-        />
+        {loading ? (
+          <ListSkeleton label="Loading your orders" />
+        ) : (
+          <OrderList
+            orders={listOrdersData}
+            createOrderHref="/orders/new"
+            orderHref={(order) => `/orders/${order.id}`}
+          />
+        )}
       </AppShell>
     </ProtectedPage>
   );

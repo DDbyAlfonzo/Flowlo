@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import { AuthProvider } from "@/hooks/use-auth";
 import { PWARegister } from "@/components/pwa-register";
+import { LoadingProvider } from "@/components/loading/loading-context";
+import { Preloader } from "@/components/loading/Preloader";
 import "@/styles/globals.css";
 import "@/styles/light-theme.css";
 
@@ -38,9 +40,14 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className="font-sans antialiased">
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          <LoadingProvider>
+            <Preloader />
+            {children}
+          </LoadingProvider>
+        </AuthProvider>
         <PWARegister />
       </body>
     </html>

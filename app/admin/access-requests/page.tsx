@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
+import { useActivity } from "@/components/loading/loading-context";
+import { ListSkeleton } from "@/components/loading/Skeleton";
 import { ProtectedPage } from "@/components/protected-page";
 import { StatusBadge } from "@/components/status-badge";
 import { useAuth } from "@/hooks/use-auth";
@@ -55,6 +57,7 @@ function getStatusTone(status: AccessRequestStatus) {
 
 export default function AdminAccessRequestsPage() {
   const { user } = useAuth();
+  const runActivity = useActivity();
   const [requests, setRequests] = useState<AccessRequest[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<AccessRequestStatus>("pending");
@@ -131,9 +134,25 @@ export default function AdminAccessRequestsPage() {
     setActioningKey(`${request.id}:${status}`);
     setFeedback(null);
 
+    const reviewerEmail = user.email;
+    const verb = status === "approved" ? "Approving" : status === "disabled" ? "Disabling" : "Rejecting";
+
     try {
-      await reviewAccessRequest(request.id, status, user.email);
-      await loadRequests();
+      const result = await runActivity({
+        title: `${verb} ${request.fullName}`,
+        successTitle: "Access updated",
+        failureTitle: "Access not updated",
+        failureHint: "Nothing was changed.",
+        steps: [
+          { label: "Updating access", run: () => reviewAccessRequest(request.id, status, reviewerEmail) },
+          { label: "Refreshing the list", run: () => loadRequests() },
+        ],
+      });
+
+      if (!result.ok) {
+        throw result.error;
+      }
+
       setFeedback({
         tone: "success",
         message:
@@ -169,8 +188,21 @@ export default function AdminAccessRequestsPage() {
     setFeedback(null);
 
     try {
-      await deleteAccessRequestRecord(request.id);
-      await loadRequests();
+      const result = await runActivity({
+        title: `Deleting ${request.fullName}'s record`,
+        successTitle: "Record deleted",
+        failureTitle: "Record not deleted",
+        failureHint: "Nothing was changed.",
+        steps: [
+          { label: "Deleting access record", run: () => deleteAccessRequestRecord(request.id) },
+          { label: "Refreshing the list", run: () => loadRequests() },
+        ],
+      });
+
+      if (!result.ok) {
+        throw result.error;
+      }
+
       setFeedback({
         tone: "success",
         message: `${request.fullName}'s access record has been deleted. Firebase Auth still needs separate removal if you want the account deleted entirely.`,
@@ -295,15 +327,7 @@ export default function AdminAccessRequestsPage() {
                 />
               ) : null}
 
-              {loading ? (
-                Array.from({ length: 3 }).map((_, index) => (
-                  <div key={index} className="surface-elevated p-5">
-                    <div className="h-5 w-40 rounded-full bg-white/8" />
-                    <div className="mt-4 h-4 w-56 rounded-full bg-white/6" />
-                    <div className="mt-6 h-24 rounded-[1.35rem] bg-white/5" />
-                  </div>
-                ))
-              ) : null}
+              {loading ? <ListSkeleton label="Loading access requests" rows={3} chips={false} head={false} /> : null}
 
               {!loading
                 ? filteredRequests.map((request) => (

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/app-shell";
 import DeliveryBoard, { type Delivery as BoardDelivery } from "@/components/delivery/DeliveryBoard";
+import { ListSkeleton } from "@/components/loading/Skeleton";
 import { ProtectedPage } from "@/components/protected-page";
 import { useAuth } from "@/hooks/use-auth";
 import { listDeliveries } from "@/lib/firestore";
@@ -70,14 +71,18 @@ export default function DeliveriesPage() {
   return (
     <ProtectedPage>
       <AppShell>
-        <DeliveryBoard
-          deliveries={loading ? [] : boardDeliveries}
-          createOrderHref="/orders/new"
-          deliveryHref={(delivery) => {
-            const source = deliveries.find((item) => item.id === delivery.id);
-            return `/orders/${source?.orderId ?? delivery.id}`;
-          }}
-        />
+        {loading ? (
+          <ListSkeleton label="Loading your deliveries" />
+        ) : (
+          <DeliveryBoard
+            deliveries={boardDeliveries}
+            createOrderHref="/orders/new"
+            deliveryHref={(delivery) => {
+              const source = deliveries.find((item) => item.id === delivery.id);
+              return `/orders/${source?.orderId ?? delivery.id}`;
+            }}
+          />
+        )}
       </AppShell>
     </ProtectedPage>
   );
