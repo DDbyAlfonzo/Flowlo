@@ -33,6 +33,8 @@ type LightShellProps = {
   initials: string;
   navItems: LightNavItem[];
   newOrderHref?: string;
+  /** Hide the New order button (admin screens). */
+  showNewOrder?: boolean;
   settingsHref?: string;
   attentionCount?: number;
   onNotificationsClick?: () => void;
@@ -46,6 +48,7 @@ export default function LightShell({
   initials,
   navItems,
   newOrderHref = "/orders/new",
+  showNewOrder = true,
   settingsHref = "/settings/business",
   attentionCount = 0,
   onNotificationsClick,
@@ -62,10 +65,12 @@ export default function LightShell({
         <Link href="/dashboard" className={styles.logo} aria-label="FlowLo home">
           <img src={LOGO_SRC} alt="FlowLo" width={82} height={24} />
         </Link>
-        <Link className={styles.newBtn} href={newOrderHref}>
-          <Icon name="plus" strokeWidth={2} />
-          New order
-        </Link>
+        {showNewOrder ? (
+          <Link className={styles.newBtn} href={newOrderHref}>
+            <Icon name="plus" strokeWidth={2} />
+            New order
+          </Link>
+        ) : null}
         <nav className={styles.nav} aria-label="Primary">
           {navItems.map((item) => {
             const on = isActive(item.href);
@@ -139,9 +144,11 @@ export default function LightShell({
           {tabs.slice(0, 2).map((t) => (
             <TabLink key={t.href} item={t} on={isActive(t.href)} />
           ))}
-          <Link className={styles.plus} href={newOrderHref} aria-label="New order">
-            <Icon name="plus" strokeWidth={2.2} />
-          </Link>
+          {showNewOrder ? (
+            <Link className={styles.plus} href={newOrderHref} aria-label="New order">
+              <Icon name="plus" strokeWidth={2.2} />
+            </Link>
+          ) : null}
           {tabs.slice(2, 4).map((t) => (
             <TabLink key={t.href} item={t} on={isActive(t.href)} />
           ))}
