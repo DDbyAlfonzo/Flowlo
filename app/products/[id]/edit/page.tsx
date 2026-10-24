@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
-import { LoadingScreen } from "@/components/loading-screen";
+import { FormSkeleton } from "@/components/loading/Skeleton";
+
 import { ProductForm } from "@/components/product-form";
 import { ProtectedPage } from "@/components/protected-page";
 import { useAuth } from "@/hooks/use-auth";
@@ -48,7 +49,7 @@ export default function EditProductPage() {
           </div>
         </div>
 
-        {loading ? <LoadingScreen message="Loading product..." /> : null}
+        {loading ? <FormSkeleton label="Loading product" /> : null}
 
         {!loading && !product ? (
           <EmptyState

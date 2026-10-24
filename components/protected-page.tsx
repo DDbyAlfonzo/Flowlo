@@ -3,7 +3,7 @@
 import { ReactNode, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
-import { LoadingScreen } from "@/components/loading-screen";
+import { ShellSkeleton } from "@/components/loading/Skeleton";
 import { logoutUser } from "@/lib/auth";
 
 type ProtectedPageProps = {
@@ -108,23 +108,23 @@ export function ProtectedPage({
     user && requireAccess === "approved" && isApproved && requireBusiness && businessLoading;
 
   if (loading || accessLoading || shouldWaitForBusiness) {
-    return <LoadingScreen message="Loading your workspace..." />;
+    return <ShellSkeleton label="Loading your workspace..." />;
   }
 
   if (!user) {
-    return <LoadingScreen message="Taking you to login..." />;
+    return <ShellSkeleton label="Taking you to login..." />;
   }
 
   if (requireAccess === "admin" && !isAdmin) {
-    return <LoadingScreen message="Checking admin access..." />;
+    return <ShellSkeleton label="Checking admin access..." />;
   }
 
   if (requireAccess === "approved" && !isApproved) {
-    return <LoadingScreen message="Checking your FlowLo access..." />;
+    return <ShellSkeleton label="Checking your FlowLo access..." />;
   }
 
   if (requireAccess === "approved" && requireBusiness && !business) {
-    return <LoadingScreen message="Taking you to business setup..." />;
+    return <ShellSkeleton label="Taking you to business setup..." />;
   }
 
   return <>{children}</>;

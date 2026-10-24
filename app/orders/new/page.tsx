@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
-import { LoadingScreen } from "@/components/loading-screen";
+import { FormSkeleton } from "@/components/loading/Skeleton";
+
 import { OrderForm } from "@/components/order-form";
 import { ProtectedPage } from "@/components/protected-page";
 import { useAuth } from "@/hooks/use-auth";
@@ -46,7 +47,7 @@ export default function NewOrderPage() {
           </div>
         </div>
 
-        {loading ? <LoadingScreen message="Loading your products..." /> : null}
+        {loading ? <FormSkeleton label="Loading your products" /> : null}
 
         {!loading && !products.length ? (
           <EmptyState

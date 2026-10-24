@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { EmptyState } from "@/components/empty-state";
-import { LoadingScreen } from "@/components/loading-screen";
+import { useActivity } from "@/components/loading/loading-context";
+import { DetailSkeleton } from "@/components/loading/Skeleton";
 import { ProtectedPage } from "@/components/protected-page";
 import { StatusBadge } from "@/components/status-badge";
 import NotifyCustomerButton, { type NotifyStage } from "@/components/whatsapp/NotifyCustomerButton";
@@ -91,6 +92,7 @@ export default function OrderDetailPage() {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState<"paid" | "complete" | "cancel" | null>(null);
   const [actionError, setActionError] = useState("");
+  const runActivity = useActivity();
 
   const loadOrder = async (showLoader = true) => {
     if (!params.id) {
@@ -126,9 +128,28 @@ export default function OrderDetailPage() {
     setActionLoading(action);
     setActionError("");
 
+    const copy = {
+      paid: { title: "Marking as paid", done: "Order marked as paid", step: "Marking as paid" },
+      complete: { title: "Completing order", done: "Order completed", step: "Completing order" },
+      cancel: { title: "Cancelling order", done: "Order cancelled", step: "Cancelling order" },
+    }[action];
+
     try {
-      await runner(params.id);
-      await loadOrder(false);
+      const orderId = params.id;
+      const result = await runActivity({
+        title: copy.title,
+        successTitle: copy.done,
+        failureTitle: "Order not updated",
+        failureHint: "Nothing was changed.",
+        steps: [
+          { label: copy.step, run: () => runner(orderId) },
+          { label: "Refreshing order", run: () => loadOrder(false) },
+        ],
+      });
+
+      if (!result.ok) {
+        throw result.error;
+      }
     } catch (error) {
       setActionError(
         error instanceof Error ? error.message : "We could not update this order.",
@@ -150,7 +171,7 @@ export default function OrderDetailPage() {
           </div>
         </div>
 
-        {loading ? <LoadingScreen message="Loading order..." /> : null}
+        {loading ? <DetailSkeleton label="Loading order" /> : null}
 
         {!loading && !order ? (
           <EmptyState

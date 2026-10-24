@@ -1,0 +1,571 @@
+/* FlowLo — loading system (preloader, activity panel, skeletons).
+   Lives outside the `.flowlo-light` scope (mounted in the root layout), so every
+   colour is declared here from the v3 light palette. */
+
+.root {
+  --ink: #0a111c;
+  --ink-3: #3a4a5e;
+  --ink-4: #5b6b7e;
+  --teal: #00957a;
+  --mint: #2fcfa9;
+  --gold: #e3b34e;
+  --wash: #eaf0f4;
+  --line: rgba(10, 17, 28, 0.1);
+  --danger: #a4231c;
+  font-family: var(--fl-body), Inter, system-ui, sans-serif;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+.root *,
+.root *::before,
+.root *::after {
+  box-sizing: border-box;
+}
+
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ───────────── Tier 1 · brand preloader ───────────── */
+
+/* Set by an inline script before hydration when the preloader already played
+   this session, so a reload never flashes it. */
+:global(html[data-fl-pre-seen]) .pre {
+  display: none;
+}
+
+.pre {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--wash);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  clip-path: inset(0 0 0 0);
+  transition: clip-path 0.8s cubic-bezier(0.7, 0, 0.2, 1);
+}
+.out {
+  clip-path: inset(0 0 100% 0);
+}
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+.in .blob {
+  opacity: 0.8;
+}
+.b1 {
+  width: 52vmax;
+  height: 52vmax;
+  left: -10vmax;
+  top: -26vmax;
+  background: rgba(120, 205, 235, 0.55);
+}
+.b2 {
+  width: 46vmax;
+  height: 46vmax;
+  right: -8vmax;
+  top: -24vmax;
+  background: rgba(127, 240, 209, 0.55);
+}
+.b3 {
+  width: 30vmax;
+  height: 30vmax;
+  right: 30vw;
+  bottom: -22vmax;
+  background: rgba(227, 179, 78, 0.35);
+}
+.in .b3 {
+  opacity: 0.7;
+}
+.pc {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  width: min(78vw, 300px);
+}
+.mark {
+  width: clamp(70px, 14vw, 96px);
+  aspect-ratio: 92 / 90;
+  clip-path: inset(100% 0 0 0);
+  transform: scale(0.88) rotate(-4deg);
+  opacity: 0.2;
+}
+.in .mark {
+  clip-path: inset(0 0 0 0);
+  transform: none;
+  opacity: 1;
+  transition:
+    clip-path 0.9s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 1s cubic-bezier(0.2, 0.8, 0.2, 1),
+    opacity 0.5s ease;
+}
+.out .mark {
+  transform: scale(0.82);
+  opacity: 0;
+  transition:
+    transform 0.7s ease,
+    opacity 0.5s ease;
+}
+.mark svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+.wm {
+  font: 700 clamp(26px, 4.6vw, 36px) var(--fl-display), "Space Grotesk", system-ui, sans-serif;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin: -2px 0 6px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.5s ease 0.5s,
+    transform 0.6s ease 0.5s;
+}
+.wm i {
+  font-style: normal;
+  color: var(--teal);
+}
+.in .wm {
+  opacity: 1;
+  transform: none;
+}
+.out .wm {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.shine {
+  transform: translateX(-40px) skewX(-18deg);
+}
+.shineGo .shine {
+  transform: translateX(130px) skewX(-18deg);
+  transition: transform 1s ease;
+}
+.track {
+  width: 100%;
+  height: 4px;
+  border-radius: 99px;
+  background: rgba(10, 17, 28, 0.1);
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.4s ease 0.5s;
+}
+.in .track {
+  opacity: 1;
+}
+.fill {
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--teal), var(--mint) 70%, var(--gold));
+}
+.meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  width: 100%;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--ink-3);
+  opacity: 0;
+  transition: opacity 0.4s ease 0.6s;
+}
+.in .meta {
+  opacity: 1;
+}
+.meta output {
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  font-weight: 600;
+}
+.steps3 {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  opacity: 0;
+  transition: opacity 0.4s ease 0.7s;
+}
+.in .steps3 {
+  opacity: 1;
+}
+.steps3 i {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(10, 17, 28, 0.1);
+  transition: background 0.4s;
+}
+.steps3 i.on {
+  background: var(--teal);
+}
+/* reduced motion: no wipe, no reveal choreography, just a fade */
+.fade {
+  clip-path: none;
+  transition: opacity 0.4s ease;
+}
+.fade.out {
+  opacity: 0;
+}
+.fade .mark,
+.fade .wm,
+.fade .track,
+.fade .meta,
+.fade .steps3,
+.fade .blob {
+  transition: none;
+  clip-path: none;
+  transform: none;
+  opacity: 1;
+}
+.fade .blob {
+  opacity: 0.6;
+}
+
+/* ───────────── Tier 2 · activity panel ───────────── */
+
+.dock {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(320px, calc(100vw - 32px));
+  pointer-events: none;
+}
+.panel {
+  pointer-events: auto;
+  background: #fff;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px 16px 16px;
+  box-shadow:
+    0 1px 2px rgba(10, 17, 28, 0.05),
+    0 24px 50px -20px rgba(10, 17, 28, 0.3);
+  animation: slideIn 0.45s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes slideIn {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+.panel h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 10px;
+  letter-spacing: -0.005em;
+}
+.okTitle {
+  color: #00755f;
+}
+.bar {
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(10, 17, 28, 0.1);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.bar i {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--teal), var(--mint));
+  transition: width 0.5s ease;
+}
+.st {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.st li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-4);
+}
+.st li.act {
+  color: var(--ink);
+  font-weight: 600;
+}
+.st li.done {
+  color: var(--ink-3);
+}
+.st li.err {
+  color: var(--danger);
+  font-weight: 600;
+}
+.dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(10, 17, 28, 0.18);
+  display: grid;
+  place-items: center;
+  flex: none;
+  font-size: 11px;
+  line-height: 1;
+}
+.act .dot {
+  border-color: var(--teal) transparent var(--teal) var(--teal);
+  animation: spin 0.8s linear infinite;
+}
+.done .dot {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #fff;
+}
+.err .dot {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.pmsg {
+  margin: 12px 0 0;
+  font-size: 12.5px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--danger);
+}
+.pact {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.pact button {
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  border-radius: 9px;
+  padding: 8px 12px;
+  min-height: 36px;
+  border: 1px solid rgba(10, 17, 28, 0.18);
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+}
+.pact button.p {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.pact button:focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 2px;
+}
+@media (max-width: 860px) {
+  /* clear the mobile tab bar (66px) */
+  .dock {
+    right: 50%;
+    transform: translateX(50%);
+    bottom: calc(66px + 24px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ───────────── Tier 3 · skeletons ───────────── */
+
+.sk {
+  display: block;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #e9eff4 0%, #f6f9fb 50%, #e9eff4 100%);
+  background-size: 220% 100%;
+  animation: shim 1.3s ease-in-out infinite;
+}
+@keyframes shim {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -120% 0;
+  }
+}
+.skPage {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+.skHead {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+.skChips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.skRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+}
+.skRow .l {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+.skRow .r {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+.skCard {
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.skGrid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: 1.25fr 0.75fr;
+}
+@media (max-width: 860px) {
+  .skGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* full-screen shell placeholder (ProtectedPage while auth resolves) */
+.skShell {
+  min-height: 100vh;
+  display: flex;
+  background: var(--wash);
+}
+.skSide {
+  width: 232px;
+  flex: none;
+  padding: 28px 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.skMain {
+  flex: 1;
+  min-width: 0;
+  margin: 12px 12px 12px 0;
+  padding: 28px;
+  background: #fff;
+  border-radius: 20px;
+}
+@media (max-width: 860px) {
+  .skSide {
+    display: none;
+  }
+  .skMain {
+    margin: 8px;
+    padding: 18px;
+  }
+}
+
+.shellMark {
+  width: 24px;
+  height: 23px;
+}
+.shellWm {
+  font: 700 18px var(--fl-display), "Space Grotesk", system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+.shellWm i {
+  font-style: normal;
+  color: var(--teal);
+}
+
+/* compact branded loader for public pages (login, register, tracking) */
+.soft {
+  min-height: 60vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+.softIn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+.softMark {
+  width: 44px;
+  height: 43px;
+}
+.softMsg {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.softBar {
+  width: 120px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(10, 17, 28, 0.1);
+  overflow: hidden;
+}
+.softBar i {
+  display: block;
+  height: 100%;
+  width: 40%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--teal), var(--mint));
+  animation: slide 1.2s ease-in-out infinite;
+}
+@keyframes slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sk,
+  .act .dot,
+  .softBar i {
+    animation-duration: 2.4s;
+  }
+  .panel {
+    animation: none;
+  }
+}

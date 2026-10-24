@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import BusinessSettings from "@/components/business/BusinessSettings";
-import { LoadingScreen } from "@/components/loading-screen";
+import { useActivity } from "@/components/loading/loading-context";
+import { ShellSkeleton } from "@/components/loading/Skeleton";
 import { ProtectedPage } from "@/components/protected-page";
 import { useAuth } from "@/hooks/use-auth";
 import { logoutUser } from "@/lib/auth";
@@ -14,9 +15,10 @@ import { BusinessCategory } from "@/types";
 export default function BusinessSettingsPage() {
   const router = useRouter();
   const { user, business, businessLoading, refreshBusiness } = useAuth();
+  const runActivity = useActivity();
 
   if (businessLoading) {
-    return <LoadingScreen message="Loading your setup..." />;
+    return <ShellSkeleton label="Loading your setup" />;
   }
 
   return (
@@ -33,12 +35,27 @@ export default function BusinessSettingsPage() {
               throw new Error("You must be signed in to save business details.");
             }
 
-            await upsertBusiness({
-              ownerId: user.uid,
-              businessName: name,
-              category: category as BusinessCategory,
+            const result = await runActivity({
+              title: "Saving business details",
+              successTitle: "Business details saved",
+              failureTitle: "Business details not saved",
+              steps: [
+                {
+                  label: "Saving details",
+                  run: () =>
+                    upsertBusiness({
+                      ownerId: user.uid,
+                      businessName: name,
+                      category: category as BusinessCategory,
+                    }),
+                },
+                { label: "Refreshing your workspace", run: () => refreshBusiness() },
+              ],
             });
-            await refreshBusiness();
+
+            if (!result.ok) {
+              throw result.error;
+            }
           }}
           onSignOut={() => {
             void logoutUser().finally(() => {
